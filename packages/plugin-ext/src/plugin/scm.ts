@@ -35,7 +35,7 @@ import { sortedDiff, Splice } from '../common/arrays';
 import { UriComponents } from '../common/uri-components';
 import { Command } from '../common/plugin-api-rpc-model';
 import { RPCProtocol } from '../common/rpc-protocol';
-import { URI } from 'vscode-uri';
+import { URI } from '@theia/core/shared/vscode-uri';
 import { ScmCommandArg } from '../common/plugin-api-rpc';
 import { sep } from '@theia/callhierarchy/lib/common/paths';
 type ProviderHandle = number;
@@ -453,8 +453,7 @@ class SsmResourceGroupImpl implements theia.SourceControlResourceGroup {
                 // TODO remove the letter and colorId fields when the FileDecorationProvider is applied, see https://github.com/eclipse-theia/theia/pull/8911
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const rawResource = {
-                    handle, sourceUri, letter: (r as any).letter, colorId: (r as any).color.id, icons,
-                    tooltip, strikeThrough, faded, contextValue, command
+                    handle, sourceUri, icons, tooltip, strikeThrough, faded, contextValue, command
                 } as ScmRawResource;
 
                 return { rawResource, handle };

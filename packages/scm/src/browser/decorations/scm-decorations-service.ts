@@ -22,7 +22,6 @@ import { ContentLines } from '../dirty-diff/content-lines';
 import { EditorManager, TextEditor } from '@theia/editor/lib/browser';
 import { ScmService } from '../scm-service';
 
-
 @injectable()
 export class ScmDecorationsService {
     private readonly diffComputer: DiffComputer;
