@@ -64,7 +64,15 @@ export class FrontendGenerator extends AbstractGenerator {
         return `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">`;
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style type="text/css">
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/webfonts/JetBrainsMono-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+  </style>`;
     }
 
     protected compileIndexJs(frontendModules: Map<string, string>): string {

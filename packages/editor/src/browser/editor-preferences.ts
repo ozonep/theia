@@ -26,9 +26,9 @@ import {
 } from '@theia/core/lib/browser/preferences';
 import { isWindows, isOSX, OS } from '@theia/core/lib/common/os';
 
-const DEFAULT_WINDOWS_FONT_FAMILY = 'Consolas, \'Courier New\', monospace';
-const DEFAULT_MAC_FONT_FAMILY = 'Menlo, Monaco, \'Courier New\', monospace';
-const DEFAULT_LINUX_FONT_FAMILY = '\'Droid Sans Mono\', \'monospace\', monospace, \'Droid Sans Fallback\'';
+const DEFAULT_WINDOWS_FONT_FAMILY = '\'JetBrains Mono\', Consolas, \'Courier New\', monospace';
+const DEFAULT_MAC_FONT_FAMILY = '\'JetBrains Mono\', Menlo, Monaco, \'Courier New\', monospace';
+const DEFAULT_LINUX_FONT_FAMILY = '\'JetBrains Mono\', \'Droid Sans Mono\', \'monospace\', monospace, \'Droid Sans Fallback\'';
 
 const platform = {
     isMacintosh: isOSX,
@@ -41,9 +41,7 @@ export const EDITOR_FONT_DEFAULTS = {
         isOSX ? DEFAULT_MAC_FONT_FAMILY : (isWindows ? DEFAULT_WINDOWS_FONT_FAMILY : DEFAULT_LINUX_FONT_FAMILY)
     ),
     fontWeight: 'normal',
-    fontSize: (
-        isOSX ? 12 : 14
-    ),
+    fontSize: 13,
     lineHeight: 0,
     letterSpacing: 0,
 };
@@ -206,7 +204,7 @@ const codeEditorPreferenceProperties = {
             'The editor will be permanently optimized for usage with a Screen Reader.',
             'The editor will never be optimized for usage with a Screen Reader.'
         ],
-        'default': 'auto',
+        'default': 'off',
         'description': 'Controls whether the editor should run in a mode where it is optimized for screen readers.'
     },
     'editor.accessibilityPageSize': {
@@ -366,7 +364,7 @@ const codeEditorPreferenceProperties = {
     'editor.cursorSmoothCaretAnimation': {
         'description': 'Controls whether the smooth caret animation should be enabled.',
         'type': 'boolean',
-        'default': false
+        'default': true
     },
     'editor.cursorStyle': {
         'description': 'Controls the cursor style.',
@@ -521,7 +519,7 @@ const codeEditorPreferenceProperties = {
             }
         ],
         'description': 'Configures font ligatures.',
-        'default': false
+        'default': true
     },
     'editor.fontSize': {
         'type': 'number',
@@ -760,7 +758,7 @@ const codeEditorPreferenceProperties = {
     },
     'editor.minimap.enabled': {
         'type': 'boolean',
-        'default': true,
+        'default': false,
         'description': 'Controls whether the minimap is shown.'
     },
     'editor.minimap.side': {
@@ -1032,14 +1030,14 @@ const codeEditorPreferenceProperties = {
     'editor.scrollBeyondLastColumn': {
         'description': 'Controls the number of extra characters beyond which the editor will scroll horizontally.',
         'type': 'integer',
-        'default': 5,
+        'default': 4,
         'minimum': 0,
         'maximum': 1073741824
     },
     'editor.scrollBeyondLastLine': {
         'description': 'Controls whether the editor will scroll beyond the last line.',
         'type': 'boolean',
-        'default': true
+        'default': false
     },
     'editor.scrollPredominantAxis': {
         'description': 'Scroll only along the predominant axis when scrolling both vertically and horizontally at the same time. Prevents horizontal drift when scrolling vertically on a trackpad.',
@@ -1120,7 +1118,7 @@ const codeEditorPreferenceProperties = {
     'editor.smoothScrolling': {
         'description': 'Controls whether the editor will scroll using an animation.',
         'type': 'boolean',
-        'default': false
+        'default': true
     },
     'editor.stickyTabStops': {
         'description': 'Emulate selection behaviour of tab characters when using spaces for indentation. Selection will stick to tab stops.',
@@ -1486,7 +1484,7 @@ export const editorPreferenceSchema: PreferenceSchema = {
                 'on',
                 'off'
             ],
-            'default': 'off',
+            'default': 'on',
             'description': 'Controls auto save of dirty files.',
             overridable: false
         },
