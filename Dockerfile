@@ -9,10 +9,10 @@ RUN mkdir -p /home/app \
 
 WORKDIR /home/theia
 COPY . .
-# COPY /.npmmegarc /root/.npmrc
+COPY /.npmmegarc /root/.npmrc
 RUN yarn
-# RUN yarn config set registry http://host.docker.internal:4873
-# RUN yarn run next:publish
+RUN yarn config set registry http://host.docker.internal:4873
+RUN yarn run next:publish
 
 # WORKDIR /home/app
 # ADD next.pkg /home/app/package.json

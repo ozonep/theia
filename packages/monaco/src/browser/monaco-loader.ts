@@ -26,7 +26,6 @@ export function loadVsRequire(context: any): Promise<any> {
             const vsLoader = document.createElement('script');
             vsLoader.type = 'text/javascript';
             vsLoader.src = './vs/loader.js';
-            vsLoader.charset = 'utf-8';
             vsLoader.addEventListener('load', () => {
                 // Save Monaco's amd require and restore the original require
                 const amdRequire = context.require;
@@ -56,8 +55,8 @@ export function loadMonaco(vsRequire: any): Promise<void> {
                 'vs/editor/standalone/browser/simpleServices',
                 'vs/editor/standalone/browser/standaloneServices',
                 'vs/editor/standalone/browser/standaloneLanguages',
-                'vs/base/parts/quickopen/browser/quickOpenWidget',
-                'vs/base/parts/quickopen/browser/quickOpenModel',
+                'vs/base/parts/quickinput/browser/quickOpenWidget',
+                'vs/base/parts/quickinput/browser/quickOpenModel',
                 'vs/base/common/filters',
                 'vs/platform/theme/common/themeService',
                 'vs/platform/theme/common/styler',

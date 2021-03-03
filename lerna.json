@@ -10,7 +10,7 @@
     "publish": {
       "forcePublish": true,
       "skipGit": true,
-      "registry": "https://registry.npmjs.org/"
+      "registry": "http://host.docker.internal:4873"
     }
   }
 }
