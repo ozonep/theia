@@ -11,15 +11,16 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "downlevelIteration": true,
+        "removeComments": true,
         "resolveJsonModule": true,
         "module": "commonjs",
         "moduleResolution": "node",
+        "sourceMap": true,
         "target": "es5",
         "jsx": "react",
         "lib": [
             "es6",
             "dom"
-        ],
-        "sourceMap": true
+        ]
     }
 }
