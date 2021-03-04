@@ -45,13 +45,11 @@ export class LanguagesMainPluginMetrics extends LanguagesMainImpl {
             super.provideCompletionItems(handle, model, position, context, token));
     }
 
-    protected resolveCompletionItem(handle: number, item: monaco.languages.CompletionItem,
-        token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionItem> {
-        return this.pluginMetricsResolver.resolveRequest(
-            this.handleToExtensionName(handle),
+    protected resolveCompletionItem(handle: number, model: monaco.editor.ITextModel, position: monaco.Position,
+        item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionItem> {
+        return this.pluginMetricsResolver.resolveRequest(this.handleToExtensionName(handle),
             vst.CompletionRequest.type.method,
-            super.resolveCompletionItem(handle, item, token)
-        );
+            super.resolveCompletionItem(handle, model, position, item, token));
     }
 
     protected provideReferences(handle: number, model: monaco.editor.ITextModel, position: monaco.Position,

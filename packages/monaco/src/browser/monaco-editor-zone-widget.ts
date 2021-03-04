@@ -166,12 +166,12 @@ export class MonacoEditorZoneWidget implements Disposable {
         this.zoneNode.style.left = this.computeLeft(info) + 'px';
     }
     protected computeWidth(info: monaco.editor.EditorLayoutInfo = this.editor.getLayoutInfo()): number {
-        return info.width - info.minimap.minimapWidth - info.verticalScrollbarWidth;
+        return info.width - info.minimapWidth - info.verticalScrollbarWidth;
     }
     protected computeLeft(info: monaco.editor.EditorLayoutInfo = this.editor.getLayoutInfo()): number {
         // If minimap is to the left, we move beyond it
-        if (info.minimap.minimapWidth > 0 && info.minimap.minimapLeft === 0) {
-            return info.minimap.minimapWidth;
+        if (info.minimapWidth > 0 && info.minimapLeft === 0) {
+            return info.minimapWidth;
         }
         return 0;
     }

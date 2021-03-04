@@ -468,7 +468,7 @@ export class MonacoEditorModel implements ITextEditorModel, TextEditorDocument {
     protected applyEdits(
         operations: monaco.editor.IIdentifiedSingleEditOperation[],
         options?: Partial<MonacoEditorModel.ApplyEditsOptions>
-    ): void {
+    ): monaco.editor.IIdentifiedSingleEditOperation[] {
         return this.updateModel(() => this.model.applyEdits(operations), options);
     }
 
