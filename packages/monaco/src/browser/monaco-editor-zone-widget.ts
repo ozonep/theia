@@ -214,7 +214,6 @@ class Arrow implements Disposable {
 
     private _updateStyle(): void {
         const style = document.createElement('style');
-        style.type = 'text/css';
         style.media = 'screen';
         document.getElementsByTagName('head')[0].appendChild(style);
         const selector = `.monaco-editor ${this.ruleName}`;

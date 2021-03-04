@@ -82,7 +82,7 @@ export class MonacoFormattingConflictsContribution implements FrontendApplicatio
         }
 
         const languageId = currentEditor.editor.document.languageId;
-        const defaultFormatterId = await this.getDefaultFormatter(languageId);
+        const defaultFormatterId = this.getDefaultFormatter(languageId);
 
         if (defaultFormatterId) {
             const formatter = formatters.find(f => f.extensionId && f.extensionId.value === defaultFormatterId);

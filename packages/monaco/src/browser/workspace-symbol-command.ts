@@ -17,9 +17,12 @@
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { environment } from '@theia/core/shared/@theia/application-package/lib/environment';
 import {
-    PrefixQuickOpenService, QuickOpenModel, QuickOpenItem, OpenerService,
+    PrefixQuickOpenService, QuickOpenItem, OpenerService,
     QuickOpenMode, KeybindingContribution, KeybindingRegistry, QuickOpenHandler, QuickOpenOptions, QuickOpenContribution, QuickOpenHandlerRegistry
 } from '@theia/core/lib/browser';
+import {
+    QuickOpenModel
+} from '@theia/core/lib/common/quick-open-model';
 import { CancellationTokenSource, CommandRegistry, CommandHandler, Command, SelectionService, CancellationToken } from '@theia/core';
 import URI from '@theia/core/lib/common/uri';
 import { CommandContribution } from '@theia/core/lib/common';
