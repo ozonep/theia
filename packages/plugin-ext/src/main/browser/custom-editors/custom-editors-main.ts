@@ -27,7 +27,7 @@ import { PluginCustomEditorRegistry } from './plugin-custom-editor-registry';
 import { CustomEditorWidget } from './custom-editor-widget';
 import { Emitter } from '@theia/core';
 import { UriComponents } from '../../../common/uri-components';
-import { URI } from 'vscode-uri';
+import { URI } from '@theia/core/shared/vscode-uri';
 import TheiaURI from '@theia/core/lib/common/uri';
 import { Disposable, DisposableCollection } from '@theia/core/lib/common/disposable';
 import { Reference } from '@theia/core/lib/common/reference';
