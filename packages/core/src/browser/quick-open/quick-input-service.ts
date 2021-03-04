@@ -16,7 +16,7 @@
 
 import { inject, injectable } from 'inversify';
 import { QuickOpenService } from './quick-open-service';
-import { QuickOpenItem, QuickOpenMode } from './quick-open-model';
+import { QuickOpenItem, QuickOpenMode } from '../../common/quick-open-model';
 import { Deferred } from '../../common/promise-util';
 import { MaybePromise } from '../../common/types';
 import { MessageType } from '../../common/message-service-protocol';
@@ -159,17 +159,17 @@ export class QuickInputService {
                 currentText = lookFor;
             }
         }, {
-                prefix: options.value,
-                placeholder: options.placeHolder,
-                password: options.password,
-                ignoreFocusOut: options.ignoreFocusOut,
-                enabled: options.enabled,
-                valueSelection: options.valueSelection,
-                onClose: () => {
-                    result.resolve(undefined);
-                    this.quickTitleBar.hide();
-                }
-            });
+            prefix: options.value,
+            placeholder: options.placeHolder,
+            password: options.password,
+            ignoreFocusOut: options.ignoreFocusOut,
+            enabled: options.enabled,
+            valueSelection: options.valueSelection,
+            onClose: () => {
+                result.resolve(undefined);
+                this.quickTitleBar.hide();
+            }
+        });
 
         if (options && this.quickTitleBar.shouldShowTitleBar(options.title, options.step)) {
             this.quickTitleBar.attachTitleBar(this.quickOpenService.widgetNode, options.title, options.step, options.totalSteps, options.buttons);

@@ -21,11 +21,6 @@ import { QuickOpenHideReason, QuickOpenOptions } from '../../common/quick-open-s
 import { QuickOpenItem } from '../../common/quick-open-model';
 import { Emitter } from '../../common/event';
 
-/**
- * @deprecated import from `@theia/core/lib/common/quick-open-service` instead
- */
-export { QuickOpenOptions } from '../../common/quick-open-service';
-
 @injectable()
 export class QuickOpenService {
 

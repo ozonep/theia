@@ -15,24 +15,7 @@
  ********************************************************************************/
 
 import { injectable } from 'inversify';
-import { QuickOpenItem } from '../../common/quick-open-model';
-import * as common from '../../common/quick-open-model';
-
-/**
- * @deprecated import from `@theia/core/lib/common/quick-open-model` instead
- */
-export type QuickOpenActionProvider = common.QuickOpenActionProvider;
-
-/**
- * @deprecated import from `@theia/core/lib/common/quick-open-model` instead
- */
-export type QuickOpenActionOptions = common.QuickOpenActionOptions;
-
-/**
- * @deprecated import from `@theia/core/lib/common/quick-open-model` instead
- */
-export type QuickOpenAction = common.QuickOpenAction;
-
+import { QuickOpenItem, QuickOpenAction, QuickOpenActionOptions } from '../../common/quick-open-model';
 @injectable()
 export abstract class QuickOpenBaseAction implements QuickOpenAction {
     constructor(protected options: QuickOpenActionOptions) {

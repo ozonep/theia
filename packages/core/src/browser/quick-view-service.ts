@@ -15,10 +15,11 @@
  ********************************************************************************/
 
 import { injectable, inject } from 'inversify';
-import { QuickOpenHandler, QuickOpenOptions, QuickOpenItem, QuickOpenMode, QuickOpenContribution, QuickOpenHandlerRegistry } from './quick-open';
+import { QuickOpenHandler, QuickOpenContribution, QuickOpenHandlerRegistry } from './quick-open';
 import { Disposable } from '../common/disposable';
 import { ContextKeyService } from './context-key-service';
-import { QuickOpenModel } from '../common/quick-open-model';
+import { QuickOpenModel, QuickOpenItem, QuickOpenMode } from '../common/quick-open-model';
+import { QuickOpenOptions } from '../common/quick-open-service';
 
 export interface QuickViewItem {
     readonly label: string;

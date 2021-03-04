@@ -19,7 +19,7 @@ import { Command, CommandRegistry, Disposable } from '../../common';
 import { Keybinding } from '../../common/keybinding';
 import { KeybindingRegistry } from '../keybinding';
 import { QuickOpenModel, QuickOpenItem, QuickOpenGroupItemOptions, QuickOpenMode, QuickOpenGroupItem } from '../../common/quick-open-model';
-import { QuickOpenOptions } from './quick-open-service';
+import { QuickOpenOptions } from '../../common/quick-open-service';
 import { QuickOpenContribution, QuickOpenHandlerRegistry, QuickOpenHandler } from './prefix-quick-open-service';
 import { ContextKeyService } from '../context-key-service';
 import { CLEAR_COMMAND_HISTORY } from './quick-command-contribution';

@@ -16,10 +16,12 @@
 
 import { inject, injectable } from '@theia/core/shared/inversify';
 import {
-    QuickOpenModel, QuickOpenItem, QuickOpenMode, PrefixQuickOpenService,
-    OpenerService, KeybindingRegistry, QuickOpenGroupItem, QuickOpenGroupItemOptions, QuickOpenItemOptions,
-    QuickOpenHandler, QuickOpenOptions
+    PrefixQuickOpenService,
+    OpenerService, KeybindingRegistry,
+    QuickOpenHandler
 } from '@theia/core/lib/browser';
+import { QuickOpenModel, QuickOpenItemOptions, QuickOpenMode, QuickOpenGroupItemOptions, QuickOpenGroupItem, QuickOpenItem } from '@theia/core/lib/common/quick-open-model';
+import { QuickOpenOptions } from '@theia/core/lib/common/quick-open-service';
 import { WorkspaceService } from '@theia/workspace/lib/browser/workspace-service';
 import URI from '@theia/core/lib/common/uri';
 import { FileSearchService, WHITESPACE_QUERY_SEPARATOR } from '../common/file-search-service';

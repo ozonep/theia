@@ -16,10 +16,12 @@
 
 import { inject, injectable } from '@theia/core/shared/inversify';
 import {
-    QuickOpenModel, QuickOpenItem, QuickOpenMode, PrefixQuickOpenService,
-    OpenerService, QuickOpenItemOptions,
-    QuickOpenHandler, QuickOpenOptions
+    PrefixQuickOpenService,
+    OpenerService,
+    QuickOpenHandler
 } from '@theia/core/lib/browser';
+import { QuickOpenModel, QuickOpenItem, QuickOpenMode, QuickOpenItemOptions } from '@theia/core/lib/common/quick-open-model';
+import { QuickOpenOptions } from '@theia/core/lib/common/quick-open-service';
 import URI from '@theia/core/lib/common/uri';
 import { LabelProvider } from '@theia/core/lib/browser/label-provider';
 import { EditorManager } from './editor-manager';
