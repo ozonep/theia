@@ -123,7 +123,7 @@ export class MenusContributionPointHandler {
                     if (!action.command) {
                         continue;
                     }
-                    toDispose.push(this.registerTitleAction(location, { ...action, when: undefined }, {
+                    toDispose.push(this.registerTitleAction(location, action, {
                         execute: widget => widget instanceof PluginViewWidget && this.commands.executeCommand(action.command!),
                         isEnabled: widget => widget instanceof PluginViewWidget &&
                             this.viewContextKeys.with({ view: widget.options.viewId }, () =>
