@@ -454,5 +454,12 @@ export class TabBarToolbarRegistry implements FrontendApplicationContribution {
         }
         return result;
     }
+    
+    unregisterItem(itemOrId: TabBarToolbarItem | ReactTabBarToolbarItem | string): void {
+        const id = typeof itemOrId === 'string' ? itemOrId : itemOrId.id;
+        if (this.items.delete(id)) {
+            this.fireOnDidChange();
+        }
+    }
 
 }
