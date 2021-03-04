@@ -17,9 +17,12 @@
 import { inject, injectable, postConstruct } from '@theia/core/shared/inversify';
 import { Command, CommandContribution, CommandHandler, CommandRegistry } from '@theia/core/lib/common/command';
 import {
-    QuickOpenContribution, QuickOpenHandler, QuickOpenModel,
-    PrefixQuickOpenService, QuickOpenOptions, QuickOpenHandlerRegistry, QuickOpenItem, QuickOpenMode
+    QuickOpenContribution, QuickOpenHandler,
+    PrefixQuickOpenService, QuickOpenOptions, QuickOpenHandlerRegistry
 } from '@theia/core/lib/browser/quick-open';
+import {
+    QuickOpenModel, QuickOpenItem, QuickOpenMode
+} from '@theia/core/lib/common/quick-open-model';
 import { DebugSessionManager } from './debug-session-manager';
 import { DebugConfigurationManager } from './debug-configuration-manager';
 import { DebugCommands } from './debug-frontend-application-contribution';

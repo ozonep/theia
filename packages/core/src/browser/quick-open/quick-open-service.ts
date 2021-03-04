@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 import { injectable } from 'inversify';
-import { QuickOpenModel } from './quick-open-model';
+import { QuickOpenModel } from '../../common/quick-open-model';
 import { MessageType } from '../../common/message-service-protocol';
-import * as common from '../../common/quick-open-service';
+import { QuickOpenHideReason, QuickOpenOptions } from '../../common/quick-open-service';
 import { QuickOpenItem } from '../../common/quick-open-model';
 import { Emitter } from '../../common/event';
 
@@ -43,8 +43,8 @@ export class QuickOpenService {
     /**
      * It should be implemented by an extension, e.g. by the monaco extension.
      */
-    open(model: QuickOpenModel, options?: common.QuickOpenOptions): void { }
-    hide(reason?: common.QuickOpenHideReason): void { }
+    open(model: QuickOpenModel, options?: QuickOpenOptions): void { }
+    hide(reason?: QuickOpenHideReason): void { }
     showDecoration(type: MessageType): void { }
     hideDecoration(): void { }
     refresh(): void { }

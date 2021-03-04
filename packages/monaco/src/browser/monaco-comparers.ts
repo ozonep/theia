@@ -20,7 +20,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import strings = monaco.strings;
 import IdleValue = monaco.async.IdleValue;
 import QuickOpenEntry = monaco.quickOpen.QuickOpenEntry;
 
@@ -36,8 +35,6 @@ export function compareFileNames(one: string | null, other: string | null, caseS
         const b = other || '';
         const result = intlFileNameCollator.getValue().collator.compare(a, b);
 
-        // Using the numeric option in the collator will
-        // make compare(`foo1`, `foo01`) === 0. We must disambiguate.
         if (intlFileNameCollator.getValue().collatorIsNumeric && result === 0 && a !== b) {
             return a < b ? -1 : 1;
         }
@@ -47,8 +44,6 @@ export function compareFileNames(one: string | null, other: string | null, caseS
 
     return noIntlCompareFileNames(one, other, caseSensitive);
 }
-
-const FileNameMatch = /^(.*?)(\.([^.]*))?$/;
 
 export function noIntlCompareFileNames(one: string | null, other: string | null, caseSensitive = false): number {
     if (!caseSensitive) {
@@ -70,6 +65,8 @@ export function noIntlCompareFileNames(one: string | null, other: string | null,
     return oneExtension < otherExtension ? -1 : 1;
 }
 
+const FileNameMatch = /^(.*?)(\.([^.]*))?$/;
+
 function extractNameAndExtension(str?: string | null): [string, string] {
     const match = str ? FileNameMatch.exec(str) as Array<string> : ([] as Array<string>);
 
@@ -87,8 +84,8 @@ export function compareAnything(one: string, other: string, lookFor: string): nu
     }
 
     // Sort suffix matches over non suffix matches
-    const elementASuffixMatch = strings.endsWith(elementAName, lookFor);
-    const elementBSuffixMatch = strings.endsWith(elementBName, lookFor);
+    const elementASuffixMatch = elementAName.endsWith(lookFor);
+    const elementBSuffixMatch = elementBName.endsWith(lookFor);
     if (elementASuffixMatch !== elementBSuffixMatch) {
         return elementASuffixMatch ? -1 : 1;
     }
@@ -108,11 +105,13 @@ export function compareByPrefix(one: string, other: string, lookFor: string): nu
     const elementBName = other.toLowerCase();
 
     // Sort prefix matches over non prefix matches
-    const elementAPrefixMatch = strings.startsWith(elementAName, lookFor);
-    const elementBPrefixMatch = strings.startsWith(elementBName, lookFor);
+    const elementAPrefixMatch = elementAName.startsWith(lookFor);
+    const elementBPrefixMatch = elementBName.startsWith(lookFor);
     if (elementAPrefixMatch !== elementBPrefixMatch) {
         return elementAPrefixMatch ? -1 : 1;
-    } else if (elementAPrefixMatch && elementBPrefixMatch) { // Same prefix: Sort shorter matches to the top to have those on top that match more precisely
+    }
+    // Same prefix: Sort shorter matches to the top to have those on top that match more precisely
+    else if (elementAPrefixMatch && elementBPrefixMatch) {
         if (elementAName.length < elementBName.length) {
             return -1;
         }
@@ -132,8 +131,6 @@ export function compareByPrefix(one: string, other: string, lookFor: string): nu
 // copied from vscode: https://github.com/microsoft/vscode/blob/standalone/0.17.x/src/vs/base/parts/quickopen/browser/quickOpenModel.ts#L584
 export function compareEntries(elementA: QuickOpenEntry, elementB: QuickOpenEntry, lookFor: string): number {
 
-    // Give matches with label highlights higher priority over
-    // those with only description highlights
     const labelHighlightsA = elementA.getHighlights()[0] || [];
     const labelHighlightsB = elementB.getHighlights()[0] || [];
     if (labelHighlightsA.length && !labelHighlightsB.length) {
@@ -142,6 +139,10 @@ export function compareEntries(elementA: QuickOpenEntry, elementB: QuickOpenEntr
 
     if (!labelHighlightsA.length && labelHighlightsB.length) {
         return 1;
+    }
+
+    if (labelHighlightsA.length === 0 && labelHighlightsB.length === 0) {
+        return 0;
     }
 
     // Fallback to the full path if labels are identical and we have associated resources

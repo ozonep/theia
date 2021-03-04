@@ -20,7 +20,7 @@ import {
     QuickOpenModel,
     QuickOpenItem,
     QuickOpenMode
-} from '@theia/core/lib/browser/quick-open/quick-open-model';
+} from '@theia/core/lib/common/quick-open-model';
 import { RPCProtocol } from '../../common/rpc-protocol';
 import {
     QuickOpenExt,
