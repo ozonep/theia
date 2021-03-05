@@ -18,7 +18,7 @@
 /* eslint-disable max-len */
 
 // eslint-disable-next-line spaced-comment
-/// <reference types='@theia/monaco-editor-core/monaco'/>
+/// <reference types='ozonep-monaco-editor-core/monaco'/>
 
 declare module monaco.languages {
 
