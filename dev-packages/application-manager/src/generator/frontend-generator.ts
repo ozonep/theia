@@ -48,15 +48,12 @@ export class FrontendGenerator extends AbstractGenerator {
     protected compileIndexHtml(frontendModules: Map<string, string>): string {
         return `<!DOCTYPE html>
 <html lang="en">
-
 <head>${this.compileIndexHead(frontendModules)}
-  <script type="text/javascript" src="./bundle.js"></script>
+  <script type="text/javascript" src="./bundle.js" charset="utf-8"></script>
 </head>
-
 <body>
   <div class="theia-preload">${this.compileIndexPreload(frontendModules)}</div>
 </body>
-
 </html>`;
     }
 
@@ -64,65 +61,54 @@ export class FrontendGenerator extends AbstractGenerator {
         return `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">`
+  <meta name="apple-mobile-web-app-capable" content="yes">`;
     }
 
     protected compileIndexJs(frontendModules: Map<string, string>): string {
         return `// @ts-check
-        ${this.ifBrowser("require('es6-promise/auto');")}
-        require('reflect-metadata');
-        const { Container } = require('inversify');
-        const { FrontendApplicationConfigProvider } = require('@theia/core/lib/browser/frontend-application-config-provider');
-        FrontendApplicationConfigProvider.set(${this.prettyStringify(this.pck.props.frontend.config)});
-        const { FrontendApplication } = require('@theia/core/lib/browser');
-        const { frontendApplicationModule } = require('@theia/core/lib/browser/frontend-application-module');
-        const { messagingFrontendModule } = require('@theia/core/lib/${this.pck.isBrowser()
-                ? 'browser/messaging/messaging-frontend-module'
-                : 'electron-browser/messaging/electron-messaging-frontend-module'} ');
+${this.ifBrowser("require('es6-promise/auto');")}
+require('reflect-metadata');
+const { Container } = require('inversify');
+const { FrontendApplicationConfigProvider } = require('@theia/core/lib/browser/frontend-application-config-provider');
+FrontendApplicationConfigProvider.set(${this.prettyStringify(this.pck.props.frontend.config)});
+const { FrontendApplication } = require('@theia/core/lib/browser');
+const { frontendApplicationModule } = require('@theia/core/lib/browser/frontend-application-module');
+const { messagingFrontendModule } = require('@theia/core/lib/browser/messaging/messaging-frontend-module');
 const { loggerFrontendModule } = require('@theia/core/lib/browser/logger-frontend-module');
 const { ThemeService } = require('@theia/core/lib/browser/theming');
-
 const container = new Container();
 container.load(frontendApplicationModule);
 container.load(messagingFrontendModule);
 container.load(loggerFrontendModule);
-
 function load(raw) {
     return Promise.resolve(raw.default).then(module =>
         container.load(module)
     )
 }
-
 function start() {
     (window['theia'] = window['theia'] || {}).container = container;
-
     const themeService = ThemeService.get();
     themeService.loadUserTheme();
-
     const application = container.get(FrontendApplication);
     return application.start();
 }
-
 module.exports = Promise.resolve()${this.compileFrontendModuleImports(frontendModules)}
     .then(start).catch(reason => {
-    console.error('Failed to start the frontend application.');
-    if (reason) {
-        console.error(reason);
-    }
-}); `;
+        console.error('Failed to start the frontend application.');
+        if (reason) {
+            console.error(reason);
+        }
+    });`;
     }
 
     protected compileElectronMain(electronMainModules?: Map<string, string>): string {
         return `// @ts-check
-
 require('reflect-metadata');
-
 // Useful for Electron/NW.js apps as GUI apps on macOS doesn't inherit the \`$PATH\` define
 // in your dotfiles (.bashrc/.bash_profile/.zshrc/etc).
 // https://github.com/electron/electron/issues/550#issuecomment-162037357
 // https://github.com/eclipse-theia/theia/pull/3534#issuecomment-439689082
 require('fix-path')();
-
 // Workaround for https://github.com/electron/electron/issues/9225. Chrome has an issue where
 // in certain locales (e.g. PL), image metrics are wrongly computed. We explicitly set the
 // LC_NUMERIC to prevent this from happening (selects the numeric formatting category of the
@@ -131,25 +117,20 @@ if (process.env.LC_ALL) {
     process.env.LC_ALL = 'C';
 }
 process.env.LC_NUMERIC = 'C';
-
 const { default: electronMainApplicationModule } = require('@theia/core/lib/electron-main/electron-main-application-module');
 const { ElectronMainApplication, ElectronMainApplicationGlobals } = require('@theia/core/lib/electron-main/electron-main-application');
 const { Container } = require('inversify');
 const { resolve } = require('path');
 const { app } = require('electron');
-
 // Fix the window reloading issue, see: https://github.com/electron/electron/issues/22119
 app.allowRendererProcessReuse = false;
-
 const config = ${this.prettyStringify(this.pck.props.frontend.config)};
 const isSingleInstance = ${this.pck.props.backend.config.singleInstance === true ? 'true' : 'false'};
-
 if (isSingleInstance && !app.requestSingleInstanceLock()) {
     // There is another instance running, exit now. The other instance will request focus.
     app.quit();
     return;
 }
-
 const container = new Container();
 container.load(electronMainApplicationModule);
 container.bind(ElectronMainApplicationGlobals).toConstantValue({
@@ -157,25 +138,22 @@ container.bind(ElectronMainApplicationGlobals).toConstantValue({
     THEIA_BACKEND_MAIN_PATH: resolve(__dirname, '..', 'backend', 'main.js'),
     THEIA_FRONTEND_HTML_PATH: resolve(__dirname, '..', '..', 'lib', 'index.html'),
 });
-
 function load(raw) {
     return Promise.resolve(raw.default).then(module =>
         container.load(module)
     );
 }
-
 async function start() {
     const application = container.get(ElectronMainApplication);
     await application.start(config);
 }
-
 module.exports = Promise.resolve()${this.compileElectronMainModuleImports(electronMainModules)}
     .then(start).catch(reason => {
-    console.error('Failed to start the electron application.');
-    if (reason) {
-        console.error(reason);
-    }
-});
+        console.error('Failed to start the electron application.');
+        if (reason) {
+            console.error(reason);
+        }
+    });
 `;
     }
 
