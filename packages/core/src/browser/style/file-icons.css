@@ -1,236 +1,274 @@
 ._archive:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\eaef";
+  font-size: 120%;
 }
 ._binary:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\eae8";
+  font-size: 120%;
 }
 ._bugs:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eaaf";
+  font-size: 120%;
 }
 ._changelog:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\ea82";
+  font-size: 120%;
 }
 ._codeowners:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\ea7e";
+  font-size: 120%;
 }
 ._config:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eaf8";
+  font-size: 120%;
 }
 ._config-src:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eaf8";
+  font-size: 120%;
 }
 ._ctags:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\ea66";
+  font-size: 120%;
 }
 ._data:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eae9";
+  font-size: 120%;
 }
 ._data-markup:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eac4";
+  font-size: 120%;
 }
 ._data-template:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #ebcb8b;
   content: "\eb52";
+  font-size: 120%;
 }
 ._database:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eace";
+  font-size: 120%;
 }
 ._database-src:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eace";
+  font-size: 120%;
 }
 ._debug:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\eaaf";
+  font-size: 120%;
 }
 ._diff:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eae1";
+  font-size: 120%;
 }
 ._doc:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\ea7b";
+  font-size: 120%;
 }
 ._script:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #fc9776;
   content: "\ea85";
+  font-size: 120%;
 }
 ._file:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\ea7b";
+  font-size: 120%;
+  margin-right: 6px;
 }
 ._folder:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\ea83";
+  font-size: 120%;
+  margin-right: 6px;
+  text-align: center;
 }
 ._font:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #73a1cf;
   content: "\eb69";
+  font-size: 120%;
 }
 ._headers:before {
   color: #ebcb8b;
   content: "\eae9";
+  font-size: 120%;
 }
 ._ignore:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #e0404f;
   content: "\eabd";
+  font-size: 120%;
 }
 ._image:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #73a1cf;
   content: "\eaea";
+  font-size: 120%;
 }
 ._image-src:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eaea";
+  font-size: 120%;
 }
 ._info:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\ea74";
+  font-size: 120%;
 }
 ._license:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eb12";
+  font-size: 120%;
 }
 ._linker:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\eb14";
+  font-size: 120%;
 }
 ._lock:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #e0404f;
   content: "\ea75";
+  font-size: 120%;
 }
 ._mail:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eb1c";
+  font-size: 120%;
 }
 ._map:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #ebcb8b;
   content: "\eb1a";
+  font-size: 120%;
 }
 ._markdown:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eb1d";
+  font-size: 120%;
 }
 ._markup:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eac4";
+  font-size: 120%;
 }
 ._media:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #73a1cf;
   content: "\eb2c";
+  font-size: 120%;
 }
 ._notebook:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eb26";
+  font-size: 120%;
 }
 ._pdf:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eaeb";
+  font-size: 120%;
 }
 ._ruby:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #e0404f;
   content: "\eb48";
+  font-size: 120%;
 }
 ._search:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a3a8ae;
   content: "\ea6d";
+  font-size: 120%;
 }
 ._sheet:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #c280b6;
   content: "\eb17";
+  font-size: 120%;
 }
 ._src:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\eae9";
+  font-size: 120%;
 }
 ._security:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eb53";
+  font-size: 120%;
 }
 ._stylesheet:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #ebcb8b;
   content: "\eb2a";
+  font-size: 120%;
 }
 ._support:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #e0404f;
   content: "\eb05";
+  font-size: 120%;
 }
 ._template:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #ebcb8b;
   content: "\eac4";
+  font-size: 120%;
 }
 ._test:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #a1d971;
   content: "\ea79";
+  font-size: 120%;
 }
 ._todo:before {
-  font-family: codicons;
+  font-family: codicon;
   color: #7bd0cd;
   content: "\eab3";
-}
-
-/* ----------------------------[ Fonts ]---------------------------------- */
-
-@font-face {
-  font-family: "codicons";
-  src: url("https://github.com/ozonep/theia/raw/master/extensions/codicons.woff2")
-    format("woff2");
-  font-weight: normal;
-  font-style: normal;
+  font-size: 120%;
 }
 
 /* ----------------------------[ Icons ]---------------------------------- */
@@ -241,5 +279,4 @@
   text-align: center;
   display: inline-block;
   vertical-align: top;
-  font-size: 120%;
 }

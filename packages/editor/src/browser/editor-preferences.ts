@@ -364,7 +364,7 @@ const codeEditorPreferenceProperties = {
     'editor.cursorSmoothCaretAnimation': {
         'description': 'Controls whether the smooth caret animation should be enabled.',
         'type': 'boolean',
-        'default': true
+        'default': false
     },
     'editor.cursorStyle': {
         'description': 'Controls the cursor style.',
@@ -1118,7 +1118,7 @@ const codeEditorPreferenceProperties = {
     'editor.smoothScrolling': {
         'description': 'Controls whether the editor will scroll using an animation.',
         'type': 'boolean',
-        'default': true
+        'default': false
     },
     'editor.stickyTabStops': {
         'description': 'Emulate selection behaviour of tab characters when using spaces for indentation. Selection will stick to tab stops.',

@@ -17,7 +17,7 @@
 import '../../src/browser/style/index.css';
 require('../../src/browser/style/materialcolors.css').use();
 import 'font-awesome/css/font-awesome.min.css';
-import './file-icons.css';
+import '../../src/browser/style/file-icons.css';
 
 import { ContainerModule } from 'inversify';
 import {
