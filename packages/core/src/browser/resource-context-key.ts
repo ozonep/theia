@@ -16,7 +16,7 @@
 
 import { injectable, inject, postConstruct } from 'inversify';
 import URI from '../common/uri';
-import { URI as Uri } from 'vscode-uri';
+import { URI as Uri } from '../../shared/vscode-uri';
 import { ContextKeyService, ContextKey } from './context-key-service';
 import { LanguageService } from './language-service';
 
