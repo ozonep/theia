@@ -64,21 +64,21 @@ export class FrontendGenerator extends AbstractGenerator {
         return `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">`
     }
 
     protected compileIndexJs(frontendModules: Map<string, string>): string {
         return `// @ts-check
-        ${ this.ifBrowser("require('es6-promise/auto');") }
+        ${this.ifBrowser("require('es6-promise/auto');")}
         require('reflect-metadata');
         const { Container } = require('inversify');
         const { FrontendApplicationConfigProvider } = require('@theia/core/lib/browser/frontend-application-config-provider');
-        FrontendApplicationConfigProvider.set(${ this.prettyStringify(this.pck.props.frontend.config) });
+        FrontendApplicationConfigProvider.set(${this.prettyStringify(this.pck.props.frontend.config)});
         const { FrontendApplication } = require('@theia/core/lib/browser');
         const { frontendApplicationModule } = require('@theia/core/lib/browser/frontend-application-module');
         const { messagingFrontendModule } = require('@theia/core/lib/${this.pck.isBrowser()
-            ? 'browser/messaging/messaging-frontend-module'
-            : 'electron-browser/messaging/electron-messaging-frontend-module'} ');
+                ? 'browser/messaging/messaging-frontend-module'
+                : 'electron-browser/messaging/electron-messaging-frontend-module'} ');
 const { loggerFrontendModule } = require('@theia/core/lib/browser/logger-frontend-module');
 const { ThemeService } = require('@theia/core/lib/browser/theming');
 
@@ -103,7 +103,7 @@ function start() {
     return application.start();
 }
 
-module.exports = Promise.resolve()${ this.compileFrontendModuleImports(frontendModules) }
+module.exports = Promise.resolve()${this.compileFrontendModuleImports(frontendModules)}
     .then(start).catch(reason => {
     console.error('Failed to start the frontend application.');
     if (reason) {
@@ -141,8 +141,8 @@ const { app } = require('electron');
 // Fix the window reloading issue, see: https://github.com/electron/electron/issues/22119
 app.allowRendererProcessReuse = false;
 
-const config = ${ this.prettyStringify(this.pck.props.frontend.config)};
-const isSingleInstance = ${ this.pck.props.backend.config.singleInstance === true ? 'true' : 'false'};
+const config = ${this.prettyStringify(this.pck.props.frontend.config)};
+const isSingleInstance = ${this.pck.props.backend.config.singleInstance === true ? 'true' : 'false'};
 
 if (isSingleInstance && !app.requestSingleInstanceLock()) {
     // There is another instance running, exit now. The other instance will request focus.
@@ -169,7 +169,7 @@ async function start() {
     await application.start(config);
 }
 
-module.exports = Promise.resolve()${ this.compileElectronMainModuleImports(electronMainModules) }
+module.exports = Promise.resolve()${this.compileElectronMainModuleImports(electronMainModules)}
     .then(start).catch(reason => {
     console.error('Failed to start the electron application.');
     if (reason) {
