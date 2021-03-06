@@ -154,16 +154,15 @@ export class MonacoThemingService {
     protected static toUpdateUiTheme = new DisposableCollection();
     protected static updateBodyUiTheme(): void {
         this.toUpdateUiTheme.dispose();
-        const type = ThemeService.get().getCurrentTheme().type;
-        const uiTheme: monaco.editor.BuiltinTheme = type === 'hc' ? 'hc-black' : type === 'light' ? 'vs' : 'vs-dark';
+        const uiTheme: monaco.editor.BuiltinTheme = 'vs-dark';
         document.body.classList.add(uiTheme);
         this.toUpdateUiTheme.push(Disposable.create(() => document.body.classList.remove(uiTheme)));
     }
 
     protected static doRegister(state: MonacoThemeState): Disposable {
-        const { id, label, description, uiTheme, data } = state;
-        const type = uiTheme === 'vs' ? 'light' : uiTheme === 'vs-dark' ? 'dark' : 'hc';
-        const builtInTheme = uiTheme === 'vs' ? BuiltinThemeProvider.lightCss : BuiltinThemeProvider.darkCss;
+        const { id, label, description, data } = state;
+        const type = 'dark';
+        const builtInTheme = BuiltinThemeProvider.darkCss;
         return new DisposableCollection(
             ThemeService.get().register({
                 type,
