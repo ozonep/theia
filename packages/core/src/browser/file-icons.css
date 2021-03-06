@@ -1,0 +1,245 @@
+._archive:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\eaef";
+}
+._binary:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\eae8";
+}
+._bugs:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eaaf";
+}
+._changelog:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\ea82";
+}
+._codeowners:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\ea7e";
+}
+._config:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eaf8";
+}
+._config-src:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eaf8";
+}
+._ctags:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\ea66";
+}
+._data:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eae9";
+}
+._data-markup:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eac4";
+}
+._data-template:before {
+  font-family: codicons;
+  color: #ebcb8b;
+  content: "\eb52";
+}
+._database:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eace";
+}
+._database-src:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eace";
+}
+._debug:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\eaaf";
+}
+._diff:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eae1";
+}
+._doc:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\ea7b";
+}
+._script:before {
+  font-family: codicons;
+  color: #fc9776;
+  content: "\ea85";
+}
+._file:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\ea7b";
+}
+._folder:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\ea83";
+}
+._font:before {
+  font-family: codicons;
+  color: #73a1cf;
+  content: "\eb69";
+}
+._headers:before {
+  color: #ebcb8b;
+  content: "\eae9";
+}
+._ignore:before {
+  font-family: codicons;
+  color: #e0404f;
+  content: "\eabd";
+}
+._image:before {
+  font-family: codicons;
+  color: #73a1cf;
+  content: "\eaea";
+}
+._image-src:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eaea";
+}
+._info:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\ea74";
+}
+._license:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eb12";
+}
+._linker:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\eb14";
+}
+._lock:before {
+  font-family: codicons;
+  color: #e0404f;
+  content: "\ea75";
+}
+._mail:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eb1c";
+}
+._map:before {
+  font-family: codicons;
+  color: #ebcb8b;
+  content: "\eb1a";
+}
+._markdown:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eb1d";
+}
+._markup:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eac4";
+}
+._media:before {
+  font-family: codicons;
+  color: #73a1cf;
+  content: "\eb2c";
+}
+._notebook:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eb26";
+}
+._pdf:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eaeb";
+}
+._ruby:before {
+  font-family: codicons;
+  color: #e0404f;
+  content: "\eb48";
+}
+._search:before {
+  font-family: codicons;
+  color: #a3a8ae;
+  content: "\ea6d";
+}
+._sheet:before {
+  font-family: codicons;
+  color: #c280b6;
+  content: "\eb17";
+}
+._src:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\eae9";
+}
+._security:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eb53";
+}
+._stylesheet:before {
+  font-family: codicons;
+  color: #ebcb8b;
+  content: "\eb2a";
+}
+._support:before {
+  font-family: codicons;
+  color: #e0404f;
+  content: "\eb05";
+}
+._template:before {
+  font-family: codicons;
+  color: #ebcb8b;
+  content: "\eac4";
+}
+._test:before {
+  font-family: codicons;
+  color: #a1d971;
+  content: "\ea79";
+}
+._todo:before {
+  font-family: codicons;
+  color: #7bd0cd;
+  content: "\eab3";
+}
+
+/* ----------------------------[ Fonts ]---------------------------------- */
+
+@font-face {
+  font-family: "codicons";
+  src: url("https://github.com/ozonep/theia/raw/master/extensions/codicons.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ----------------------------[ Icons ]---------------------------------- */
+
+.icon:before {
+  font-weight: normal;
+  font-style: normal;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 120%;
+}

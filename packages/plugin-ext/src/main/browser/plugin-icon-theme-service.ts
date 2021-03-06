@@ -158,7 +158,6 @@ export class PluginIconTheme extends PluginIconThemeDefinition implements IconTh
             return;
         }
         const styleElement = document.createElement('style');
-        styleElement.type = 'text/css';
         styleElement.className = 'theia-icon-theme';
         styleElement.innerText = this.styleSheetContent;
         document.head.appendChild(styleElement);
@@ -236,12 +235,6 @@ export class PluginIconTheme extends PluginIconThemeDefinition implements IconTh
             definitionSelectors.set(definitionId, selectors);
         };
         this.collectSelectors(json, acceptSelector.bind(undefined, 'dark'));
-        if (json.light) {
-            this.collectSelectors(json.light, acceptSelector.bind(undefined, 'light'));
-        }
-        if (json.highContrast) {
-            this.collectSelectors(json.highContrast, acceptSelector.bind(undefined, 'hc'));
-        }
 
         if (!this.icons.size) {
             return;

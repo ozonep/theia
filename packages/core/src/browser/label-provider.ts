@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { inject, injectable, named, postConstruct } from 'inversify';
-import * as fileIcons from 'file-icons-js';
+import * as fileIcons from './file-icons';
 import URI from '../common/uri';
 import { ContributionProvider } from '../common/contribution-provider';
 import { Prioritizeable } from '../common/types';
@@ -27,11 +27,11 @@ import { ResourceLabelFormatter, ResourceLabelFormatting } from '../common/label
 /**
  * @internal don't export it, use `LabelProvider.folderIcon` instead.
  */
-const DEFAULT_FOLDER_ICON = 'fa fa-folder';
+const DEFAULT_FOLDER_ICON = '_folder';
 /**
  * @internal don't export it, use `LabelProvider.fileIcon` instead.
  */
-const DEFAULT_FILE_ICON = 'fa fa-file';
+const DEFAULT_FILE_ICON = '_file';
 
 /**
  * Internal folder icon class for the default (File Icons) theme.
@@ -150,11 +150,11 @@ export class DefaultUriLabelProviderContribution implements LabelProviderContrib
     }
 
     get defaultFolderIcon(): string {
-        return DEFAULT_FOLDER_ICON;
+        return '_folder';
     }
 
     get defaultFileIcon(): string {
-        return DEFAULT_FILE_ICON;
+        return '_file';
     }
 
     protected getFileIcon(uri: URI): string | undefined {
