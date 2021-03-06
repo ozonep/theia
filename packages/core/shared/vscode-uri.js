@@ -1,10 +1,28 @@
 'use strict';
-let isWindows;
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.uriToFsPath = exports.URI = void 0;
+var isWindows;
 if (typeof process === 'object') {
     isWindows = process.platform === 'win32';
 }
 else if (typeof navigator === 'object') {
-    let userAgent = navigator.userAgent;
+    var userAgent = navigator.userAgent;
     isWindows = userAgent.indexOf('Windows') >= 0;
 }
 function isHighSurrogate(charCode) {
@@ -25,12 +43,12 @@ function isUpperAsciiLetter(code) {
 function isAsciiLetter(code) {
     return isLowerAsciiLetter(code) || isUpperAsciiLetter(code);
 }
-const _schemePattern = /^\w[\w\d+.-]*$/;
-const _singleSlashStart = /^\//;
-const _doubleSlashStart = /^\/\//;
+var _schemePattern = /^\w[\w\d+.-]*$/;
+var _singleSlashStart = /^\//;
+var _doubleSlashStart = /^\/\//;
 function _validateUri(ret, _strict) {
     if (!ret.scheme && _strict) {
-        throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${ret.authority}", path: "${ret.path}", query: "${ret.query}", fragment: "${ret.fragment}"}`);
+        throw new Error("[UriError]: Scheme is missing: {scheme: \"\", authority: \"" + ret.authority + "\", path: \"" + ret.path + "\", query: \"" + ret.query + "\", fragment: \"" + ret.fragment + "\"}");
     }
     if (ret.scheme && !_schemePattern.test(ret.scheme)) {
         throw new Error('[UriError]: Scheme contains illegal characters.');
@@ -69,11 +87,12 @@ function _referenceResolution(scheme, path) {
     }
     return path;
 }
-const _empty = '';
-const _slash = '/';
-const _regexp = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-export class URI {
-    constructor(schemeOrData, authority, path, query, fragment, _strict = false) {
+var _empty = '';
+var _slash = '/';
+var _regexp = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+var URI = (function () {
+    function URI(schemeOrData, authority, path, query, fragment, _strict) {
+        if (_strict === void 0) { _strict = false; }
         if (typeof schemeOrData === 'object') {
             this.scheme = schemeOrData.scheme || _empty;
             this.authority = schemeOrData.authority || _empty;
@@ -90,7 +109,7 @@ export class URI {
             _validateUri(this, _strict);
         }
     }
-    static isUri(thing) {
+    URI.isUri = function (thing) {
         if (thing instanceof URI) {
             return true;
         }
@@ -105,15 +124,19 @@ export class URI {
             && typeof thing.fsPath === 'function'
             && typeof thing.with === 'function'
             && typeof thing.toString === 'function';
-    }
-    get fsPath() {
-        return uriToFsPath(this, false);
-    }
-    with(change) {
+    };
+    Object.defineProperty(URI.prototype, "fsPath", {
+        get: function () {
+            return uriToFsPath(this, false);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    URI.prototype.with = function (change) {
         if (!change) {
             return this;
         }
-        let { scheme, authority, path, query, fragment } = change;
+        var scheme = change.scheme, authority = change.authority, path = change.path, query = change.query, fragment = change.fragment;
         if (scheme === undefined) {
             scheme = this.scheme;
         }
@@ -152,21 +175,22 @@ export class URI {
             return this;
         }
         return new _URI(scheme, authority, path, query, fragment);
-    }
-    static parse(value, _strict = false) {
-        const match = _regexp.exec(value);
+    };
+    URI.parse = function (value, _strict) {
+        if (_strict === void 0) { _strict = false; }
+        var match = _regexp.exec(value);
         if (!match) {
             return new _URI(_empty, _empty, _empty, _empty, _empty);
         }
         return new _URI(match[2] || _empty, percentDecode(match[4] || _empty), percentDecode(match[5] || _empty), percentDecode(match[7] || _empty), percentDecode(match[9] || _empty), _strict);
-    }
-    static file(path) {
-        let authority = _empty;
+    };
+    URI.file = function (path) {
+        var authority = _empty;
         if (isWindows) {
             path = path.replace(/\\/g, _slash);
         }
         if (path[0] === _slash && path[1] === _slash) {
-            const idx = path.indexOf(_slash, 2);
+            var idx = path.indexOf(_slash, 2);
             if (idx === -1) {
                 authority = path.substring(2);
                 path = _slash;
@@ -177,17 +201,18 @@ export class URI {
             }
         }
         return new _URI('file', authority, path, _empty, _empty);
-    }
-    static from(components) {
+    };
+    URI.from = function (components) {
         return new _URI(components.scheme, components.authority, components.path, components.query, components.fragment);
-    }
-    toString(skipEncoding = false) {
+    };
+    URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
         return _asFormatted(this, skipEncoding);
-    }
-    toJSON() {
+    };
+    URI.prototype.toJSON = function () {
         return this;
-    }
-    static revive(data) {
+    };
+    URI.revive = function (data) {
         if (!data) {
             return data;
         }
@@ -195,27 +220,36 @@ export class URI {
             return data;
         }
         else {
-            const result = new _URI(data);
+            var result = new _URI(data);
             result._formatted = data.external;
             result._fsPath = data._sep === _pathSepMarker ? data.fsPath : null;
             return result;
         }
+    };
+    return URI;
+}());
+exports.URI = URI;
+var _pathSepMarker = isWindows ? 1 : undefined;
+var _URI = (function (_super) {
+    __extends(_URI, _super);
+    function _URI() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._formatted = null;
+        _this._fsPath = null;
+        return _this;
     }
-}
-const _pathSepMarker = isWindows ? 1 : undefined;
-class _URI extends URI {
-    constructor() {
-        super(...arguments);
-        this._formatted = null;
-        this._fsPath = null;
-    }
-    get fsPath() {
-        if (!this._fsPath) {
-            this._fsPath = uriToFsPath(this, false);
-        }
-        return this._fsPath;
-    }
-    toString(skipEncoding = false) {
+    Object.defineProperty(_URI.prototype, "fsPath", {
+        get: function () {
+            if (!this._fsPath) {
+                this._fsPath = uriToFsPath(this, false);
+            }
+            return this._fsPath;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    _URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
         if (!skipEncoding) {
             if (!this._formatted) {
                 this._formatted = _asFormatted(this, false);
@@ -225,9 +259,9 @@ class _URI extends URI {
         else {
             return _asFormatted(this, true);
         }
-    }
-    toJSON() {
-        const res = {
+    };
+    _URI.prototype.toJSON = function () {
+        var res = {
             $mid: 1
         };
         if (this._fsPath) {
@@ -253,34 +287,35 @@ class _URI extends URI {
             res.fragment = this.fragment;
         }
         return res;
-    }
-}
-const encodeTable = {
-    [58]: '%3A',
-    [47]: '%2F',
-    [63]: '%3F',
-    [35]: '%23',
-    [91]: '%5B',
-    [93]: '%5D',
-    [64]: '%40',
-    [33]: '%21',
-    [36]: '%24',
-    [38]: '%26',
-    [39]: '%27',
-    [40]: '%28',
-    [41]: '%29',
-    [42]: '%2A',
-    [43]: '%2B',
-    [44]: '%2C',
-    [59]: '%3B',
-    [61]: '%3D',
-    [32]: '%20',
-};
+    };
+    return _URI;
+}(URI));
+var encodeTable = (_a = {},
+    _a[58] = '%3A',
+    _a[47] = '%2F',
+    _a[63] = '%3F',
+    _a[35] = '%23',
+    _a[91] = '%5B',
+    _a[93] = '%5D',
+    _a[64] = '%40',
+    _a[33] = '%21',
+    _a[36] = '%24',
+    _a[38] = '%26',
+    _a[39] = '%27',
+    _a[40] = '%28',
+    _a[41] = '%29',
+    _a[42] = '%2A',
+    _a[43] = '%2B',
+    _a[44] = '%2C',
+    _a[59] = '%3B',
+    _a[61] = '%3D',
+    _a[32] = '%20',
+    _a);
 function encodeURIComponentFast(uriComponent, allowSlash) {
-    let res = undefined;
-    let nativeEncodePos = -1;
-    for (let pos = 0; pos < uriComponent.length; pos++) {
-        const code = uriComponent.charCodeAt(pos);
+    var res = undefined;
+    var nativeEncodePos = -1;
+    for (var pos = 0; pos < uriComponent.length; pos++) {
+        var code = uriComponent.charCodeAt(pos);
         if ((code >= 97 && code <= 122)
             || (code >= 65 && code <= 90)
             || (code >= 48 && code <= 57)
@@ -301,7 +336,7 @@ function encodeURIComponentFast(uriComponent, allowSlash) {
             if (res === undefined) {
                 res = uriComponent.substr(0, pos);
             }
-            const escaped = encodeTable[code];
+            var escaped = encodeTable[code];
             if (escaped !== undefined) {
                 if (nativeEncodePos !== -1) {
                     res += encodeURIComponent(uriComponent.substring(nativeEncodePos, pos));
@@ -320,9 +355,9 @@ function encodeURIComponentFast(uriComponent, allowSlash) {
     return res !== undefined ? res : uriComponent;
 }
 function encodeURIComponentMinimal(path) {
-    let res = undefined;
-    for (let pos = 0; pos < path.length; pos++) {
-        const code = path.charCodeAt(pos);
+    var res = undefined;
+    for (var pos = 0; pos < path.length; pos++) {
+        var code = path.charCodeAt(pos);
         if (code === 35 || code === 63) {
             if (res === undefined) {
                 res = path.substr(0, pos);
@@ -337,10 +372,10 @@ function encodeURIComponentMinimal(path) {
     }
     return res !== undefined ? res : path;
 }
-export function uriToFsPath(uri, keepDriveLetterCasing) {
-    let value;
+function uriToFsPath(uri, keepDriveLetterCasing) {
+    var value;
     if (uri.authority && uri.path.length > 1 && uri.scheme === 'file') {
-        value = `//${uri.authority}${uri.path}`;
+        value = "//" + uri.authority + uri.path;
     }
     else if (uri.path.charCodeAt(0) === 47
         && (uri.path.charCodeAt(1) >= 65 && uri.path.charCodeAt(1) <= 90 || uri.path.charCodeAt(1) >= 97 && uri.path.charCodeAt(1) <= 122)
@@ -360,12 +395,13 @@ export function uriToFsPath(uri, keepDriveLetterCasing) {
     }
     return value;
 }
+exports.uriToFsPath = uriToFsPath;
 function _asFormatted(uri, skipEncoding) {
-    const encoder = !skipEncoding
+    var encoder = !skipEncoding
         ? encodeURIComponentFast
         : encodeURIComponentMinimal;
-    let res = '';
-    let { scheme, authority, path, query, fragment } = uri;
+    var res = '';
+    var scheme = uri.scheme, authority = uri.authority, path = uri.path, query = uri.query, fragment = uri.fragment;
     if (scheme) {
         res += scheme;
         res += ':';
@@ -375,9 +411,9 @@ function _asFormatted(uri, skipEncoding) {
         res += _slash;
     }
     if (authority) {
-        let idx = authority.indexOf('@');
+        var idx = authority.indexOf('@');
         if (idx !== -1) {
-            const userinfo = authority.substr(0, idx);
+            var userinfo = authority.substr(0, idx);
             authority = authority.substr(idx + 1);
             idx = userinfo.indexOf(':');
             if (idx === -1) {
@@ -402,15 +438,15 @@ function _asFormatted(uri, skipEncoding) {
     }
     if (path) {
         if (path.length >= 3 && path.charCodeAt(0) === 47 && path.charCodeAt(2) === 58) {
-            const code = path.charCodeAt(1);
+            var code = path.charCodeAt(1);
             if (code >= 65 && code <= 90) {
-                path = `/${String.fromCharCode(code + 32)}:${path.substr(3)}`;
+                path = "/" + String.fromCharCode(code + 32) + ":" + path.substr(3);
             }
         }
         else if (path.length >= 2 && path.charCodeAt(1) === 58) {
-            const code = path.charCodeAt(0);
+            var code = path.charCodeAt(0);
             if (code >= 65 && code <= 90) {
-                path = `${String.fromCharCode(code + 32)}:${path.substr(2)}`;
+                path = String.fromCharCode(code + 32) + ":" + path.substr(2);
             }
         }
         res += encoder(path, true);
@@ -438,10 +474,10 @@ function decodeURIComponentGraceful(str) {
         }
     }
 }
-const _rEncodedAsHex = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+var _rEncodedAsHex = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
 function percentDecode(str) {
     if (!str.match(_rEncodedAsHex)) {
         return str;
     }
-    return str.replace(_rEncodedAsHex, (match) => decodeURIComponentGraceful(match));
+    return str.replace(_rEncodedAsHex, function (match) { return decodeURIComponentGraceful(match); });
 }
