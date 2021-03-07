@@ -124,7 +124,7 @@ const codeEditorPreferenceProperties = {
             'Semantic highlighting disabled for all color themes.',
             'Semantic highlighting is configured by the current color theme\'s `semanticHighlighting` setting.'
         ],
-        'default': 'configuredByTheme',
+        'default': true,
         'description': 'Controls whether the semanticHighlighting is shown for the languages that support it.'
     },
     'editor.stablePeek': {
