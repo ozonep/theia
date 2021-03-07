@@ -1490,7 +1490,7 @@ export const editorPreferenceSchema: PreferenceSchema = {
         },
         'editor.autoSaveDelay': {
             'type': 'number',
-            'default': 500,
+            'default': 4000,
             'description': 'Configure the auto save delay in milliseconds.',
             overridable: false
         },
