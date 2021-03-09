@@ -16,7 +16,6 @@
 
 import { injectable, inject } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
-import { environment } from '@theia/application-package/lib/environment';
 import { MaybePromise, SelectionService, isCancelled } from '@theia/core/lib/common';
 import { Command, CommandContribution, CommandRegistry } from '@theia/core/lib/common/command';
 import {
@@ -125,7 +124,7 @@ export class FileSystemFrontendContribution implements FrontendApplicationContri
     }
 
     protected canUpload({ fileStat }: FileSelection): boolean {
-        return !environment.electron.is() && fileStat.isDirectory;
+        return fileStat.isDirectory;
     }
 
     protected async upload(selection: FileSelection): Promise<FileUploadResult | undefined> {

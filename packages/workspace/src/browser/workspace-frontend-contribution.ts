@@ -16,7 +16,6 @@
 
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { CommandContribution, CommandRegistry, MenuContribution, MenuModelRegistry, SelectionService } from '@theia/core/lib/common';
-import { isOSX, environment, OS } from '@theia/core';
 import {
     open, OpenerService, CommonMenus, StorageService, LabelProvider,
     ConfirmDialog, KeybindingRegistry, KeybindingContribution, CommonCommands, FrontendApplicationContribution
@@ -118,18 +117,15 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
     }
 
     registerCommands(commands: CommandRegistry): void {
-        // Not visible/enabled on Windows/Linux in electron.
         commands.registerCommand(WorkspaceCommands.OPEN, {
-            isEnabled: () => isOSX || !this.isElectron(),
-            isVisible: () => isOSX || !this.isElectron(),
+            isEnabled: () => true,
+            isVisible: () => true,
             execute: () => this.doOpen()
         });
-        // Visible/enabled only on Windows/Linux in electron.
         commands.registerCommand(WorkspaceCommands.OPEN_FILE, {
             isEnabled: () => true,
             execute: () => this.doOpenFile()
         });
-        // Visible/enabled only on Windows/Linux in electron.
         commands.registerCommand(WorkspaceCommands.OPEN_FOLDER, {
             isEnabled: () => true,
             execute: () => this.doOpenFolder()
@@ -164,24 +160,10 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
     }
 
     registerMenus(menus: MenuModelRegistry): void {
-        if (isOSX || !this.isElectron()) {
-            menus.registerMenuAction(CommonMenus.FILE_OPEN, {
-                commandId: WorkspaceCommands.OPEN.id,
-                order: 'a00'
-            });
-        }
-        if (!isOSX && this.isElectron()) {
-            menus.registerMenuAction(CommonMenus.FILE_OPEN, {
-                commandId: WorkspaceCommands.OPEN_FILE.id,
-                label: `${WorkspaceCommands.OPEN_FILE.dialogLabel}...`,
-                order: 'a01'
-            });
-            menus.registerMenuAction(CommonMenus.FILE_OPEN, {
-                commandId: WorkspaceCommands.OPEN_FOLDER.id,
-                label: `${WorkspaceCommands.OPEN_FOLDER.dialogLabel}...`,
-                order: 'a02'
-            });
-        }
+        menus.registerMenuAction(CommonMenus.FILE_OPEN, {
+            commandId: WorkspaceCommands.OPEN.id,
+            order: 'a00'
+        });
         menus.registerMenuAction(CommonMenus.FILE_OPEN, {
             commandId: WorkspaceCommands.OPEN_WORKSPACE.id,
             order: 'a10'
@@ -207,18 +189,12 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
     registerKeybindings(keybindings: KeybindingRegistry): void {
         keybindings.registerKeybinding({
             command: WorkspaceCommands.NEW_FILE.id,
-            keybinding: this.isElectron() ? 'ctrlcmd+n' : 'alt+n',
+            keybinding: 'alt+n',
         });
         keybindings.registerKeybinding({
-            command: isOSX || !this.isElectron() ? WorkspaceCommands.OPEN.id : WorkspaceCommands.OPEN_FILE.id,
-            keybinding: this.isElectron() ? 'ctrlcmd+o' : 'ctrlcmd+alt+o',
+            command: WorkspaceCommands.OPEN.id,
+            keybinding: 'ctrlcmd+alt+o',
         });
-        if (!isOSX && this.isElectron()) {
-            keybindings.registerKeybinding({
-                command: WorkspaceCommands.OPEN_FOLDER.id,
-                keybinding: 'ctrl+k ctrl+o',
-            });
-        }
         keybindings.registerKeybinding({
             command: WorkspaceCommands.OPEN_WORKSPACE.id,
             keybinding: 'ctrlcmd+alt+w',
@@ -235,12 +211,9 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
 
     /**
      * This is the generic `Open` method. Opens files and directories too. Resolves to the opened URI.
-     * Except when you are on either Windows or Linux `AND` running in electron. If so, it opens a file.
+     * Except when you are on either Windows or Linux `AND` running in . If so, it opens a file.
      */
     protected async doOpen(): Promise<URI | undefined> {
-        if (!isOSX && this.isElectron()) {
-            return this.doOpenFile();
-        }
         const [rootStat] = await this.workspaceService.roots;
         const destinationUri = await this.fileDialogService.showOpenDialog({
             title: WorkspaceCommands.OPEN.dialogLabel,
@@ -317,7 +290,7 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
      * if it was successful. Otherwise, resolves to `undefined`.
      *
      * **Caveat**: this behaves differently on different platforms, the `workspace.supportMultiRootWorkspace` preference value **does** matter,
-     * and `electron`/`browser` version has impact too. See [here](https://github.com/eclipse-theia/theia/pull/3202#issuecomment-430884195) for more details.
+     * and ``/`browser` version has impact too. See [here](https://github.com/eclipse-theia/theia/pull/3202#issuecomment-430884195) for more details.
      *
      * Legend:
      *  - `workspace.supportMultiRootWorkspace` is `false`: => `N`
@@ -329,7 +302,7 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
      * -----
      *
      * |---------|-----------|-----------|------------|------------|
-     * |         | browser Y | browser N | electron Y | electron N |
+     * |         | browser Y | browser N |  Y |  N |
      * |---------|-----------|-----------|------------|------------|
      * | Linux   |     FW    |     F     |     W      |     F      |
      * | Windows |     FW    |     F     |     W      |     F      |
@@ -355,11 +328,7 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
     protected async openWorkspaceOpenFileDialogProps(): Promise<OpenFileDialogProps> {
         await this.preferences.ready;
         const supportMultiRootWorkspace = this.preferences['workspace.supportMultiRootWorkspace'];
-        const type = OS.type();
-        const electron = this.isElectron();
         return WorkspaceFrontendContribution.createOpenWorkspaceOpenFileDialogProps({
-            type,
-            electron,
             supportMultiRootWorkspace
         });
     }
@@ -442,10 +411,6 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
     }
 
     private async confirmOverwrite(uri: URI): Promise<boolean> {
-        // Electron already handles the confirmation so do not prompt again.
-        if (this.isElectron()) {
-            return true;
-        }
         // Prompt users for confirmation before overwriting.
         const confirmed = await new ConfirmDialog({
             title: 'Overwrite',
@@ -453,11 +418,6 @@ export class WorkspaceFrontendContribution implements CommandContribution, Keybi
         }).open();
         return !!confirmed;
     }
-
-    private isElectron(): boolean {
-        return environment.electron.is();
-    }
-
     /**
      * Get the current workspace URI.
      *
@@ -482,56 +442,23 @@ export namespace WorkspaceFrontendContribution {
     /**
      * Returns with an `OpenFileDialogProps` for opening the `Open Workspace` dialog.
      */
-    export function createOpenWorkspaceOpenFileDialogProps(options: Readonly<{ type: OS.Type, electron: boolean, supportMultiRootWorkspace: boolean }>): OpenFileDialogProps {
-        const { electron, type, supportMultiRootWorkspace } = options;
+    export function createOpenWorkspaceOpenFileDialogProps(options: Readonly<{ supportMultiRootWorkspace: boolean }>): OpenFileDialogProps {
+        const { supportMultiRootWorkspace } = options;
         const title = WorkspaceCommands.OPEN_WORKSPACE.dialogLabel;
-        // If browser
-        if (!electron) {
-            // and multi-root workspace is supported, it is always folder + workspace files.
-            if (supportMultiRootWorkspace) {
-                return {
-                    title,
-                    canSelectFiles: true,
-                    canSelectFolders: true,
-                    filters: DEFAULT_FILE_FILTER
-                };
-            } else {
-                // otherwise, it is always folders. No files at all.
-                return {
-                    title,
-                    canSelectFiles: false,
-                    canSelectFolders: true
-                };
-            }
-        }
-
-        // If electron
-        if (OS.Type.OSX === type) {
-            // `Finder` can select folders and files at the same time. We allow folders and workspace files.
+        if (supportMultiRootWorkspace) {
             return {
                 title,
                 canSelectFiles: true,
                 canSelectFolders: true,
                 filters: DEFAULT_FILE_FILTER
             };
-        }
-
-        // In electron, only workspace files can be selected when the multi-root workspace feature is enabled.
-        if (supportMultiRootWorkspace) {
+        } else {
             return {
                 title,
-                canSelectFiles: true,
-                canSelectFolders: false,
-                filters: DEFAULT_FILE_FILTER
+                canSelectFiles: false,
+                canSelectFolders: true
             };
         }
-
-        // Otherwise, it is always a folder.
-        return {
-            title,
-            canSelectFiles: false,
-            canSelectFolders: true
-        };
     }
 
 }

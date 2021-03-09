@@ -22,7 +22,6 @@ import * as express from '@theia/core/shared/express';
 import { BackendApplicationContribution } from '@theia/core/lib/node/backend-application';
 import { injectable, postConstruct } from '@theia/core/shared/inversify';
 import { WebviewExternalEndpoint } from '../common/webview-protocol';
-import { environment } from '@theia/core/shared/@theia/application-package/lib/environment';
 import { WsRequestValidatorContribution } from '@theia/core/lib/node/ws-request-validators';
 import { MaybePromise } from '@theia/core/lib/common';
 
@@ -58,12 +57,7 @@ export class PluginApiContribution implements BackendApplicationContribution, Ws
     }
 
     protected webviewExternalEndpointPattern(): string {
-        let endpointPattern;
-        if (environment.electron.is()) {
-            endpointPattern = WebviewExternalEndpoint.defaultPattern;
-        } else {
-            endpointPattern = process.env[WebviewExternalEndpoint.pattern] || WebviewExternalEndpoint.defaultPattern;
-        }
+        const endpointPattern = process.env[WebviewExternalEndpoint.pattern] || WebviewExternalEndpoint.defaultPattern;
         if (endpointPattern === '{{hostname}}') {
             this.serveSameOrigin = true;
         }

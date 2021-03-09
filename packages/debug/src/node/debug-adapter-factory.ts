@@ -39,7 +39,6 @@ import {
     DebugAdapterForkExecutable
 } from '../common/debug-model';
 import { DebugAdapterSessionImpl } from './debug-adapter-session';
-import { environment } from '@theia/application-package';
 
 /**
  * [DebugAdapterFactory](#DebugAdapterFactory) implementation based on
@@ -73,7 +72,7 @@ export class LaunchBasedDebugAdapterFactory implements DebugAdapterFactory {
 
         if (isForkOptions(processOptions)) {
             options.stdio.push('ipc');
-            options.env = environment.electron.runAsNodeEnv();
+            // options.env = environment.electron.runAsNodeEnv();
             options.execArgv = (executable as DebugAdapterForkExecutable).execArgv;
         }
 

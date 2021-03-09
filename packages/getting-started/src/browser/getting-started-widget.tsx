@@ -18,7 +18,7 @@ import * as React from '@theia/core/shared/react';
 import URI from '@theia/core/lib/common/uri';
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
-import { CommandRegistry, isOSX, environment, Path } from '@theia/core/lib/common';
+import { CommandRegistry, Path } from '@theia/core/lib/common';
 import { WorkspaceCommands, WorkspaceService } from '@theia/workspace/lib/browser';
 import { KeymapsCommands } from '@theia/keymaps/lib/browser';
 import { CommonCommands, LabelProvider } from '@theia/core/lib/browser';
@@ -155,16 +155,11 @@ export class GettingStartedWidget extends ReactWidget {
      * Displays a collection of `open` commands.
      */
     protected renderOpen(): React.ReactNode {
-        const requireSingleOpen = isOSX || !environment.electron.is();
-        const open = requireSingleOpen && <div className='gs-action-container'><a href='#' onClick={this.doOpen}>Open</a></div>;
-        const openFile = !requireSingleOpen && <div className='gs-action-container'><a href='#' onClick={this.doOpenFile}>Open File</a></div>;
-        const openFolder = !requireSingleOpen && <div className='gs-action-container'><a href='#' onClick={this.doOpenFolder}>Open Folder</a></div>;
+        const open = <div className='gs-action-container'><a href='#' onClick={this.doOpen}>Open</a></div>;
         const openWorkspace = <a href='#' onClick={this.doOpenWorkspace}>Open Workspace</a>;
         return <div className='gs-section'>
             <h3 className='gs-section-header'><i className='fa fa-folder-open'></i>Open</h3>
             {open}
-            {openFile}
-            {openFolder}
             {openWorkspace}
         </div>;
     }

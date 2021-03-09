@@ -106,7 +106,8 @@ export class PluginHostRPC {
                 console.log('PLUGIN_HOST(' + process.pid + '): PluginManagerExtImpl/loadPlugin(' + plugin.pluginPath + ')');
                 // cleaning the cache for all files of that plug-in.
                 Object.keys(require.cache).forEach(function (key): void {
-                    const mod: NodeJS.Module = require.cache[key];
+                    // @ts-ignore
+                    const mod: NodeModule = require.cache[key];
 
                     // attempting to reload a native module will throw an error, so skip them
                     if (mod.id.endsWith('.node')) {
@@ -116,7 +117,7 @@ export class PluginHostRPC {
                     // remove children that are part of the plug-in
                     let i = mod.children.length;
                     while (i--) {
-                        const childMod: NodeJS.Module = mod.children[i];
+                        const childMod: NodeModule = mod.children[i];
                         // ensure the child module is not null, is in the plug-in folder, and is not a native module (see above)
                         if (childMod && childMod.id.startsWith(plugin.pluginFolder) && !childMod.id.endsWith('.node')) {
                             // cleanup exports - note that some modules (e.g. ansi-styles) define their

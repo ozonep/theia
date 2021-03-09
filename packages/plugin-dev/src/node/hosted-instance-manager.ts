@@ -25,7 +25,6 @@ import URI from '@theia/core/lib/common/uri';
 import { ContributionProvider } from '@theia/core/lib/common/contribution-provider';
 import { HostedPluginUriPostProcessor, HostedPluginUriPostProcessorSymbolName } from './hosted-plugin-uri-postprocessor';
 import { DebugConfiguration } from '../common';
-import { environment } from '@theia/core';
 import { FileUri } from '@theia/core/lib/node/file-uri';
 import { LogType } from '@theia/plugin-ext/lib/common/types';
 import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/node/hosted-plugin';
@@ -92,7 +91,6 @@ const PROCESS_OPTIONS = {
     cwd: process.cwd(),
     env: { ...process.env }
 };
-delete PROCESS_OPTIONS.env.ELECTRON_RUN_AS_NODE;
 
 @injectable()
 export abstract class AbstractHostedInstanceManager implements HostedInstanceManager {
@@ -244,21 +242,16 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
     protected async getStartCommand(port?: number, debugConfig?: DebugConfiguration): Promise<string[]> {
 
         const processArguments = process.argv;
-        let command: string[];
-        if (environment.electron.is()) {
-            command = ['yarn', 'theia', 'start'];
-        } else {
-            command = processArguments.filter((arg, index, args) => {
-                // remove --port=X and --port X arguments if set
-                // remove --plugins arguments
-                if (arg.startsWith('--port') || args[index - 1] === '--port') {
-                    return;
-                } else {
-                    return arg;
-                }
+        const command: string[] = processArguments.filter((arg, index, args) => {
+            // remove --port=X and --port X arguments if set
+            // remove --plugins arguments
+            if (arg.startsWith('--port') || args[index - 1] === '--port') {
+                return;
+            } else {
+                return arg;
+            }
 
-            });
-        }
+        });
         if (process.env.HOSTED_PLUGIN_HOSTNAME) {
             command.push('--hostname=' + process.env.HOSTED_PLUGIN_HOSTNAME);
         }
@@ -384,10 +377,5 @@ export class NodeHostedPluginRunner extends AbstractHostedInstanceManager {
         }
         return super.getStartCommand(port, config);
     }
-
-}
-
-@injectable()
-export class ElectronNodeHostedPluginRunner extends AbstractHostedInstanceManager {
 
 }

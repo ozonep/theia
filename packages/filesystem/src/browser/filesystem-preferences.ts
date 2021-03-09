@@ -23,13 +23,12 @@ import {
     PreferenceContribution
 } from '@theia/core/lib/browser/preferences';
 import { SUPPORTED_ENCODINGS } from '@theia/core/lib/browser/supported-encodings';
-import { environment } from '@theia/application-package/lib/environment';
 
 // See https://github.com/Microsoft/vscode/issues/30180
 export const WIN32_MAX_FILE_SIZE_MB = 300; // 300 MB
 export const GENERAL_MAX_FILE_SIZE_MB = 16 * 1024; // 16 GB
 
-export const MAX_FILE_SIZE_MB = environment.electron.is() ? process.arch === 'ia32' ? WIN32_MAX_FILE_SIZE_MB : GENERAL_MAX_FILE_SIZE_MB : 32;
+export const MAX_FILE_SIZE_MB = 32;
 
 export const filesystemPreferenceSchema: PreferenceSchema = {
     'type': 'object',

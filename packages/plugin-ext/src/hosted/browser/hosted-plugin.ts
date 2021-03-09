@@ -59,7 +59,6 @@ import { TerminalService } from '@theia/terminal/lib/browser/base/terminal-servi
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import URI from '@theia/core/lib/common/uri';
 import { FrontendApplicationConfigProvider } from '@theia/core/lib/browser/frontend-application-config-provider';
-import { environment } from '@theia/core/shared/@theia/application-package/lib/environment';
 import { JsonSchemaStore } from '@theia/core/lib/browser/json-schema-store';
 import { FileService, FileSystemProviderActivationEvent } from '@theia/filesystem/lib/browser/file-service';
 import { PluginCustomEditorRegistry } from '../../main/browser/custom-editors/plugin-custom-editor-registry';
@@ -471,7 +470,7 @@ export class HostedPluginSupport {
                     queryParams: getQueryParameters(),
                     language: navigator.language,
                     shell: defaultShell,
-                    uiKind: environment.electron.is() ? UIKind.Desktop : UIKind.Web,
+                    uiKind: UIKind.Web,
                     appName: FrontendApplicationConfigProvider.get().applicationName
                 },
                 extApi,

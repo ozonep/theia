@@ -22,7 +22,7 @@ import { JsonRpcProxy, JsonRpcProxyFactory } from './proxy-factory';
 import { WebSocketChannel } from './web-socket-channel';
 
 /**
- * Factor common logic according to `ElectronIpcConnectionProvider` and
+ * Factor common logic according to `ElectroIpcConnectionProvider` and
  * `WebSocketConnectionProvider`. This class handles channels in a somewhat
  * generic way.
  */
@@ -31,12 +31,12 @@ export abstract class AbstractConnectionProvider<AbstractOptions extends object>
 
     /**
      * Create a proxy object to remote interface of T type
-     * over an electron ipc connection for the given path and proxy factory.
+     * over an electro ipc connection for the given path and proxy factory.
      */
     static createProxy<T extends object>(container: interfaces.Container, path: string, factory: JsonRpcProxyFactory<T>): JsonRpcProxy<T>;
     /**
      * Create a proxy object to remote interface of T type
-     * over an electron ipc connection for the given path.
+     * over an electro ipc connection for the given path.
      *
      * An optional target can be provided to handle
      * notifications and requests from a remote side.

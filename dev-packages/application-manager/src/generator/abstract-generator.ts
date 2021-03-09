@@ -28,7 +28,7 @@ const argv = yargs.option('mode', {
     type: 'boolean',
 }).option('app-target', {
     description: 'The target application type. Overrides ["theia.target"] in the application\'s package.json.',
-    choices: ['browser', 'electron'],
+    choices: ['browser'],
 }).argv;
 const splitFrontend: boolean = argv['split-frontend'] ?? argv.mode === 'development';
 
@@ -46,10 +46,6 @@ export abstract class AbstractGenerator {
         return this.compileModuleImports(modules, 'require');
     }
 
-    protected compileElectronMainModuleImports(modules?: Map<string, string>): string {
-        return modules && this.compileModuleImports(modules, 'require') || '';
-    }
-
     protected compileModuleImports(modules: Map<string, string>, fn: 'import' | 'require'): string {
         if (modules.size === 0) {
             return '';
@@ -62,14 +58,6 @@ export abstract class AbstractGenerator {
             return invocation;
         }).map(statement => `    .then(function () { return ${statement}.then(load) })`);
         return os.EOL + lines.join(os.EOL);
-    }
-
-    protected ifBrowser(value: string, defaultValue: string = ''): string {
-        return this.pck.ifBrowser(value, defaultValue);
-    }
-
-    protected ifElectron(value: string, defaultValue: string = ''): string {
-        return this.pck.ifElectron(value, defaultValue);
     }
 
     protected async write(path: string, content: string): Promise<void> {

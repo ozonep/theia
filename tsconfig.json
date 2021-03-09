@@ -31,9 +31,6 @@
       "@theia/cli/lib/*": [
         "dev-packages/cli/src/*"
       ],
-      "@theia/electron/*": [
-        "dev-packages/electron/*"
-      ],
       "@theia/ext-scripts/*": [
         "dev-packages/ext-scripts/*"
       ],
@@ -156,9 +153,6 @@
       ],
       "@theia/example-browser/*": [
         "examples/browser/*"
-      ],
-      "@theia/example-electron/*": [
-        "examples/electron/*"
       ],
       "@theia/vsx-registry/lib/*": [
         "packages/vsx-registry/src/*"

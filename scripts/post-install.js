@@ -18,17 +18,9 @@
 
 // @ts-check
 
-const fs = require('fs');
-const path = require('path');
 
 async function main() {
-    const electronCodecTestLogPath = path.resolve('dev-packages/electron/post-install.log');
-    if (fs.existsSync(electronCodecTestLogPath)) {
-        console.log('@theia/electron last logs:');
-        console.log(fs.readFileSync(electronCodecTestLogPath, { encoding: 'utf8' }).trimRight());
-    } else if (!process.env.THEIA_ELECTRON_SKIP_REPLACE_FFMPEG) {
-        console.error('Cannot find the log file for the Electron codecs test.');
-    }
+    console.log('@theia last logs:');
 }
 
 main().catch(error => {

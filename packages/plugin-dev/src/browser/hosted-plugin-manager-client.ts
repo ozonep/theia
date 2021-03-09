@@ -18,7 +18,7 @@ import { injectable, inject, postConstruct } from '@theia/core/shared/inversify'
 import URI from '@theia/core/lib/common/uri';
 import { Path } from '@theia/core/lib/common/path';
 import { MessageService, Command, Emitter, Event, UriSelection } from '@theia/core/lib/common';
-import { LabelProvider, isNative, AbstractDialog } from '@theia/core/lib/browser';
+import { LabelProvider, AbstractDialog } from '@theia/core/lib/browser';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
 import { OpenFileDialogFactory, DirNode } from '@theia/filesystem/lib/browser';
@@ -291,11 +291,6 @@ export class HostedPluginManagerClient {
      * Opens window with URL to the running plugin instance.
      */
     protected async openPluginWindow(): Promise<void> {
-        // do nothing for electron browser
-        if (isNative) {
-            return;
-        }
-
         if (this.pluginInstanceURL) {
             try {
                 this.windowService.openNewWindow(this.pluginInstanceURL);

@@ -40,10 +40,9 @@ export function startDebugAdapter(executable: theia.DebugAdapterExecutable): Com
     const { command, args } = executable;
     if (command === 'node') {
         if (Array.isArray(args) && args.length > 0) {
-            const isElectron = !!process.env['ELECTRON_RUN_AS_NODE'];
             const forkOptions: ForkOptions = {
                 env: options.env,
-                execArgv: isElectron ? ['-e', 'delete process.env.ELECTRON_RUN_AS_NODE;require(process.argv[1])'] : [],
+                execArgv: [],
                 silent: true
             };
             if (options.cwd) {

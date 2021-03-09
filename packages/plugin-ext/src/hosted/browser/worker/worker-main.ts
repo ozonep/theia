@@ -69,11 +69,7 @@ const pluginManager = new PluginManagerExtImpl({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     loadPlugin(plugin: Plugin): any {
         if (plugin.pluginPath) {
-            if (isElectron()) {
-                ctx.importScripts(plugin.pluginPath);
-            } else {
-                ctx.importScripts('/hostedPlugin/' + getPluginId(plugin.model) + '/' + plugin.pluginPath);
-            }
+            ctx.importScripts('/hostedPlugin/' + getPluginId(plugin.model) + '/' + plugin.pluginPath);
         }
 
         if (plugin.lifecycle.frontendModuleName) {
@@ -188,11 +184,3 @@ rpc.set(MAIN_RPC_CONTEXT.WORKSPACE_EXT, workspaceExt);
 rpc.set(MAIN_RPC_CONTEXT.PREFERENCE_REGISTRY_EXT, preferenceRegistryExt);
 rpc.set(MAIN_RPC_CONTEXT.STORAGE_EXT, storageProxy);
 rpc.set(MAIN_RPC_CONTEXT.WEBVIEWS_EXT, webviewExt);
-
-function isElectron(): boolean {
-    if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
-        return true;
-    }
-
-    return false;
-}

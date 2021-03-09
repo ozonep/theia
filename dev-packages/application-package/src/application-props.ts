@@ -14,8 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import type { BrowserWindowConstructorOptions } from 'electron';
-
 export interface NpmRegistryProps {
 
     /**
@@ -45,9 +43,9 @@ export interface ApplicationProps extends NpmRegistryProps {
     readonly [key: string]: any;
 
     /**
-     * Whether the extension targets the browser or electron. Defaults to `browser`.
+     * Whether the extension targets the browser. Defaults to `browser`.
      */
-    readonly target: ApplicationProps.Target;
+    readonly target: 'browser';
 
     /**
      * Frontend related properties.
@@ -66,8 +64,7 @@ export interface ApplicationProps extends NpmRegistryProps {
 }
 export namespace ApplicationProps {
     export enum ApplicationTarget {
-        browser = 'browser',
-        electron = 'electron'
+        browser = 'browser'
     };
 
     export type Target = keyof typeof ApplicationTarget;
@@ -122,24 +119,6 @@ export interface FrontendApplicationConfig extends ApplicationConfig {
      */
     readonly applicationName: string;
 
-    /**
-     * Electron specific configuration.
-     */
-    readonly electron?: Readonly<ElectronFrontendApplicationConfig>;
-}
-
-export interface ElectronFrontendApplicationConfig {
-
-    /**
-     * If set to `true`, reloading the current browser window won't be possible with the `Ctrl/Cmd + R` keybinding.
-     * It is `false` by default. Has no effect if not in an electron environment.
-     */
-    readonly disallowReloadKeybinding?: boolean;
-
-    /**
-     * Override or add properties to the electron `windowOptions`.
-     */
-    readonly windowOptions?: BrowserWindowConstructorOptions;
 }
 
 /**
@@ -147,9 +126,6 @@ export interface ElectronFrontendApplicationConfig {
  */
 export interface BackendApplicationConfig extends ApplicationConfig {
 
-    /**
-     * If true and in Electron mode, only one instance of the application is allowed to run at a time.
-     */
     singleInstance?: boolean;
 
 }

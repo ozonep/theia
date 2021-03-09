@@ -98,15 +98,13 @@ module.exports = {
         filename: 'bundle.js',
         path: outputPath
     },
-    target: '${this.ifBrowser('web', 'electron-renderer')}',
+    target: 'web',
     mode,
-    node: {${this.ifElectron(`
-        __dirname: false,
-        __filename: false`, `
+    node: {
         fs: 'empty',
         child_process: 'empty',
         net: 'empty',
-        crypto: 'empty'`)}
+        crypto: 'empty'
     },
     module: {
         rules: [

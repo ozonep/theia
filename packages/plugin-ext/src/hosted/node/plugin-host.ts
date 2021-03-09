@@ -25,7 +25,7 @@ process.exit = function (code?: number): void {
     console.warn(err.stack);
 } as (code?: number) => never;
 
-// same for 'crash'(works only in electron)
+// same for 'crash'(works only in electro)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const proc = process as any;
 if (proc.crash) {

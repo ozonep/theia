@@ -20,7 +20,6 @@ import { Deferred } from '@theia/core/lib/common/promise-util';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import URI from '@theia/core/lib/common/uri';
 import { WebviewExternalEndpoint } from '../../common/webview-protocol';
-import { environment } from '@theia/core/shared/@theia/application-package/lib/environment';
 
 @injectable()
 export class WebviewEnvironment {
@@ -33,13 +32,8 @@ export class WebviewEnvironment {
     @postConstruct()
     protected async init(): Promise<void> {
         try {
-            let endpointPattern;
-            if (environment.electron.is()) {
-                endpointPattern = WebviewExternalEndpoint.defaultPattern;
-            } else {
-                const variable = await this.environments.getValue(WebviewExternalEndpoint.pattern);
-                endpointPattern = variable && variable.value || WebviewExternalEndpoint.defaultPattern;
-            }
+            const variable = await this.environments.getValue(WebviewExternalEndpoint.pattern);
+            const endpointPattern = variable && variable.value || WebviewExternalEndpoint.defaultPattern;
             const { host } = new Endpoint();
             this.externalEndpointHost.resolve(endpointPattern.replace('{{hostname}}', host));
         } catch (e) {

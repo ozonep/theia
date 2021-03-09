@@ -31,7 +31,7 @@ export const isChrome = (userAgent.indexOf('Chrome') >= 0);
 export const isSafari = (userAgent.indexOf('Chrome') === -1) && (userAgent.indexOf('Safari') >= 0);
 export const isIPad = (userAgent.indexOf('iPad') >= 0);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isNative = typeof (window as any).process !== 'undefined';
+export const isNative = false;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isBasicWasmSupported = typeof (window as any).WebAssembly !== 'undefined';
 

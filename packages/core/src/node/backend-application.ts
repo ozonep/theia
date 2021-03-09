@@ -25,7 +25,6 @@ import { inject, named, injectable, postConstruct } from 'inversify';
 import { ContributionProvider, MaybePromise } from '../common';
 import { CliContribution } from './cli';
 import { Deferred } from '../common/promise-util';
-import { environment } from '../common/index';
 import { AddressInfo } from 'net';
 import { ApplicationPackage } from '@theia/application-package';
 
@@ -82,7 +81,7 @@ export interface BackendApplicationContribution {
     onStop?(app?: express.Application): void;
 }
 
-const defaultPort = environment.electron.is() ? 0 : 3000;
+const defaultPort = 3000;
 const defaultHost = 'localhost';
 const defaultSSL = false;
 
@@ -119,12 +118,6 @@ export class BackendApplicationCliContribution implements CliContribution {
     }
 
     protected appProjectPath(): string {
-        if (environment.electron.is()) {
-            if (process.env.THEIA_APP_PROJECT_PATH) {
-                return process.env.THEIA_APP_PROJECT_PATH;
-            }
-            throw new Error('The \'THEIA_APP_PROJECT_PATH\' environment variable must be set when running in electron.');
-        }
         return process.cwd();
     }
 
@@ -157,8 +150,6 @@ export class BackendApplication {
             }
         });
 
-        // Workaround for Electron not installing a handler to ignore SIGPIPE error
-        // (https://github.com/electron/electron/issues/13254)
         process.on('SIGPIPE', () => {
             console.error(new Error('Unexpected SIGPIPE'));
         });

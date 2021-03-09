@@ -19,43 +19,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Electron Backend",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-      "windows": {
-        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
-      },
-      "cwd": "${workspaceRoot}/examples/electron",
-      "protocol": "inspector",
-      "args": [
-        ".",
-        "--log-level=debug",
-        "--hostname=localhost",
-        "--no-cluster",
-        "--app-project-path=${workspaceRoot}/examples/electron",
-        "--remote-debugging-port=9222",
-        "--no-app-auto-install",
-        "--plugins=local-dir:../../plugins"
-      ],
-      "env": {
-        "NODE_ENV": "development",
-        "THEIA_WEBVIEW_EXTERNAL_ENDPOINT": "${env:THEIA_WEBVIEW_EXTERNAL_ENDPOINT}",
-        "THEIA_MINI_BROWSER_HOST_PATTERN": "${env:THEIA_MINI_BROWSER_HOST_PATTERN}"
-      },
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/examples/electron/src-gen/frontend/electron-main.js",
-        "${workspaceRoot}/examples/electron/src-gen/backend/main.js",
-        "${workspaceRoot}/examples/electron/lib/**/*.js",
-        "${workspaceRoot}/packages/*/lib/**/*.js",
-        "${workspaceRoot}/dev-packages/*/lib/**/*.js"
-      ],
-      "smartStep": true,
-      "internalConsoleOptions": "openOnSessionStart",
-      "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Launch Browser Backend",
       "program": "${workspaceRoot}/examples/browser/src-gen/backend/main.js",
       "args": [
@@ -154,12 +117,6 @@
       "webRoot": "${workspaceRoot}"
     },
     {
-      "type": "chrome",
-      "request": "attach",
-      "name": "Attach to Electron Frontend",
-      "port": 9222
-    },
-    {
       "name": "Launch VS Code Tests",
       "type": "node",
       "request": "launch",
@@ -185,13 +142,5 @@
       ]
     }
   ],
-  "compounds": [
-    {
-      "name": "Launch Electron Backend & Frontend",
-      "configurations": [
-        "Launch Electron Backend",
-        "Attach to Electron Frontend"
-      ]
-    }
-  ]
+  "compounds": []
 }

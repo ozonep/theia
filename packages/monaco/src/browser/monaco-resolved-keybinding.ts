@@ -50,7 +50,7 @@ export class MonacoResolvedKeybinding extends monaco.keybindings.ResolvedKeybind
 
     public getElectronAccelerator(): string | null {
         if (this.isChord()) {
-            // Electron cannot handle chords
+            // Electro cannot handle chords
             // eslint-disable-next-line no-null/no-null
             return null;
         }

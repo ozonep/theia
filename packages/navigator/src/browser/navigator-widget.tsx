@@ -28,7 +28,7 @@ import { WorkspaceService, WorkspaceCommands } from '@theia/workspace/lib/browse
 import { ApplicationShell } from '@theia/core/lib/browser/shell/application-shell';
 import { WorkspaceNode, WorkspaceRootNode } from './navigator-tree';
 import { FileNavigatorModel } from './navigator-model';
-import { isOSX, environment } from '@theia/core';
+import { isOSX } from '@theia/core';
 import * as React from '@theia/core/shared/react';
 import { NavigatorContextKeyService } from './navigator-context-key-service';
 import { FileNavigatorCommands } from './navigator-contribution';
@@ -176,7 +176,7 @@ export class FileNavigatorWidget extends FileTreeWidget {
         }
     }
 
-    protected canOpenWorkspaceFileAndFolder: boolean = isOSX || !environment.electron.is();
+    protected canOpenWorkspaceFileAndFolder: boolean = true;
 
     protected readonly openWorkspace = () => this.doOpenWorkspace();
     protected doOpenWorkspace(): void {

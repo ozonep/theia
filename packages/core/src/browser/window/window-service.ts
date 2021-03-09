@@ -26,11 +26,6 @@ export interface NewWindowOptions {
 export const WindowService = Symbol('WindowService');
 export interface WindowService {
 
-    /**
-     * Opens a new window and loads the content from the given URL.
-     * In a browser, opening a new Theia tab or open a link is the same thing.
-     * But in Electron, we want to open links in a browser, not in Electron.
-     */
     openNewWindow(url: string, options?: NewWindowOptions): undefined;
 
     /**

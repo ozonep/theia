@@ -18,7 +18,6 @@ import { injectable, inject } from '@theia/core/shared/inversify';
 import { KeybindingContribution, KeybindingRegistry } from '@theia/core/lib/browser';
 import { MonacoCommands } from './monaco-command';
 import { MonacoCommandRegistry } from './monaco-command-registry';
-import { environment } from '@theia/core';
 import { MonacoResolvedKeybinding } from './monaco-resolved-keybinding';
 
 @injectable()
@@ -34,7 +33,7 @@ export class MonacoKeybindingContribution implements KeybindingContribution {
             if (command) {
                 const when = item.when && item.when.serialize();
                 let keybinding;
-                if (item.command === MonacoCommands.GO_TO_DEFINITION && !environment.electron.is()) {
+                if (item.command === MonacoCommands.GO_TO_DEFINITION) {
                     keybinding = 'ctrlcmd+f11';
                 } else {
                     keybinding = MonacoResolvedKeybinding.toKeybinding(item.keybinding);

@@ -365,7 +365,6 @@ export class PluginManagerExtImpl implements PluginManagerExt, PluginManager {
             const pluginExport = await pluginMain[plugin.lifecycle.startMethod].apply(getGlobal(), [pluginContext]);
             this.activatedPlugins.set(plugin.model.id, new ActivatedPlugin(pluginContext, pluginExport, stopFn));
         } else {
-            // https://github.com/TypeFox/vscode/blob/70b8db24a37fafc77247de7f7cb5bb0195120ed0/src/vs/workbench/api/common/extHostExtensionService.ts#L400-L401
             console.log(`plugin ${id}, ${plugin.lifecycle.startMethod} method is undefined so the module is the extension's exports`);
             this.activatedPlugins.set(plugin.model.id, new ActivatedPlugin(pluginContext, pluginMain));
         }
@@ -404,7 +403,6 @@ export class PluginManagerExtImpl implements PluginManagerExt, PluginManager {
 
 }
 
-// for electron
 function getGlobal(): Window | NodeJS.Global | null {
     return typeof self === 'undefined' ? typeof global === 'undefined' ? null : global : self;
 }

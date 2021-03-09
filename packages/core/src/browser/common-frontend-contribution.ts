@@ -41,7 +41,6 @@ import { Navigatable } from './navigatable';
 import { QuickViewService } from './quick-view-service';
 import { PrefixQuickOpenService, QuickOpenService } from './quick-open';
 import { QuickOpenItem, QuickOpenMode, QuickOpenGroupItem } from '../common/quick-open-model';
-import { environment } from '@theia/application-package/lib/environment';
 import { IconThemeService } from './icon-theme-service';
 import { ColorContribution } from './color-application-contribution';
 import { ColorRegistry, Color } from './color-registry';
@@ -349,7 +348,7 @@ export class CommonFrontendContribution implements FrontendApplicationContributi
         this.contextKeyService.createKey<boolean>('isLinux', OS.type() === OS.Type.Linux);
         this.contextKeyService.createKey<boolean>('isMac', OS.type() === OS.Type.OSX);
         this.contextKeyService.createKey<boolean>('isWindows', OS.type() === OS.Type.Windows);
-        this.contextKeyService.createKey<boolean>('isWeb', !this.isElectron());
+        this.contextKeyService.createKey<boolean>('isWeb', true);
 
         this.initResourceContextKeys();
         this.registerCtrlWHandling();
@@ -834,10 +833,6 @@ export class CommonFrontendContribution implements FrontendApplicationContributi
         }
     }
 
-    private isElectron(): boolean {
-        return environment.electron.is();
-    }
-
     registerKeybindings(registry: KeybindingRegistry): void {
         if (supportCut) {
             registry.registerKeybinding({
@@ -903,7 +898,7 @@ export class CommonFrontendContribution implements FrontendApplicationContributi
             },
             {
                 command: CommonCommands.CLOSE_MAIN_TAB.id,
-                keybinding: this.isElectron() ? (isWindows ? 'ctrl+f4' : 'ctrlcmd+w') : 'alt+w'
+                keybinding: 'alt+w'
             },
             {
                 command: CommonCommands.CLOSE_OTHER_MAIN_TABS.id,
@@ -911,7 +906,7 @@ export class CommonFrontendContribution implements FrontendApplicationContributi
             },
             {
                 command: CommonCommands.CLOSE_ALL_MAIN_TABS.id,
-                keybinding: this.isElectron() ? 'ctrlCmd+k ctrlCmd+w' : 'alt+shift+w'
+                keybinding: 'alt+shift+w'
             },
             // Panels
             {

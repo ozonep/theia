@@ -155,7 +155,7 @@ export interface GitPromptClient {
 
 /**
  * Note: This implementation is not reconnecting.
- * Git prompting is not supported in the browser. In electron, there's no need to reconnect.
+ * Git prompting is not supported in the browser.
  */
 @injectable()
 export class GitPromptServerImpl implements GitPromptServer {

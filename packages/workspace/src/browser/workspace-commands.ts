@@ -45,9 +45,9 @@ export namespace WorkspaceCommands {
     const WORKSPACE_CATEGORY = 'Workspace';
     const FILE_CATEGORY = 'File';
 
-    // On Linux and Windows, both files and folders cannot be opened at the same time in electron.
-    // `OPEN_FILE` and `OPEN_FOLDER` must be available only on Linux and Windows in electron.
-    // `OPEN` must *not* be available on Windows and Linux in electron.
+    // On Linux and Windows, both files and folders cannot be opened at the same time in electro.
+    // `OPEN_FILE` and `OPEN_FOLDER` must be available only on Linux and Windows in electro.
+    // `OPEN` must *not* be available on Windows and Linux in electro.
     // VS Code does the same. See: https://github.com/eclipse-theia/theia/pull/3202#issuecomment-430585357
     export const OPEN: Command & { dialogLabel: string } = {
         id: 'workspace:open',

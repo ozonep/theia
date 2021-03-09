@@ -39,7 +39,6 @@ async function main() {
     });
     await mkdirp(shared);
     await Promise.all([
-        generateExportTheiaElectron(),
         Promise.all(exportStar.map(([package, alias]) => generateExportStar(package, alias))),
         Promise.all(exportEqual.map(([package, namespace]) => generateExportEqual(package, namespace))),
         generateReadme([
@@ -56,31 +55,6 @@ async function generateReadme(reExports) {
     await fsp.writeFile(output, readme.replace('{{RE-EXPORTS}}', reExports.map(
         package => ` - [\`${package}@${getPackageRange(package)}\`](${getNpmUrl(package)})`
     ).join(getEOL(readme))));
-}
-
-/**
- * @theia/electron is optional, so it is expected to miss this package.
- */
-async function generateExportTheiaElectron() {
-    const base = path.resolve(shared, 'electron');
-    await Promise.all([
-        writeFileIfMissing(`${base}.js`, `\
-module.exports = undefined;
-try {
-    module.exports = require('@theia/electron');
-} catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-        console.warn('@theia/electron not found');
-    } else {
-        throw error;
-    }
-}
-`),
-        writeFileIfMissing(`${base}.d.ts`, `\
-import Electron = require('@theia/electron');
-export = Electron;
-`),
-    ]);
 }
 
 async function generateExportStar(package, alias) {

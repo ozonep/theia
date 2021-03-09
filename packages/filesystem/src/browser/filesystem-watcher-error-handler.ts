@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 import { injectable, inject } from '@theia/core/shared/inversify';
-import { environment } from '@theia/application-package/lib/environment';
 import { MessageService } from '@theia/core';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 
@@ -34,27 +33,11 @@ export class FileSystemWatcherErrorHandler {
     public async handleError(): Promise<void> {
         if (!this.watchHandlesExhausted) {
             this.watchHandlesExhausted = true;
-            if (this.isElectron()) {
-                const instructionsAction = 'Instructions';
-                const action = await this.messageService.warn(
-                    'Unable to watch for file changes in this large workspace.  Please follow the instructions link to resolve this issue.',
-                    { timeout: 60000 },
-                    instructionsAction
-                );
-                if (action === instructionsAction) {
-                    this.windowService.openNewWindow(this.instructionsLink, { external: true });
-                }
-            } else {
-                await this.messageService.warn(
-                    'Unable to watch for file changes in this large workspace.  The information you see may not include recent file changes.',
-                    { timeout: 60000 }
-                );
-            }
+            await this.messageService.warn(
+                'Unable to watch for file changes in this large workspace.  The information you see may not include recent file changes.',
+                { timeout: 60000 }
+            );
         }
-    }
-
-    protected isElectron(): boolean {
-        return environment.electron.is();
     }
 
 }

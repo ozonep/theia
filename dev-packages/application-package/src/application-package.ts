@@ -47,14 +47,6 @@ export class ApplicationPackage {
         this.projectPath = options.projectPath;
         this.log = options.log || console.log.bind(console);
         this.error = options.error || console.error.bind(console);
-        if (this.isElectron()) {
-            const { version } = require('../package.json');
-            try {
-                require.resolve('@theia/electron/package.json', { paths: [this.projectPath] });
-            } catch {
-                console.warn(`please install @theia/electron@${version} as a runtime dependency`);
-            }
-        }
     }
 
     protected _registry: NpmRegistry | undefined;
@@ -100,10 +92,7 @@ export class ApplicationPackage {
     }
 
     protected _frontendModules: Map<string, string> | undefined;
-    protected _frontendElectronModules: Map<string, string> | undefined;
     protected _backendModules: Map<string, string> | undefined;
-    protected _backendElectronModules: Map<string, string> | undefined;
-    protected _electronMainModules: Map<string, string> | undefined;
     protected _extensionPackages: ReadonlyArray<ExtensionPackage> | undefined;
 
     /**
@@ -144,32 +133,11 @@ export class ApplicationPackage {
         return this._frontendModules;
     }
 
-    get frontendElectronModules(): Map<string, string> {
-        if (!this._frontendElectronModules) {
-            this._frontendElectronModules = this.computeModules('frontendElectron', 'frontend');
-        }
-        return this._frontendElectronModules;
-    }
-
     get backendModules(): Map<string, string> {
         if (!this._backendModules) {
             this._backendModules = this.computeModules('backend');
         }
         return this._backendModules;
-    }
-
-    get backendElectronModules(): Map<string, string> {
-        if (!this._backendElectronModules) {
-            this._backendElectronModules = this.computeModules('backendElectron', 'backend');
-        }
-        return this._backendElectronModules;
-    }
-
-    get electronMainModules(): Map<string, string> {
-        if (!this._electronMainModules) {
-            this._electronMainModules = this.computeModules('electronMain');
-        }
-        return this._electronMainModules;
     }
 
     protected computeModules<P extends keyof Extension, S extends keyof Extension = P>(primary: P, secondary?: S): Map<string, string> {
@@ -219,36 +187,12 @@ export class ApplicationPackage {
         return this.srcGen('frontend', ...segments);
     }
 
-    isBrowser(): boolean {
-        return this.target === ApplicationProps.ApplicationTarget.browser;
-    }
-
-    isElectron(): boolean {
-        return this.target === ApplicationProps.ApplicationTarget.electron;
-    }
-
-    ifBrowser<T>(value: T): T | undefined;
-    ifBrowser<T>(value: T, defaultValue: T): T;
-    ifBrowser<T>(value: T, defaultValue?: T): T | undefined {
-        return this.isBrowser() ? value : defaultValue;
-    }
-
-    ifElectron<T>(value: T): T | undefined;
-    ifElectron<T>(value: T, defaultValue: T): T;
-    ifElectron<T>(value: T, defaultValue?: T): T | undefined {
-        return this.isElectron() ? value : defaultValue;
-    }
-
     get targetBackendModules(): Map<string, string> {
-        return this.ifBrowser(this.backendModules, this.backendElectronModules);
+        return this.backendModules;
     }
 
     get targetFrontendModules(): Map<string, string> {
-        return this.ifBrowser(this.frontendModules, this.frontendElectronModules);
-    }
-
-    get targetElectronMainModules(): Map<string, string> {
-        return this.ifElectron(this.electronMainModules, new Map());
+        return this.frontendModules;
     }
 
     setDependency(name: string, version: string | undefined): boolean {

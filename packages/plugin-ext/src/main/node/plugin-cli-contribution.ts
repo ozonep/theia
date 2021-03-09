@@ -24,10 +24,6 @@ export class PluginCliContribution implements CliContribution {
 
     static PLUGINS = 'plugins';
     static PLUGIN_MAX_SESSION_LOGS_FOLDERS = 'plugin-max-session-logs-folders';
-    /**
-     * This is the default value used in VSCode, see:
-     * - https://github.com/Microsoft/vscode/blob/613447d6b3f458ef7fee227e3876303bf5184580/src/vs/code/electron-browser/sharedProcess/contrib/logsDataCleaner.ts#L32
-     */
     static DEFAULT_PLUGIN_MAX_SESSION_LOGS_FOLDERS = 10;
 
     protected _localDir: string | undefined;

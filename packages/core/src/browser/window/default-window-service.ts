@@ -68,7 +68,7 @@ export class DefaultWindowService implements WindowService, FrontendApplicationC
                 return this.preventUnload(event);
             }
         });
-        // In a browser, `unload` is correctly fired when the page unloads, unlike Electron.
+        // In a browser, `unload` is correctly fired when the page unloads, unlike Electro
         // If `beforeunload` is cancelled, the user will be prompted to leave or stay.
         // If the user stays, the page won't be unloaded, so `unload` is not fired.
         // If the user leaves, the page will be unloaded, so `unload` is fired.
@@ -80,7 +80,7 @@ export class DefaultWindowService implements WindowService, FrontendApplicationC
      *
      * Notes:
      *  - Shows a confirmation popup in browsers.
-     *  - Prevents the window from closing without confirmation in electron.
+     *  - Prevents the window from closing without confirmation in electro
      *
      * @param event The beforeunload event
      */

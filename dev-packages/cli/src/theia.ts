@@ -126,7 +126,6 @@ function rebuildCommand(command: string, target: ApplicationProps.Target): yargs
         })
         .command(rebuildCommand('rebuild', target))
         .command(rebuildCommand('rebuild:browser', 'browser'))
-        .command(rebuildCommand('rebuild:electron', 'electron'))
         .command<{ suppress: boolean }>({
             command: 'check:hoisted',
             describe: 'check that all dependencies are hoisted',

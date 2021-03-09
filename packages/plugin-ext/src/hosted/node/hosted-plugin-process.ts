@@ -100,8 +100,8 @@ export class HostedPluginProcess implements ServerPluginRunner {
         this.childProcess = undefined;
 
         const waitForTerminated = new Deferred<void>();
-        cp.on('message', message => {
-            const msg = JSON.parse(message);
+        cp.on('message', (message: cp.Serializable) => {
+            const msg = JSON.parse(message.toString());
             if ('type' in msg && msg.type === MessageType.Terminated) {
                 waitForTerminated.resolve();
             }
@@ -152,9 +152,9 @@ export class HostedPluginProcess implements ServerPluginRunner {
             logger: this.logger,
             args: []
         });
-        this.childProcess.on('message', message => {
+        this.childProcess.on('message', (message: cp.Serializable) => {
             if (this.client) {
-                this.client.postMessage(PLUGIN_HOST_BACKEND, message);
+                this.client.postMessage(PLUGIN_HOST_BACKEND, message.toString());
             }
         });
     }

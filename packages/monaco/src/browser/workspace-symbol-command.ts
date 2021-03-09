@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 import { injectable, inject } from '@theia/core/shared/inversify';
-import { environment } from '@theia/core/shared/@theia/application-package/lib/environment';
 import {
     PrefixQuickOpenService, OpenerService,
     KeybindingContribution, KeybindingRegistry, QuickOpenHandler, QuickOpenContribution, QuickOpenHandlerRegistry
@@ -73,14 +72,10 @@ export class WorkspaceSymbolCommand implements QuickOpenModel, CommandContributi
         commands.registerCommand(this.command, this);
     }
 
-    private isElectron(): boolean {
-        return environment.electron.is();
-    }
-
     registerKeybindings(keybindings: KeybindingRegistry): void {
         keybindings.registerKeybinding({
             command: this.command.id,
-            keybinding: this.isElectron() ? 'ctrlcmd+t' : 'ctrlcmd+o',
+            keybinding: 'ctrlcmd+o',
         });
     }
 

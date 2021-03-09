@@ -17,7 +17,7 @@
 import { injectable, postConstruct } from 'inversify';
 
 /**
- * **Important: This component is not bound on Electron.**
+ * **Important: This component is not bound on .**
  *
  * Component handling the different hosts the Theia backend should be reachable at.
  *

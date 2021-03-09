@@ -17,7 +17,6 @@
 const parseArgs = require('minimist');
 const nativeKeymap = require('native-keymap');
 const fs = require('fs');
-const electron = require('electron');
 
 /*
  * Generate keyboard layouts for using Theia as web application.
@@ -87,5 +86,3 @@ if (outFile) {
 } else {
     console.log(stringOutput);
 }
-
-electron.app.quit();
