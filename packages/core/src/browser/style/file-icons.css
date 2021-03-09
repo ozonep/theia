@@ -1,115 +1,115 @@
 ._archive:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\eaef";
   font-size: 120%;
 }
 ._binary:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\eae8";
   font-size: 120%;
 }
 ._bugs:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eaaf";
   font-size: 120%;
 }
 ._changelog:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\ea82";
   font-size: 120%;
 }
 ._codeowners:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\ea7e";
   font-size: 120%;
 }
 ._config:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eaf8";
   font-size: 120%;
 }
 ._config-src:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eaf8";
   font-size: 120%;
 }
 ._ctags:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\ea66";
   font-size: 120%;
 }
 ._data:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eae9";
   font-size: 120%;
 }
 ._data-markup:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eac4";
   font-size: 120%;
 }
 ._data-template:before {
   font-family: codicon;
-  color: #ebcb8b;
+  color: #fee310;
   content: "\eb52";
   font-size: 120%;
 }
 ._database:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eace";
   font-size: 120%;
 }
 ._database-src:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eace";
   font-size: 120%;
 }
 ._debug:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\eaaf";
   font-size: 120%;
 }
 ._diff:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eae1";
   font-size: 120%;
 }
 ._doc:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\ea7b";
   font-size: 120%;
 }
 ._script:before {
   font-family: codicon;
-  color: #fc9776;
+  color: #fffbce;
   content: "\ea85";
   font-size: 120%;
 }
 ._file:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\ea7b";
   font-size: 120%;
   margin-right: 6px;
 }
 ._folder:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\ea83";
   font-size: 120%;
   margin-right: 6px;
@@ -117,157 +117,157 @@
 }
 ._font:before {
   font-family: codicon;
-  color: #73a1cf;
+  color: #a5e5fa;
   content: "\eb69";
   font-size: 120%;
 }
 ._headers:before {
   font-family: codicon;
-  color: #ebcb8b;
+  color: #fee310;
   content: "\eae9";
   font-size: 120%;
 }
 ._ignore:before {
   font-family: codicon;
-  color: #e0404f;
+  color: #ff5443;
   content: "\eabd";
   font-size: 120%;
 }
 ._image:before {
   font-family: codicon;
-  color: #73a1cf;
+  color: #a5e5fa;
   content: "\eaea";
   font-size: 120%;
 }
 ._image-src:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eaea";
   font-size: 120%;
 }
 ._info:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\ea74";
   font-size: 120%;
 }
 ._license:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eb12";
   font-size: 120%;
 }
 ._linker:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\eb14";
   font-size: 120%;
 }
 ._lock:before {
   font-family: codicon;
-  color: #e0404f;
+  color: #ff5443;
   content: "\ea75";
   font-size: 120%;
 }
 ._mail:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eb1c";
   font-size: 120%;
 }
 ._map:before {
   font-family: codicon;
-  color: #ebcb8b;
+  color: #fee310;
   content: "\eb1a";
   font-size: 120%;
 }
 ._markdown:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eb1d";
   font-size: 120%;
 }
 ._markup:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eac4";
   font-size: 120%;
 }
 ._media:before {
   font-family: codicon;
-  color: #73a1cf;
+  color: #a5e5fa;
   content: "\eb2c";
   font-size: 120%;
 }
 ._notebook:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eb26";
   font-size: 120%;
 }
 ._pdf:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eaeb";
   font-size: 120%;
 }
 ._ruby:before {
   font-family: codicon;
-  color: #e0404f;
+  color: #ff5443;
   content: "\eb48";
   font-size: 120%;
 }
 ._search:before {
   font-family: codicon;
-  color: #a3a8ae;
+  color: #c9d6e3;
   content: "\ea6d";
   font-size: 120%;
 }
 ._sheet:before {
   font-family: codicon;
-  color: #c280b6;
+  color: #e06fc2;
   content: "\eb17";
   font-size: 120%;
 }
 ._src:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\eae9";
   font-size: 120%;
 }
 ._security:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eb53";
   font-size: 120%;
 }
 ._stylesheet:before {
   font-family: codicon;
-  color: #ebcb8b;
+  color: #fee310;
   content: "\eb2a";
   font-size: 120%;
 }
 ._support:before {
   font-family: codicon;
-  color: #e0404f;
+  color: #ff5443;
   content: "\eb05";
   font-size: 120%;
 }
 ._template:before {
   font-family: codicon;
-  color: #ebcb8b;
+  color: #fee310;
   content: "\eac4";
   font-size: 120%;
 }
 ._test:before {
   font-family: codicon;
-  color: #a1d971;
+  color: #6fe08d;
   content: "\ea79";
   font-size: 120%;
 }
 ._todo:before {
   font-family: codicon;
-  color: #7bd0cd;
+  color: #2087d1;
   content: "\eab3";
   font-size: 120%;
 }

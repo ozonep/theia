@@ -152,5 +152,5 @@ export class MonacoThemeRegistry {
 export namespace MonacoThemeRegistry {
     export const SINGLETON = new MonacoThemeRegistry();
 
-    export const DARK_DEFAULT_THEME: string = SINGLETON.register(require('../../../data/monaco-themes/vscode/dark_github.json'), {}, 'dark-theia', 'vs-dark').name!;
+    export const DARK_DEFAULT_THEME: string = SINGLETON.register(require('../../../data/monaco-themes/vscode/dark_mint.json'), {}, 'dark-theia', 'vs-dark').name!;
 }
