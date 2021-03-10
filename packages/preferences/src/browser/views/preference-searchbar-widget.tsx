@@ -15,13 +15,17 @@
  ********************************************************************************/
 
 import { injectable, postConstruct } from '@theia/core/shared/inversify';
-import { ReactWidget } from '@theia/core/lib/browser';
+import { ReactWidget, StatefulWidget } from '@theia/core/lib/browser';
 import * as React from '@theia/core/shared/react';
 import debounce = require('@theia/core/shared/lodash.debounce');
 import { Disposable, Emitter } from '@theia/core';
 
+export interface PreferencesSearchbarState {
+    searchTerm: string;
+}
+
 @injectable()
-export class PreferencesSearchbarWidget extends ReactWidget {
+export class PreferencesSearchbarWidget extends ReactWidget implements StatefulWidget {
     static readonly ID = 'settings.header';
     static readonly LABEL = 'Settings Header';
     static readonly SEARCHBAR_ID = 'preference-searchbar';
@@ -110,6 +114,30 @@ export class PreferencesSearchbarWidget extends ReactWidget {
         return !!this.searchbarRef.current?.value;
     }
 
+    /**
+     * Get the search term.
+     *
+     * @returns the search term.
+     */
+     protected getSearchTerm(): string {
+        const search = document.getElementById(PreferencesSearchbarWidget.SEARCHBAR_ID) as HTMLInputElement;
+        return search?.value;
+    }
+
+    /**
+     * Update the search term.
+     * @param searchTerm the search term.
+     */
+    protected updateSearchTerm(searchTerm: string): void {
+        const search = document.getElementById(PreferencesSearchbarWidget.SEARCHBAR_ID) as HTMLInputElement;
+        if (!search) {
+            return;
+        }
+        search.value = searchTerm;
+        this.search(search.value);
+        this.update();
+    }
+
     render(): React.ReactNode {
         const optionContainer = this.renderOptionContainer();
         return (
@@ -137,5 +165,18 @@ export class PreferencesSearchbarWidget extends ReactWidget {
     updateResultsCount(count: number): void {
         this.resultsCount = count;
         this.update();
+    }
+
+    storeState(): PreferencesSearchbarState {
+        return {
+            searchTerm: this.getSearchTerm()
+        };
+    }
+
+    restoreState(oldState: PreferencesSearchbarState): void {
+        const searchInputExists = this.onDidChangeVisibility(() => {
+            this.updateSearchTerm(oldState.searchTerm || '');
+            searchInputExists.dispose();
+        });
     }
 }
