@@ -1,4 +1,1 @@
-<!--Copyright (c) Microsoft Corporation. All rights reserved.-->
-<!--Copyright (C) 2018 TypeFox and others.-->
-<!--Licensed under the MIT License. See License.txt in the project root for license information.-->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><defs><style>.icon-canvas-transparent,.icon-vs-out{fill:#252526;}.icon-canvas-transparent{opacity:0;}.icon-vs-bg{fill:#c5c5c5;}</style></defs><title>repl</title><g id="canvas"><path class="icon-canvas-transparent" d="M16,0V16H0V0Z"/></g><g id="outline" style="display: none;"><path class="icon-vs-out" d="M16,2V14H0V2Z"/></g><g id="iconBg"><path id="iconBg-2" data-name="iconBg" class="icon-vs-bg" d="M1,3V13H15V3Zm13,9H2V4H14ZM7.5,8,4.875,10.75,4,9.833,5.75,8,4,6.167l.875-.917Z"/></g></svg>
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m16 0v16h-16v-16z" fill="#252526" opacity="0"/><path d="m1 3v10h14v-10zm13 9h-12v-8h12zm-6.5-4-2.625 2.75-.875-.917 1.75-1.833-1.75-1.833.875-.917z" fill="#c5c5c5"/></svg>
