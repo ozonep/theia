@@ -71,9 +71,6 @@
       "path": "../packages/navigator/compile.tsconfig.json"
     },
     {
-      "path": "../packages/outline-view/compile.tsconfig.json"
-    },
-    {
       "path": "../packages/output/compile.tsconfig.json"
     },
     {

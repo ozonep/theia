@@ -22,9 +22,6 @@
       "path": "../markers/compile.tsconfig.json"
     },
     {
-      "path": "../outline-view/compile.tsconfig.json"
-    },
-    {
       "path": "../workspace/compile.tsconfig.json"
     }
   ]

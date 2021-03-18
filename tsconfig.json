@@ -88,9 +88,6 @@
       "@theia/navigator/lib/*": [
         "packages/navigator/src/*"
       ],
-      "@theia/outline-view/lib/*": [
-        "packages/outline-view/src/*"
-      ],
       "@theia/output/lib/*": [
         "packages/output/src/*"
       ],
