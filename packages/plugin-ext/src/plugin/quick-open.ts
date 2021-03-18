@@ -22,7 +22,7 @@ import { Emitter, Event } from '@theia/core/lib/common/event';
 import { DisposableCollection } from '@theia/core/lib/common/disposable';
 import { QuickInputButtons, QuickInputButton, ThemeIcon } from './types-impl';
 import { URI } from '@theia/core/shared/vscode-uri';
-import * as path from 'path';
+import { join, isAbsolute, normalize, relative } from 'path';
 import { quickPickItemToPickOpenItem } from './type-converters';
 import { PluginPackage } from '../common/plugin-protocol';
 
@@ -329,9 +329,9 @@ export class QuickInputExt implements QuickInput {
                 return arg.toString(true);
             }
             const { packagePath } = this.plugin.rawModel;
-            const absolutePath = path.isAbsolute(arg) ? arg : path.join(packagePath, arg);
-            const normalizedPath = path.normalize(absolutePath);
-            const relativePath = path.relative(packagePath, normalizedPath);
+            const absolutePath = isAbsolute(arg) ? arg : join(packagePath, arg);
+            const normalizedPath = normalize(absolutePath);
+            const relativePath = relative(packagePath, normalizedPath);
             return PluginPackage.toPluginUrl(this.plugin.rawModel, relativePath);
         };
         if ('id' in iconPath || iconPath instanceof ThemeIcon) {

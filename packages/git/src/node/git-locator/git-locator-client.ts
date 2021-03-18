@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as paths from 'path';
+import { resolve as pResolve } from 'path';
 import { inject, injectable } from '@theia/core/shared/inversify';
 import { JsonRpcProxyFactory, DisposableCollection } from '@theia/core';
 import { IPCConnectionProvider } from '@theia/core/lib/node';
@@ -36,7 +36,7 @@ export class GitLocatorClient implements GitLocator {
         return new Promise((resolve, reject) => {
             const toStop = this.ipcConnectionProvider.listen({
                 serverName: 'git-locator',
-                entryPoint: paths.resolve(__dirname, 'git-locator-host')
+                entryPoint: pResolve(__dirname, 'git-locator-host')
             }, async connection => {
                 const proxyFactory = new JsonRpcProxyFactory<GitLocator>();
                 const remote = proxyFactory.createProxy();

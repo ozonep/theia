@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as ws from 'ws';
+import ws from 'ws';
 import { MessageConnection } from 'vscode-ws-jsonrpc';
 import { IConnection } from 'vscode-ws-jsonrpc/lib/server/connection';
 import { WebSocketChannel } from '../../common/messaging/web-socket-channel';

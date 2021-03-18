@@ -72,7 +72,7 @@ export namespace KeySequence {
     }
 
     export function parse(keybinding: string): KeySequence {
-        const keyCodes = [];
+        const keyCodes: KeyCode[] = [];
         const rawKeyCodes = keybinding.trim().split(/\s+/g);
         for (const rawKeyCode of rawKeyCodes) {
             const keyCode = KeyCode.parse(rawKeyCode);
@@ -155,7 +155,7 @@ export class KeyCode {
      * Return a keybinding string compatible with the `Keybinding.keybinding` property.
      */
     toString(): string {
-        const result = [];
+        const result: string[] = [];
         if (this.meta) {
             result.push(SpecialCases.META);
         }
@@ -236,7 +236,7 @@ export class KeyCode {
         }
 
         const schema: KeyCodeSchema = {};
-        const keys = [];
+        const keys: string[] = [];
         let currentKey = '';
         for (const character of keybinding.trim().toLowerCase()) {
             if (currentKey && (character === '-' || character === '+')) {

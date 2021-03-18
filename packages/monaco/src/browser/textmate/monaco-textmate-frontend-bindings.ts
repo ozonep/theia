@@ -20,47 +20,38 @@ import { bindContributionProvider } from '@theia/core';
 import { TextmateRegistry } from './textmate-registry';
 import { LanguageGrammarDefinitionContribution } from './textmate-contribution';
 import { MonacoTextmateService, OnigasmPromise } from './monaco-textmate-service';
-import { MonacoThemeRegistry } from './monaco-theme-registry';
-import { loadWASM, OnigScanner, OnigString } from 'onigasm';
+import { MonacoThemeRegistry, OnigPromise } from './monaco-theme-registry';
 import { IOnigLib } from 'vscode-textmate';
+import { loadWASM, OnigScanner, OnigString } from 'vscode-oniguruma';
 
-export function fetchOnigasm(): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-        const onigasmPath = require('onigasm/lib/onigasm.wasm'); // webpack doing its magic here
-        const request = new XMLHttpRequest();
+// eslint-disable-next-line no-null/no-null
+let onigurumaLib: Promise<IOnigLib> | null = null;
 
-        request.onreadystatechange = function (): void {
-            if (this.readyState === XMLHttpRequest.DONE) {
-                if (this.status === 200) {
-                    resolve(this.response);
-                } else {
-                    reject(new Error('Could not fetch onigasm'));
-                }
-            }
-        };
-
-        request.open('GET', onigasmPath, true);
-        request.responseType = 'arraybuffer';
-        request.send();
-    });
+async function fetchOnigasm(): Promise<ArrayBuffer> {
+    const onigasmPath = require('vscode-oniguruma/release/onig.wasm');
+    const response = await fetch(onigasmPath);
+    if (response.status === 200) {
+        return response.arrayBuffer();
+    } else {
+        throw new Error('Could not fetch onigasm');
+    }
 }
 
-export class OnigasmLib implements IOnigLib {
-    createOnigScanner(sources: string[]): OnigScanner {
-        return new OnigScanner(sources);
+async function getOnigasm(): Promise<IOnigLib> {
+    if (!onigurumaLib) {
+        const wasmBin = await fetchOnigasm(); // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onigurumaLib = loadWASM(wasmBin).then((_: any) => ({
+            createOnigScanner(patterns: string[]): OnigScanner { return new OnigScanner(patterns); },
+            createOnigString(s: string): OnigString { return new OnigString(s); }
+        }));
     }
-    createOnigString(sources: string): OnigString {
-        return new OnigString(sources);
-    }
+    return onigurumaLib;
 }
 
 export default (bind: interfaces.Bind, unbind: interfaces.Unbind, isBound: interfaces.IsBound, rebind: interfaces.Rebind) => {
-    const onigasmPromise: Promise<IOnigLib> = isBasicWasmSupported ? fetchOnigasm().then(async buffer => {
-        await loadWASM(buffer);
-        return new OnigasmLib();
-    }) : Promise.reject(new Error('wasm not supported'));
+    const onigasmPromise: Promise<IOnigLib> = isBasicWasmSupported ? getOnigasm() : Promise.reject(new Error('wasm not supported'));
     bind(OnigasmPromise).toConstantValue(onigasmPromise);
-
+    bind(OnigPromise).toConstantValue(onigasmPromise);
     bind(MonacoTextmateService).toSelf().inSingletonScope();
     bind(FrontendApplicationContribution).toService(MonacoTextmateService);
     bindContributionProvider(bind, LanguageGrammarDefinitionContribution);

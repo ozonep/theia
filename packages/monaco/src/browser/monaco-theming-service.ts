@@ -17,7 +17,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { injectable, inject } from '@theia/core/shared/inversify';
-import * as jsoncparser from 'jsonc-parser';
+import { parse } from '@theia/core/shared/jsonc-parser';
 import * as plistparser from 'fast-plist';
 import { ThemeService, BuiltinThemeProvider } from '@theia/core/lib/browser/theming';
 import URI from '@theia/core/lib/common/uri';
@@ -104,7 +104,7 @@ export class MonacoThemingService {
             }
             throw new Error(`Problem parsing tmTheme file: ${uri}. 'settings' is not array.`);
         }
-        const json = jsoncparser.parse(content, undefined, { disallowComments: false });
+        const json = parse(content, undefined, { disallowComments: false });
         if ('tokenColors' in json && typeof json.tokenColors === 'string') {
             const value = await this.doLoadTheme(themeUri, json.tokenColors, includes, pending, toDispose);
             if (toDispose.disposed) {

@@ -19,7 +19,7 @@
  *--------------------------------------------------------------------------------------------*/
 // copied and modified from https://github.com/Microsoft/vscode/blob/master/src/vs/workbench/services/workspace/node/workspaceEditingService.ts
 
-import * as paths from 'path';
+import { dirname } from 'path';
 import * as theia from '@theia/plugin';
 import { Event, Emitter } from '@theia/core/lib/common/event';
 import { CancellationToken } from '@theia/core/lib/common/cancellation';
@@ -287,17 +287,17 @@ export class WorkspaceExtImpl implements WorkspaceExt {
             return undefined;
         }
 
-        function dirname(resource: URI): URI {
+        function idirname(resource: URI): URI {
             if (resource.scheme === 'file') {
-                return URI.file(paths.dirname(resource.fsPath));
+                return URI.file(dirname(resource.fsPath));
             }
             return resource.with({
-                path: paths.dirname(resource.path)
+                path: dirname(resource.path)
             });
         }
 
         if (resolveParent && this.hasFolder(uri)) {
-            uri = dirname(uri);
+            uri = idirname(uri);
         }
 
         const resourcePath = uri.toString();

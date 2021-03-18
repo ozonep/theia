@@ -88,7 +88,9 @@ export class RenameAdapter {
                 range = rangeOrLocation;
                 text = doc.getText(rangeOrLocation);
             } else if (rangeOrLocation && isObject(rangeOrLocation)) {
+                // @ts-ignore
                 range = rangeOrLocation.range;
+                // @ts-ignore
                 text = rangeOrLocation.placeholder;
             }
 

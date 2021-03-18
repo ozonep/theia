@@ -4,7 +4,6 @@
         "frontend": {
             "config": {
                 "applicationName": "Diggit Challenge",
-                "defaultIconTheme": "vscode-unfancy-file-icons-diggit",
                 "preferences": {
                     "files.enableTrash": false
                 }
@@ -44,8 +43,7 @@
         "vscode-builtin-emmet": "https://open-vsx.org/api/vscode/emmet/1.46.1/file/vscode.emmet-1.46.1.vsix",
         "vscode-builtin-go": "https://open-vsx.org/api/vscode/go/1.46.1/file/vscode.go-1.46.1.vsix",
         "vscode-builtin-handlebars": "https://open-vsx.org/api/vscode/handlebars/1.46.1/file/vscode.handlebars-1.46.1.vsix",
-        "vscode-builtin-html": "https://open-vsx.org/api/vscode/html/1.47.3/file/vscode.html-1.47.3.vsix",
-        "vscode-builtin-html-language-features": "https://open-vsx.org/api/vscode/html-language-features/1.47.3/file/vscode.html-language-features-1.47.3.vsix",
+        "vscode-builtin-html": "https://open-vsx.org/api/vscode/html/1.49.0/file/vscode.html-1.49.0.vsix",
         "vscode-builtin-javascript": "https://open-vsx.org/api/vscode/javascript/1.47.3/file/vscode.javascript-1.47.3.vsix",
         "vscode-builtin-json": "https://open-vsx.org/api/vscode/json/1.46.1/file/vscode.json-1.46.1.vsix",
         "vscode-builtin-json-language-features": "https://open-vsx.org/api/vscode/json-language-features/1.46.1/file/vscode.json-language-features-1.46.1.vsix",

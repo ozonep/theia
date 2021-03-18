@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 import { PluginDeployerFileHandler, PluginDeployerEntry, PluginDeployerFileHandlerContext, PluginType } from '@theia/plugin-ext';
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
-import * as filenamify from 'filenamify';
+import { pathExists } from '@theia/core/shared/fs-extra';
+import { join } from 'path';
+import filenamify from 'filenamify';
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { getTempDir } from '@theia/plugin-ext/lib/main/node/temp-dir-util';
 import { PluginVSCodeEnvironment } from '../common/plugin-vscode-environment';
@@ -43,7 +43,7 @@ export class PluginVsCodeFileHandler implements PluginDeployerFileHandler {
         const id = context.pluginEntry().id();
         const extensionDir = await this.getExtensionDir(context);
         console.log(`[${id}]: trying to decompress into "${extensionDir}"...`);
-        if (context.pluginEntry().type === PluginType.User && await fs.pathExists(extensionDir)) {
+        if (context.pluginEntry().type === PluginType.User && await pathExists(extensionDir)) {
             console.log(`[${id}]: already found`);
             context.pluginEntry().updatePath(extensionDir);
             return;
@@ -64,10 +64,10 @@ export class PluginVsCodeFileHandler implements PluginDeployerFileHandler {
     protected async decompress(extensionDir: string, context: PluginDeployerFileHandlerContext): Promise<void> {
         await context.unzip(context.pluginEntry().path(), extensionDir);
         if (context.pluginEntry().path().endsWith('.tgz')) {
-            const extensionPath = path.join(extensionDir, 'package');
-            const vscodeNodeModulesPath = path.join(extensionPath, 'vscode_node_modules.zip');
-            if (await fs.pathExists(vscodeNodeModulesPath)) {
-                await context.unzip(vscodeNodeModulesPath, path.join(extensionPath, 'node_modules'));
+            const extensionPath = join(extensionDir, 'package');
+            const vscodeNodeModulesPath = join(extensionPath, 'vscode_node_modules.zip');
+            if (await pathExists(vscodeNodeModulesPath)) {
+                await context.unzip(vscodeNodeModulesPath, join(extensionPath, 'node_modules'));
             }
         }
     }

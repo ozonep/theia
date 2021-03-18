@@ -36,7 +36,7 @@ export class WorkspaceSchemaUpdater implements JsonSchemaContribution {
 
     protected readonly uri = new URI(workspaceSchemaId);
     protected readonly editQueue: SchemaUpdateMessage[] = [];
-    protected safeToHandleQueue = new Deferred();
+    protected safeToHandleQueue = new Deferred<void>();
 
     @inject(InMemoryResources) protected readonly inmemoryResources: InMemoryResources;
 
@@ -77,7 +77,7 @@ export class WorkspaceSchemaUpdater implements JsonSchemaContribution {
 
     protected async handleQueue(): Promise<void> {
         await this.safeToHandleQueue.promise;
-        this.safeToHandleQueue = new Deferred();
+        this.safeToHandleQueue = new Deferred<void>();
         const cache = await this.retrieveCurrent();
         while (this.editQueue.length) {
             const nextMessage = this.editQueue.shift();

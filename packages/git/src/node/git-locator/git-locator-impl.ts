@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
+import { realpathSync, stat, readdir } from '@theia/core/shared/fs-extra';
+import { dirname, join } from 'path';
 import { GitLocator, GitLocateOptions } from './git-locator-protocol';
 
 export type FindGitRepositories = (path: string, progressCb: (repos: string[]) => void) => Promise<string[]>;
@@ -59,14 +59,14 @@ export class GitLocatorImpl implements GitLocator {
     }
 
     protected async doLocate(basePath: string, context: GitLocateContext): Promise<string[]> {
-        const realBasePath = fs.realpathSync(basePath);
+        const realBasePath = realpathSync(basePath);
         if (context.visited.has(realBasePath)) {
             return [];
         }
         context.visited.set(realBasePath, true);
         try {
-            const stat = await fs.stat(realBasePath);
-            if (!stat.isDirectory()) {
+            const istat = await stat(realBasePath);
+            if (!istat.isDirectory()) {
                 return [];
             }
             const progress: string[] = [];
@@ -97,7 +97,7 @@ export class GitLocatorImpl implements GitLocator {
     }
     protected locateNested(repositoryPath: string, context: GitLocateContext): Promise<string[]> {
         return new Promise<string[]>(resolve => {
-            fs.readdir(repositoryPath, async (err, files) => {
+            readdir(repositoryPath, async (err, files) => {
                 if (err) {
                     this.options.error(err.message, err);
                     resolve([]);
@@ -114,7 +114,7 @@ export class GitLocatorImpl implements GitLocator {
     protected * generateRepositories(repositoryPath: string, files: string[], context: GitLocateContext): IterableIterator<Promise<string[]>> {
         for (const file of files) {
             if (file !== '.git') {
-                yield this.doLocate(path.join(repositoryPath, file), {
+                yield this.doLocate(join(repositoryPath, file), {
                     ...context
                 });
             }
@@ -146,7 +146,7 @@ export class GitLocatorImpl implements GitLocator {
     }
 
     static map(repository: string): string {
-        return fs.realpathSync(path.dirname(repository));
+        return realpathSync(dirname(repository));
     }
 
 }

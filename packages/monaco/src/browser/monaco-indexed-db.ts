@@ -14,13 +14,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as idb from 'idb';
+import { openDB, IDBPDatabase } from 'idb';
 import { Disposable, DisposableCollection } from '@theia/core/lib/common/disposable';
 type ThemeMix = import('./textmate/monaco-theme-registry').ThemeMix;
 
-let _monacoDB: Promise<idb.IDBPDatabase> | undefined;
+let _monacoDB: Promise<IDBPDatabase> | undefined;
 if ('indexedDB' in window) {
-    _monacoDB = idb.openDB('theia-monaco', 1, {
+    _monacoDB = openDB('theia-monaco', 1, {
         upgrade: db => {
             if (!db.objectStoreNames.contains('themes')) {
                 db.createObjectStore('themes', { keyPath: 'id' });

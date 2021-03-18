@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as cp from 'child_process';
+import { resolve } from 'path';
+import { ChildProcess, ForkOptions, fork } from 'child_process';
 import { injectable, inject } from 'inversify';
 import { Trace, IPCMessageReader, IPCMessageWriter, createMessageConnection, MessageConnection, Message } from 'vscode-ws-jsonrpc';
 import { ILogger, ConnectionErrorHandler, DisposableCollection, Disposable } from '../../common';
@@ -74,7 +74,7 @@ export class IPCConnectionProvider {
         return toStop;
     }
 
-    protected createConnection(childProcess: cp.ChildProcess, options: ResolvedIPCConnectionOptions): MessageConnection {
+    protected createConnection(childProcess: ChildProcess, options: ResolvedIPCConnectionOptions): MessageConnection {
         const reader = new IPCMessageReader(childProcess);
         const writer = new IPCMessageWriter(childProcess);
         const connection = createMessageConnection(reader, writer, {
@@ -90,8 +90,8 @@ export class IPCConnectionProvider {
         return connection;
     }
 
-    protected fork(options: ResolvedIPCConnectionOptions): cp.ChildProcess {
-        const forkOptions: cp.ForkOptions = {
+    protected fork(options: ResolvedIPCConnectionOptions): ChildProcess {
+        const forkOptions: ForkOptions = {
             silent: true,
             env: createIpcEnv(options),
             execArgv: []
@@ -102,7 +102,7 @@ export class IPCConnectionProvider {
             forkOptions.execArgv = ['--nolazy', `--inspect${inspectArg.substr(inspectArgPrefix.length)}`];
         }
 
-        const childProcess = cp.fork(path.resolve(__dirname, 'ipc-bootstrap.js'), options.args, forkOptions);
+        const childProcess = fork(resolve(__dirname, 'ipc-bootstrap.js'), options.args, forkOptions);
         childProcess.stdout!.on('data', data => this.logger.info(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
         childProcess.stderr!.on('data', data => this.logger.error(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
 

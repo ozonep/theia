@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from '@theia/core/shared/fs-extra';
-import * as Path from 'path';
+import { realpathSync } from '@theia/core/shared/fs-extra';
+import { join, relative } from 'path';
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 import { git } from 'dugite-extra/lib/core/git';
 import { push } from 'dugite-extra/lib/command/push';
@@ -62,7 +62,7 @@ export abstract class OutputParser<T> {
     abstract parse(repositoryUri: string, input: string | string[], delimiter?: string): T[];
 
     protected toUri(repositoryUri: string, pathSegment: string): string {
-        return FileUri.create(Path.join(FileUri.fsPath(repositoryUri), pathSegment)).toString();
+        return FileUri.create(join(FileUri.fsPath(repositoryUri), pathSegment)).toString();
     }
 
     protected split(input: string | string[], delimiter: string): string[] {
@@ -636,7 +636,7 @@ export class DugiteGit implements Git {
         const args = ['diff', '--name-status', '-C', '-M', '-z'];
         args.push(this.mapRange((options || {}).range));
         if (options && options.uri) {
-            const relativePath = Path.relative(this.getFsPath(repository), this.getFsPath(options.uri));
+            const relativePath = relative(this.getFsPath(repository), this.getFsPath(options.uri));
             args.push(...['--', relativePath !== '' ? relativePath : '.']);
         }
         const result = await this.exec(repository, args);
@@ -662,7 +662,7 @@ export class DugiteGit implements Git {
                 [CommitPlaceholders.SHORT_HASH, ...CommitDetailsParser.DEFAULT_PLACEHOLDERS.slice(1)] : CommitDetailsParser.DEFAULT_PLACEHOLDERS;
         args.push(...['--name-status', '--date=unix', `--format=${this.commitDetailsParser.getFormat(...placeholders)}`, '-z', '--']);
         if (options && options.uri) {
-            const file = Path.relative(this.getFsPath(repository), this.getFsPath(options.uri)) || '.';
+            const file = relative(this.getFsPath(repository), this.getFsPath(options.uri)) || '.';
             args.push(...[file]);
         }
 
@@ -701,7 +701,7 @@ export class DugiteGit implements Git {
     async blame(repository: Repository, uri: string, options?: Git.Options.Blame): Promise<GitFileBlame | undefined> {
         await this.ready.promise;
         const args = ['blame', '--root', '--incremental'];
-        const file = Path.relative(this.getFsPath(repository), this.getFsPath(uri));
+        const file = relative(this.getFsPath(repository), this.getFsPath(uri));
         const repositoryPath = this.getFsPath(repository);
         const [exec, env] = await Promise.all([this.execProvider.exec(), this.gitEnv.promise]);
         const status = await getStatus(repositoryPath, true, this.limit, { exec, env });
@@ -736,7 +736,7 @@ export class DugiteGit implements Git {
     async lsFiles(repository: Repository, uri: string, options?: Git.Options.LsFiles): Promise<any> {
         await this.ready.promise;
         const args = ['ls-files'];
-        const relativePath = Path.relative(this.getFsPath(repository), this.getFsPath(uri));
+        const relativePath = relative(this.getFsPath(repository), this.getFsPath(uri));
         const file = (relativePath === '') ? '.' : relativePath;
         if (options && options.errorUnmatch) {
             args.push('--error-unmatch', file);
@@ -766,7 +766,7 @@ export class DugiteGit implements Git {
         const out = result.stdout;
         if (out && out.length !== 0) {
             try {
-                return fs.realpathSync(out.trim());
+                return realpathSync(out.trim());
             } catch (e) {
                 this.logger.error(e);
                 return undefined;
@@ -889,9 +889,9 @@ export class DugiteGit implements Git {
 
     private async mapFileChange(toMap: DugiteFileChange, repositoryPath: string): Promise<GitFileChange> {
         const [uri, status, oldUri] = await Promise.all([
-            this.getUri(Path.join(repositoryPath, toMap.path)),
+            this.getUri(join(repositoryPath, toMap.path)),
             this.mapFileStatus(toMap.status),
-            toMap.oldPath ? this.getUri(Path.join(repositoryPath, toMap.oldPath)) : undefined
+            toMap.oldPath ? this.getUri(join(repositoryPath, toMap.oldPath)) : undefined
         ]);
         return {
             uri,

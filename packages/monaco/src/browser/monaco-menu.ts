@@ -37,7 +37,8 @@ export class MonacoEditorMenuContribution implements MenuContribution {
     ) { }
 
     registerMenus(registry: MenuModelRegistry): void {
-        for (const item of MenuRegistry.getMenuItems(7)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const item of MenuRegistry.getMenuItems(7) as any) {
             if (!monaco.actions.isIMenuItem(item)) {
                 continue;
             }
@@ -51,7 +52,8 @@ export class MonacoEditorMenuContribution implements MenuContribution {
         this.registerPeekSubmenu(registry);
 
         registry.registerSubmenu(MonacoMenus.SELECTION, 'Selection');
-        for (const item of MenuRegistry.getMenuItems(25)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const item of MenuRegistry.getMenuItems(25) as any) {
             if (!monaco.actions.isIMenuItem(item)) {
                 continue;
             }
@@ -68,8 +70,8 @@ export class MonacoEditorMenuContribution implements MenuContribution {
 
     protected registerPeekSubmenu(registry: MenuModelRegistry): void {
         registry.registerSubmenu(MonacoMenus.PEEK_CONTEXT_SUBMENU, 'Peek');
-
-        for (const item of MenuRegistry.getMenuItems(8)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const item of MenuRegistry.getMenuItems(8) as any) {
             if (!monaco.actions.isIMenuItem(item)) {
                 continue;
             }

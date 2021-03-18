@@ -65,6 +65,10 @@ export class ProblemTree extends MarkerTree<Diagnostic> {
         if (columnNumber !== 0) {
             return columnNumber;
         }
+        const owner = ProblemUtils.ownerCompare(markerA, markerB);
+        if (owner !== 0) {
+            return owner;
+        }
         return 0;
     }
 

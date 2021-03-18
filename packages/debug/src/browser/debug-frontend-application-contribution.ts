@@ -363,16 +363,11 @@ export namespace DebugBreakpointWidgetCommands {
 }
 
 const darkCss = require('../../src/browser/style/debug-dark.useable.css');
-const lightCss = require('../../src/browser/style/debug-bright.useable.css');
 
 function updateTheme(): void {
     const themeType = ThemeService.get().getCurrentTheme().type;
     if (themeType === 'dark' || themeType === 'hc') {
-        lightCss.unuse();
         darkCss.use();
-    } else if (themeType === 'light') {
-        darkCss.unuse();
-        lightCss.use();
     }
 }
 updateTheme();

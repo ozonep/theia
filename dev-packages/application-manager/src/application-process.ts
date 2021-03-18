@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as cp from 'child_process';
+import { resolve as pResolve } from 'path';
+import { existsSync } from 'fs-extra';
+import { ChildProcess, ForkOptions, spawn as cpSpawn, fork as cpFork, SpawnOptions } from 'child_process';
 import { ApplicationPackage } from '@theia/application-package';
 
 export class ApplicationProcess {
@@ -31,34 +31,34 @@ export class ApplicationProcess {
         protected readonly binProjectPath: string
     ) { }
 
-    spawn(command: string, args?: string[], options?: cp.SpawnOptions): cp.ChildProcess {
-        return cp.spawn(command, args || [], Object.assign({}, this.defaultOptions, options));
+    spawn(command: string, args?: string[], options?: SpawnOptions): ChildProcess {
+        return cpSpawn(command, args || [], Object.assign({}, this.defaultOptions, options));
     }
 
-    fork(modulePath: string, args?: string[], options?: cp.ForkOptions): cp.ChildProcess {
-        return cp.fork(modulePath, args, Object.assign({}, this.defaultOptions, options));
+    fork(modulePath: string, args?: string[], options?: ForkOptions): ChildProcess {
+        return cpFork(modulePath, args, Object.assign({}, this.defaultOptions, options));
     }
 
     canRun(command: string): boolean {
-        return fs.existsSync(this.resolveBin(command));
+        return existsSync(this.resolveBin(command));
     }
 
-    run(command: string, args: string[], options?: cp.SpawnOptions): Promise<void> {
+    run(command: string, args: string[], options?: SpawnOptions): Promise<void> {
         const commandProcess = this.spawnBin(command, args, options);
         return this.promisify(command, commandProcess);
     }
 
-    spawnBin(command: string, args: string[], options?: cp.SpawnOptions): cp.ChildProcess {
+    spawnBin(command: string, args: string[], options?: SpawnOptions): ChildProcess {
         const binPath = this.resolveBin(command);
         return this.spawn(binPath, args, options);
     }
 
     protected resolveBin(command: string): string {
-        const commandPath = path.resolve(this.binProjectPath, 'node_modules', '.bin', command);
+        const commandPath = pResolve(this.binProjectPath, 'node_modules', '.bin', command);
         return process.platform === 'win32' ? commandPath + '.cmd' : commandPath;
     }
 
-    protected promisify(command: string, p: cp.ChildProcess): Promise<void> {
+    protected promisify(command: string, p: ChildProcess): Promise<void> {
         return new Promise((resolve, reject) => {
             p.stdout!.on('data', data => this.pck.log(data.toString()));
             p.stderr!.on('data', data => this.pck.error(data.toString()));

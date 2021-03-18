@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 // tslint:disable-next-line
-import * as ws from '@theia/core/shared/ws';
+import ws from '@theia/core/shared/ws';
 import { injectable } from '@theia/core/shared/inversify';
 import { MessagingService } from '@theia/core/lib/node/messaging/messaging-service';
 import { NodeFileUpload } from './node-file-upload';

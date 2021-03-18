@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from 'fs';
-import * as nsfw from '@theia/core/shared/nsfw';
-import * as paths from 'path';
+import { existsSync, realpathSync } from 'fs';
+import onsfw from '@theia/core/shared/onsfw';
+import paths from 'path';
 import { IMinimatch, Minimatch } from 'minimatch';
 import { Disposable, DisposableCollection } from '@theia/core/lib/common/disposable';
 import { FileUri } from '@theia/core/lib/node/file-uri';
@@ -61,12 +61,12 @@ export class NsfwFileSystemWatcherServer implements FileSystemWatcherServer {
         verbose: boolean
         info: (message: string, ...args: any[]) => void
         error: (message: string, ...args: any[]) => void,
-        nsfwOptions: nsfw.Options
+        nsfwOptions: Partial<onsfw.Options>
     };
 
     constructor(options?: {
         verbose?: boolean,
-        nsfwOptions?: nsfw.Options,
+        nsfwOptions?: Partial<onsfw.Options>
         info?: (message: string, ...args: any[]) => void
         error?: (message: string, ...args: any[]) => void
     }) {
@@ -90,12 +90,12 @@ export class NsfwFileSystemWatcherServer implements FileSystemWatcherServer {
         const toDisposeWatcher = new DisposableCollection();
         this.watchers.set(watcherId, toDisposeWatcher);
         toDisposeWatcher.push(Disposable.create(() => this.watchers.delete(watcherId)));
-        if (fs.existsSync(basePath)) {
+        if (existsSync(basePath)) {
             this.start(watcherId, basePath, options, toDisposeWatcher);
         } else {
             const toClearTimer = new DisposableCollection();
             const timer = setInterval(() => {
-                if (fs.existsSync(basePath)) {
+                if (existsSync(basePath)) {
                     toClearTimer.dispose();
                     this.pushAdded(watcherId, basePath);
                     this.start(watcherId, basePath, options, toDisposeWatcher);
@@ -117,18 +117,18 @@ export class NsfwFileSystemWatcherServer implements FileSystemWatcherServer {
             this.debug('Files ignored for watching', options.ignored);
         }
 
-        let watcher: nsfw.NSFW | undefined = await nsfw(fs.realpathSync(basePath), (events: nsfw.ChangeEvent[]) => {
+        let watcher: onsfw.NSFW | undefined = await onsfw(realpathSync(basePath), (events: onsfw.FileChangeEvent[]) => {
             for (const event of events) {
-                if (event.action === nsfw.actions.CREATED) {
+                if (event.action === onsfw.actions.CREATED) {
                     this.pushAdded(watcherId, this.resolvePath(event.directory, event.file!));
                 }
-                if (event.action === nsfw.actions.DELETED) {
+                if (event.action === onsfw.actions.DELETED) {
                     this.pushDeleted(watcherId, this.resolvePath(event.directory, event.file!));
                 }
-                if (event.action === nsfw.actions.MODIFIED) {
+                if (event.action === onsfw.actions.MODIFIED) {
                     this.pushUpdated(watcherId, this.resolvePath(event.directory, event.file!));
                 }
-                if (event.action === nsfw.actions.RENAMED) {
+                if (event.action === onsfw.actions.RENAMED) {
                     this.pushDeleted(watcherId, this.resolvePath(event.directory, event.oldFile!));
                     this.pushAdded(watcherId, this.resolvePath(event.newDirectory || event.directory, event.newFile!));
                 }
@@ -216,11 +216,11 @@ export class NsfwFileSystemWatcherServer implements FileSystemWatcherServer {
     protected resolvePath(directory: string, file: string): string {
         const path = paths.join(directory, file);
         try {
-            return fs.realpathSync(path);
+            return realpathSync(path);
         } catch {
             try {
                 // file does not exist try to resolve directory
-                return paths.join(fs.realpathSync(directory), file);
+                return paths.join(realpathSync(directory), file);
             } catch {
                 // directory does not exist fall back to symlink
                 return path;

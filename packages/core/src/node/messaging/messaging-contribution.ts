@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as ws from 'ws';
-import * as url from 'url';
-import * as net from 'net';
-import * as http from 'http';
-import * as https from 'https';
+import ws from 'ws';
+import { URL } from 'url';
+import { Socket } from 'net';
+import { Server as httpServer, IncomingMessage } from 'http';
+import { Server as httpsServer } from 'https';
 import { injectable, inject, named, postConstruct, interfaces, Container } from 'inversify';
 import { MessageConnection } from 'vscode-ws-jsonrpc';
 import { createWebSocketConnection } from 'vscode-ws-jsonrpc/lib/socket/connection';
 import { IConnection } from 'vscode-ws-jsonrpc/lib/server/connection';
-import * as launch from 'vscode-ws-jsonrpc/lib/server/launch';
+import launch from 'vscode-ws-jsonrpc/lib/server/launch';
 import { ContributionProvider, ConnectionHandler, bindContributionProvider } from '../../common';
 import { WebSocketChannel } from '../../common/messaging/web-socket-channel';
 import { BackendApplicationContribution } from '../backend-application';
@@ -85,7 +85,7 @@ export class MessagingContribution implements BackendApplicationContribution, Me
     }
 
     protected checkAliveTimeout = 30000;
-    onStart(server: http.Server | https.Server): void {
+    onStart(server: httpServer | httpsServer): void {
         this.webSocketServer = new ws.Server({
             noServer: true,
             perMessageDeflate: {
@@ -117,14 +117,14 @@ export class MessagingContribution implements BackendApplicationContribution, Me
     /**
      * Route HTTP upgrade requests to the WebSocket server.
      */
-    protected handleHttpUpgrade(request: http.IncomingMessage, socket: net.Socket, head: Buffer): void {
+    protected handleHttpUpgrade(request: IncomingMessage, socket: Socket, head: Buffer): void {
         this.wsRequestValidator.allowWsUpgrade(request).then(allowed => {
             if (allowed) {
                 this.webSocketServer!.handleUpgrade(request, socket, head, client => {
                     this.webSocketServer!.emit('connection', client, request);
                 });
             } else {
-                console.error(`refused a websocket connection: ${request.connection.remoteAddress}`);
+                console.error(`refused a websocket connection: ${request.socket.remoteAddress}`);
                 socket.write('HTTP/1.1 403 Forbidden\n\n');
                 socket.destroy();
             }
@@ -135,8 +135,8 @@ export class MessagingContribution implements BackendApplicationContribution, Me
         });
     }
 
-    protected handleConnection(socket: ws, request: http.IncomingMessage): void {
-        const pathname = request.url && url.parse(request.url).pathname;
+    protected handleConnection(socket: ws, request: IncomingMessage): void {
+        const pathname = request.url && new URL(request.url, `http://${request.headers.host}`).pathname;
         if (pathname && !this.wsHandlers.route(pathname, socket)) {
             console.error('Cannot find a ws handler for the path: ' + pathname);
         }

@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as cp from 'child_process';
+import { spawn } from 'child_process';
 import * as fuzzy from 'fuzzy';
-import * as readline from 'readline';
+import { createInterface } from 'readline';
 import { rgPath } from 'vscode-ripgrep';
 import { injectable, inject } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
@@ -24,7 +24,7 @@ import { FileUri } from '@theia/core/lib/node/file-uri';
 import { CancellationTokenSource, CancellationToken, ILogger, isWindows } from '@theia/core';
 import { RawProcessFactory } from '@theia/process/lib/node';
 import { FileSearchService, WHITESPACE_QUERY_SEPARATOR } from '../common/file-search-service';
-import * as path from 'path';
+import { resolve as pResolve } from 'path';
 
 @injectable()
 export class FileSearchServiceImpl implements FileSearchService {
@@ -91,7 +91,7 @@ export class FileSearchServiceImpl implements FileSearchService {
                 await this.doFind(rootUri, rootOptions, candidate => {
 
                     // Convert OS-native candidate path to a file URI string
-                    const fileUri = FileUri.create(path.resolve(rootPath, candidate)).toString();
+                    const fileUri = FileUri.create(pResolve(rootPath, candidate)).toString();
 
                     // Skip results that have already been matched.
                     if (exactMatches.has(fileUri) || fuzzyMatches.has(fileUri)) {
@@ -133,7 +133,7 @@ export class FileSearchServiceImpl implements FileSearchService {
         return new Promise((resolve, reject) => {
             const cwd = FileUri.fsPath(rootUri);
             const args = this.getSearchArgs(options);
-            const ripgrep = cp.spawn(rgPath, args, { cwd, stdio: ['pipe', 'pipe', 'inherit'] });
+            const ripgrep = spawn(rgPath, args, { cwd, stdio: ['pipe', 'pipe', 'inherit'] });
             ripgrep.on('error', reject);
             ripgrep.on('exit', (code, signal) => {
                 if (typeof code === 'number' && code !== 0) {
@@ -146,7 +146,7 @@ export class FileSearchServiceImpl implements FileSearchService {
                 ripgrep.kill(); // most likely sends a signal.
                 resolve(); // avoid rejecting for no good reason.
             });
-            const lineReader = readline.createInterface({
+            const lineReader = createInterface({
                 input: ripgrep.stdout,
                 crlfDelay: Infinity,
             });

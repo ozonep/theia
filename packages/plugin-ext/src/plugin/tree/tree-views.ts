@@ -369,7 +369,7 @@ class TreeViewExtImpl<T> implements Disposable {
                     description: treeItem.description,
                     resourceUri: treeItem.resourceUri,
                     tooltip: treeItem.tooltip,
-                    collapsibleState: treeItem.collapsibleState,
+                    collapsibleState: treeItem.collapsibleState as unknown,
                     contextValue: treeItem.contextValue,
                     command: this.commandsConverter.toSafeCommand(treeItem.command, toDisposeElement)
                 } as TreeViewItem;

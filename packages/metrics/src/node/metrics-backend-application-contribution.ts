@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 import { injectable, inject, named } from '@theia/core/shared/inversify';
-import * as http from 'http';
-import * as https from 'https';
+import { Server as httpServer } from 'http';
+import { Server as httpsServer } from 'https';
 import * as express from '@theia/core/shared/express';
 import { ContributionProvider } from '@theia/core/lib/common';
 import { BackendApplicationContribution } from '@theia/core/lib/node';
@@ -37,7 +37,7 @@ export class MetricsBackendApplicationContribution implements BackendApplication
         });
     }
 
-    onStart(server: http.Server | https.Server): void {
+    onStart(server: httpServer | httpsServer): void {
         this.metricsProviders.getContributions().forEach(contribution => {
             contribution.startCollecting();
         });

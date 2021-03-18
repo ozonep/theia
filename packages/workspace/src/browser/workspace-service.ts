@@ -25,8 +25,8 @@ import { Deferred } from '@theia/core/lib/common/promise-util';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { ILogger, Disposable, DisposableCollection, Emitter, Event, MaybePromise, MessageService } from '@theia/core';
 import { WorkspacePreferences } from './workspace-preferences';
-import * as jsoncparser from 'jsonc-parser';
-import * as Ajv from 'ajv';
+import { parse, stripComments, format, applyEdits } from '@theia/core/shared/jsonc-parser';
+import Ajv from 'ajv';
 import { FrontendApplicationConfigProvider } from '@theia/core/lib/browser/frontend-application-config-provider';
 import { FileStat, BaseStat } from '@theia/filesystem/lib/common/files';
 import { FileService } from '@theia/filesystem/lib/browser/file-service';
@@ -259,8 +259,8 @@ export class WorkspaceService implements FrontendApplicationContribution {
                 };
             } else if (this.isWorkspaceFile(this._workspace)) {
                 const stat = await this.fileService.read(this._workspace.resource);
-                const strippedContent = jsoncparser.stripComments(stat.value);
-                const data = jsoncparser.parse(strippedContent);
+                const strippedContent = stripComments(stat.value);
+                const data = parse(strippedContent);
                 if (data && WorkspaceData.is(data)) {
                     return WorkspaceData.transformToAbsolute(data, stat);
                 }
@@ -419,8 +419,8 @@ export class WorkspaceService implements FrontendApplicationContribution {
     private async writeWorkspaceFile(workspaceFile: FileStat | undefined, workspaceData: WorkspaceData): Promise<FileStat | undefined> {
         if (workspaceFile) {
             const data = JSON.stringify(WorkspaceData.transformToRelative(workspaceData, workspaceFile));
-            const edits = jsoncparser.format(data, undefined, { tabSize: 3, insertSpaces: true, eol: '' });
-            const result = jsoncparser.applyEdits(data, edits);
+            const edits = format(data, undefined, { tabSize: 3, insertSpaces: true, eol: '' });
+            const result = applyEdits(data, edits);
             await this.fileService.write(workspaceFile.resource, result);
             return this.fileService.resolve(workspaceFile.resource);
         }

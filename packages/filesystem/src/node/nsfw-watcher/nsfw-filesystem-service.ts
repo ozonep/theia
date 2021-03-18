@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as nsfw from '@theia/core/shared/nsfw';
+import onsfw from '@theia/core/shared/onsfw';
 import { join } from 'path';
-import { promises as fsp } from 'fs';
+import { stat, realpath } from 'fs/promises';
 import { IMinimatch, Minimatch } from 'minimatch';
 import { FileUri } from '@theia/core/lib/node/file-uri';
 import {
@@ -35,7 +35,7 @@ export interface NsfwFileSystemWatcherServerOptions {
     info: (message: string, ...args: any[]) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: (message: string, ...args: any[]) => void;
-    nsfwOptions: nsfw.Options;
+    nsfwOptions: Partial<onsfw.Options>;
 }
 
 /**
@@ -67,7 +67,7 @@ export class NsfwWatcher {
     /**
      * When this field is set, it means the nsfw instance was successfully started.
      */
-    protected nsfw: nsfw.NSFW | undefined;
+    protected nsfw: onsfw.NSFW | undefined;
 
     /**
      * When the ref count hits zero, we schedule this watch handle to be disposed.
@@ -200,7 +200,7 @@ export class NsfwWatcher {
      * before running an NSFW watcher.
      */
     protected async start(): Promise<void> {
-        while (await this.orCancel(fsp.stat(this.fsPath).then(() => false, () => true))) {
+        while (await this.orCancel(stat(this.fsPath).then(() => false, () => true))) {
             await this.orCancel(new Promise(resolve => setTimeout(resolve, 500)));
         }
         const watcher = await this.orCancel(this.createNsfw());
@@ -217,15 +217,15 @@ export class NsfwWatcher {
     /**
      * Given a started nsfw instance, gracefully shut it down.
      */
-    protected async stopNsfw(watcher: nsfw.NSFW): Promise<void> {
+    protected async stopNsfw(watcher: onsfw.NSFW): Promise<void> {
         await watcher.stop()
             .then(() => 'success=true', error => error)
             .then(status => this.debug('STOPPED', status));
     }
 
-    protected async createNsfw(): Promise<nsfw.NSFW> {
-        const fsPath = await fsp.realpath(this.fsPath);
-        return nsfw(fsPath, events => this.handleNsfwEvents(events), {
+    protected async createNsfw(): Promise<onsfw.NSFW> {
+        const fsPath = await realpath(this.fsPath);
+        return onsfw(fsPath, events => this.handleNsfwEvents(events), {
             ...this.nsfwFileSystemWatchServerOptions.nsfwOptions,
             // The errorCallback is called whenever NSFW crashes *while* watching.
             // See https://github.com/atom/github/issues/342
@@ -241,7 +241,7 @@ export class NsfwWatcher {
         });
     }
 
-    protected handleNsfwEvents(events: nsfw.ChangeEvent[]): void {
+    protected handleNsfwEvents(events: onsfw.FileChangeEvent[]): void {
         // Only process events if someone is listening.
         if (this.isInUse()) {
             // This callback is async, but nsfw won't wait for it to finish before firing the next one.
@@ -249,7 +249,7 @@ export class NsfwWatcher {
             this.nsfwEventProcessingQueue = this.nsfwEventProcessingQueue.then(async () => {
                 const fileChangeCollection = new FileChangeCollection();
                 await Promise.all(events.map(async event => {
-                    if (event.action === nsfw.actions.RENAMED) {
+                    if (event.action === onsfw.actions.RENAMED) {
                         const [oldPath, newPath] = await Promise.all([
                             this.resolveEventPath(event.directory, event.oldFile!),
                             this.resolveEventPath(event.newDirectory || event.directory, event.newFile!),
@@ -258,11 +258,11 @@ export class NsfwWatcher {
                         this.pushFileChange(fileChangeCollection, FileChangeType.ADDED, newPath);
                     } else {
                         const path = await this.resolveEventPath(event.directory, event.file!);
-                        if (event.action === nsfw.actions.CREATED) {
+                        if (event.action === onsfw.actions.CREATED) {
                             this.pushFileChange(fileChangeCollection, FileChangeType.ADDED, path);
-                        } else if (event.action === nsfw.actions.DELETED) {
+                        } else if (event.action === onsfw.actions.DELETED) {
                             this.pushFileChange(fileChangeCollection, FileChangeType.DELETED, path);
-                        } else if (event.action === nsfw.actions.MODIFIED) {
+                        } else if (event.action === onsfw.actions.MODIFIED) {
                             this.pushFileChange(fileChangeCollection, FileChangeType.UPDATED, path);
                         }
                     }
@@ -282,11 +282,11 @@ export class NsfwWatcher {
     protected async resolveEventPath(directory: string, file: string): Promise<string> {
         const path = join(directory, file);
         try {
-            return await fsp.realpath(path);
+            return await realpath(path);
         } catch {
             try {
                 // file does not exist try to resolve directory
-                return join(await fsp.realpath(directory), file);
+                return join(await realpath(directory), file);
             } catch {
                 // directory does not exist fall back to symlink
                 return path;

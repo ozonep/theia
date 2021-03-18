@@ -49,7 +49,7 @@ export class MonacoColorRegistry extends ColorRegistry {
 
     protected toColor(value: Color | undefined): monaco.color.ColorValue | undefined {
         if (!value || typeof value === 'string') {
-            return value;
+            return value as string | undefined;
         }
         if ('kind' in value) {
             return monaco.color[value.kind](value.v, value.f);

@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
+import { readFile, existsSync } from '@theia/core/shared/fs-extra';
+import { join } from 'path';
 import { DebugAdapterExecutable, DebugAdapterContribution } from '../../common/debug-model';
 import { isWindows, isOSX } from '@theia/core/lib/common/os';
 import { IJSONSchema, IJSONSchemaSnippet } from '@theia/core/lib/common/json-schema';
@@ -89,7 +89,7 @@ export abstract class AbstractVSCodeDebugAdapterContribution implements DebugAda
         @unmanaged() readonly type: string,
         @unmanaged() readonly extensionPath: string
     ) {
-        this.pckPath = path.join(this.extensionPath, 'package.json');
+        this.pckPath = join(this.extensionPath, 'package.json');
         this.pck = this.parse();
         this.debuggerContribution = this.resolveDebuggerContribution();
         this.label = this.debuggerContribution.then(({ label }) => label);
@@ -98,10 +98,10 @@ export abstract class AbstractVSCodeDebugAdapterContribution implements DebugAda
     }
 
     protected async parse(): Promise<VSCodeExtensionPackage> {
-        let text = (await fs.readFile(this.pckPath)).toString();
+        let text = (await readFile(this.pckPath)).toString();
 
-        const nlsPath = path.join(this.extensionPath, 'package.nls.json');
-        if (fs.existsSync(nlsPath)) {
+        const nlsPath = join(this.extensionPath, 'package.nls.json');
+        if (existsSync(nlsPath)) {
             const nlsMap: {
                 [key: string]: string
             } = require(nlsPath);
@@ -225,11 +225,11 @@ export abstract class AbstractVSCodeDebugAdapterContribution implements DebugAda
         if (!program) {
             return undefined;
         }
-        program = path.join(this.extensionPath, program);
+        program = join(this.extensionPath, program);
         const programArgs = info && info.args || contribution.args || [];
         let runtime = info && info.runtime || contribution.runtime;
         if (runtime && runtime.indexOf('./') === 0) {
-            runtime = path.join(this.extensionPath, runtime);
+            runtime = join(this.extensionPath, runtime);
         }
 
         const runtimeArgs = info && info.runtimeArgs || contribution.runtimeArgs || [];

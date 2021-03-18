@@ -75,7 +75,7 @@ export class MonacoTextmateService implements FrontendApplicationContribution {
         }
 
         this.grammarRegistry = new Registry({
-            getOnigLib: () => this.onigasmPromise,
+            onigLib: this.onigasmPromise,
             theme: this.monacoThemeRegistry.getThemeData(this.currentEditorTheme),
             loadGrammar: async (scopeName: string) => {
                 const provider = this.textmateRegistry.getProvider(scopeName);

@@ -14,10 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as yargs from '@theia/core/shared/yargs';
-import * as fs from '@theia/core/shared/fs-extra';
-import * as jsoncparser from 'jsonc-parser';
+import { join, resolve, isAbsolute } from 'path';
+import yargs from '@theia/core/shared/yargs';
+import { pathExistsSync, pathExists, mkdirs, writeJson, readFile } from '@theia/core/shared/fs-extra';
+import { parse, stripComments } from '@theia/core/shared/jsonc-parser';
 
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 import { FileUri } from '@theia/core/lib/node';
@@ -43,13 +43,13 @@ export class WorkspaceCliContribution implements CliContribution {
         if (!wsPath) {
             wsPath = args['root-dir'] as string;
             if (!wsPath) {
-                this.workspaceRoot.resolve();
+                this.workspaceRoot.resolve(undefined);
                 return;
             }
         }
-        if (!path.isAbsolute(wsPath)) {
+        if (!isAbsolute(wsPath)) {
             const cwd = process.cwd();
-            wsPath = path.join(cwd, wsPath);
+            wsPath = join(cwd, wsPath);
         }
         if (wsPath && wsPath.endsWith('/')) {
             wsPath = wsPath.slice(0, -1);
@@ -124,7 +124,7 @@ export class DefaultWorkspaceServer implements WorkspaceServer {
     }
 
     protected workspaceStillExist(workspaceRootUri: string): boolean {
-        return fs.pathExistsSync(FileUri.fsPath(workspaceRootUri));
+        return pathExistsSync(FileUri.fsPath(workspaceRootUri));
     }
 
     protected async getWorkspaceURIFromCli(): Promise<string | undefined> {
@@ -142,10 +142,10 @@ export class DefaultWorkspaceServer implements WorkspaceServer {
     }
 
     protected async writeToFile(fsPath: string, data: object): Promise<void> {
-        if (!await fs.pathExists(fsPath)) {
-            await fs.mkdirs(path.resolve(fsPath, '..'));
+        if (!await pathExists(fsPath)) {
+            await mkdirs(resolve(fsPath, '..'));
         }
-        await fs.writeJson(fsPath, data);
+        await writeJson(fsPath, data);
     }
 
     /**
@@ -158,16 +158,16 @@ export class DefaultWorkspaceServer implements WorkspaceServer {
     }
 
     protected async readJsonFromFile(fsPath: string): Promise<object | undefined> {
-        if (await fs.pathExists(fsPath)) {
-            const rawContent = await fs.readFile(fsPath, 'utf-8');
-            const strippedContent = jsoncparser.stripComments(rawContent);
-            return jsoncparser.parse(strippedContent);
+        if (await pathExists(fsPath)) {
+            const rawContent = await readFile(fsPath, 'utf-8');
+            const strippedContent = stripComments(rawContent);
+            return parse(strippedContent);
         }
     }
 
     protected async getUserStoragePath(): Promise<string> {
         const configDirUri = await this.envServer.getConfigDirUri();
-        return path.resolve(FileUri.fsPath(configDirUri), 'recentworkspace.json');
+        return resolve(FileUri.fsPath(configDirUri), 'recentworkspace.json');
     }
 }
 

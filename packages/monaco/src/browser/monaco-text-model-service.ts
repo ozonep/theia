@@ -150,6 +150,7 @@ export class MonacoTextModelService implements monaco.editor.ITextModelService {
             const modelOption = this.modelOptions[change.preferenceName];
             if (modelOption) {
                 const options: monaco.editor.ITextModelUpdateOptions = {};
+                // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 options[modelOption] = change.newValue as any;
                 model.textEditorModel.updateOptions(options);

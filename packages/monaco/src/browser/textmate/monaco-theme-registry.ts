@@ -17,13 +17,16 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { injectable } from '@theia/core/shared/inversify';
-import { IRawTheme, Registry, IRawThemeSetting } from 'vscode-textmate';
+import { injectable, inject } from '@theia/core/shared/inversify';
+import { IRawTheme, Registry, IRawThemeSetting, IOnigLib } from 'vscode-textmate';
 
 export interface ThemeMix extends IRawTheme, monaco.editor.IStandaloneThemeData { }
 export interface MixStandaloneTheme extends monaco.services.IStandaloneTheme {
     themeData: ThemeMix
 }
+
+export const OnigPromise = Symbol('OnigPromise');
+export type OnigPromise = Promise<IOnigLib>;
 
 @injectable()
 export class MonacoThemeRegistry {
@@ -40,6 +43,9 @@ export class MonacoThemeRegistry {
     getTheme(name?: string): MixStandaloneTheme | undefined {
         return this.doGetTheme(name);
     }
+
+    @inject(OnigPromise)
+    protected readonly onigPromise: OnigPromise;
 
     protected doGetTheme(name: string | undefined): MixStandaloneTheme | undefined {
         const standaloneThemeService = monaco.services.StaticServices.standaloneThemeService.get();
@@ -110,7 +116,10 @@ export class MonacoThemeRegistry {
                 }
             });
 
-            const reg = new Registry();
+            const reg = new Registry({
+                onigLib: this.onigPromise,
+                loadGrammar: async () => undefined
+            });
             reg.setTheme(result);
             result.encodedTokensColors = reg.getColorMap();
             // index 0 has to be set to null as it is 'undefined' by default, but monaco code expects it to be null
@@ -152,5 +161,5 @@ export class MonacoThemeRegistry {
 export namespace MonacoThemeRegistry {
     export const SINGLETON = new MonacoThemeRegistry();
 
-    export const DARK_DEFAULT_THEME: string = SINGLETON.register(require('../../../data/monaco-themes/vscode/dark_mint.json'), {}, 'dark-theia', 'vs-dark').name!;
+    export const DARK_DEFAULT_THEME: string = SINGLETON.register(require('../../../data/monaco-themes/vscode/dark_github.json'), {}, 'dark-theia', 'vs-dark').name!;
 }

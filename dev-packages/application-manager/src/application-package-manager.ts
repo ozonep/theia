@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as cp from 'child_process';
+import { join } from 'path';
+import { pathExists, remove, ensureDir, copy } from 'fs-extra';
+import { ChildProcess, ForkOptions } from 'child_process';
 import { ApplicationPackage, ApplicationPackageOptions } from '@theia/application-package';
 import { WebpackGenerator, FrontendGenerator, BackendGenerator } from './generator';
 import { ApplicationProcess } from './application-process';
@@ -35,15 +35,15 @@ export class ApplicationPackageManager {
     constructor(options: ApplicationPackageOptions) {
         this.pck = new ApplicationPackage(options);
         this.process = new ApplicationProcess(this.pck, options.projectPath);
-        this.__process = new ApplicationProcess(this.pck, path.join(__dirname, '..'));
+        this.__process = new ApplicationProcess(this.pck, join(__dirname, '..'));
         this.webpack = new WebpackGenerator(this.pck);
         this.backend = new BackendGenerator(this.pck);
         this.frontend = new FrontendGenerator(this.pck);
     }
 
     protected async remove(fsPath: string): Promise<void> {
-        if (await fs.pathExists(fsPath)) {
-            await fs.remove(fsPath);
+        if (await pathExists(fsPath)) {
+            await remove(fsPath);
         }
     }
 
@@ -60,8 +60,8 @@ export class ApplicationPackageManager {
     }
 
     async copy(): Promise<void> {
-        await fs.ensureDir(this.pck.lib());
-        await fs.copy(this.pck.frontend('index.html'), this.pck.lib('index.html'));
+        await ensureDir(this.pck.lib());
+        await copy(this.pck.frontend('index.html'), this.pck.lib('index.html'));
     }
 
     async build(args: string[] = []): Promise<void> {
@@ -70,16 +70,16 @@ export class ApplicationPackageManager {
         return this.__process.run('webpack', args);
     }
 
-    start(args: string[] = []): cp.ChildProcess {
+    start(args: string[] = []): ChildProcess {
         return this.startBrowser(args);
     }
 
-    startBrowser(args: string[]): cp.ChildProcess {
+    startBrowser(args: string[]): ChildProcess {
         const { mainArgs, options } = this.adjustArgs(args);
         return this.__process.fork(this.pck.backend('main.js'), mainArgs, options);
     }
 
-    private adjustArgs(args: string[], forkOptions: cp.ForkOptions = {}): Readonly<{ mainArgs: string[]; options: cp.ForkOptions }> {
+    private adjustArgs(args: string[], forkOptions: ForkOptions = {}): Readonly<{ mainArgs: string[]; options: ForkOptions }> {
         const options = {
             ...this.forkOptions,
             forkOptions
@@ -96,7 +96,7 @@ export class ApplicationPackageManager {
         };
     }
 
-    private get forkOptions(): cp.ForkOptions {
+    private get forkOptions(): ForkOptions {
         return {
             stdio: [0, 1, 2, 'ipc'],
             env: {

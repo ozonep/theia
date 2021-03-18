@@ -178,7 +178,7 @@ export namespace DirNode {
         let containing = node;
         while (!!containing && !is(containing)) {
             containing = containing.parent;
-        }
-        return containing;
+        };
+        return containing ? containing as DirNode : undefined;
     }
 }

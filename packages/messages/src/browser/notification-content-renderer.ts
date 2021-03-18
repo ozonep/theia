@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as markdownit from 'markdown-it';
+import markdownit from 'markdown-it';
 import { injectable } from '@theia/core/shared/inversify';
 
 @injectable()

@@ -97,7 +97,7 @@ export class WorkspaceSymbolCommand implements QuickOpenModel, CommandContributi
 
             const items: QuickOpenItem[] = [];
 
-            const workspaceProviderPromises = [];
+            const workspaceProviderPromises: Promise<SymbolInformation[] | undefined>[] = [];
             for (const provider of this.languages.workspaceSymbolProviders) {
                 workspaceProviderPromises.push((async () => {
                     const symbols = await provider.provideWorkspaceSymbols(param, newCancellationSource.token);

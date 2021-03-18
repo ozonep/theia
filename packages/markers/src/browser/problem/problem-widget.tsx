@@ -24,7 +24,7 @@ import {
     ApplicationShell, Navigatable, ExpandableTreeNode, SelectableTreeNode
 } from '@theia/core/lib/browser';
 import { DiagnosticSeverity } from '@theia/core/shared/vscode-languageserver-types';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import { ProblemPreferences } from './problem-preferences';
 import { DisposableCollection } from '@theia/core/lib/common/disposable';
 

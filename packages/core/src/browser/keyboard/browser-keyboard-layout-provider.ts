@@ -35,7 +35,7 @@ export class BrowserKeyboardLayoutProvider implements KeyboardLayoutProvider, Ke
     @inject(LocalStorageService)
     protected readonly storageService: LocalStorageService;
 
-    protected readonly initialized = new Deferred();
+    protected readonly initialized = new Deferred<void>();
     protected readonly nativeLayoutChanged = new Emitter<NativeKeyboardLayout>();
 
     get onDidChangeNativeLayout(): Event<NativeKeyboardLayout> {

@@ -434,8 +434,8 @@ export class MonacoEditor extends MonacoEditorServices implements TextEditor {
 
     protected toDeltaDecorations(params: DeltaDecorationParams): IModelDeltaDecoration[] {
         return params.newDecorations.map(decoration => <IModelDeltaDecoration>{
-            ...decoration,
-            range: this.p2m.asRange(decoration.range),
+            options: decoration.options as unknown,
+            range: this.p2m.asRange(decoration.range as unknown),
         });
     }
 
@@ -456,7 +456,7 @@ export class MonacoEditor extends MonacoEditorServices implements TextEditor {
             options,
             range,
             id
-        } as EditorDecoration & Readonly<{ id: string }>;
+        } as unknown as EditorDecoration & Readonly<{ id: string }>;
     }
 
     getVisibleColumn(position: Position): number {

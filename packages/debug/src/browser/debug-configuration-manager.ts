@@ -19,8 +19,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import debounce = require('p-debounce');
-import { visit } from 'jsonc-parser';
+import debounce from 'p-debounce';
+import { visit } from '@theia/core/shared/jsonc-parser';
 import { inject, injectable, postConstruct } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
 import { Emitter, Event, WaitUntilEvent } from '@theia/core/lib/common/event';

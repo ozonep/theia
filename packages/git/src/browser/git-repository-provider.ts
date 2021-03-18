@@ -114,7 +114,7 @@ export class GitRepositoryProvider {
      * Returns with all know repositories.
      */
     get allRepositories(): Repository[] {
-        const repositories = [];
+        const repositories: Repository[] = [];
         for (const scmRepository of this.scmService.repositories) {
             const repository = this.toGitRepository(scmRepository);
             if (repository) {

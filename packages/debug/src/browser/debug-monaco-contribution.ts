@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { visit } from 'jsonc-parser';
+import { visit } from '@theia/core/shared/jsonc-parser';
 import URI from '@theia/core/lib/common/uri';
 
 monaco.languages.register({

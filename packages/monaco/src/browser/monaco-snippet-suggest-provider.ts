@@ -18,7 +18,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as jsoncparser from 'jsonc-parser';
+import { parse } from '@theia/core/shared/jsonc-parser';
 import { injectable, inject } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
 import { Disposable, DisposableCollection } from '@theia/core/lib/common/disposable';
@@ -143,7 +143,7 @@ export class MonacoSnippetSuggestProvider implements monaco.languages.Completion
             if (toDispose.disposed) {
                 return;
             }
-            const snippets = value && jsoncparser.parse(value, undefined, { disallowComments: false });
+            const snippets = value && parse(value, undefined, { disallowComments: false });
             toDispose.push(this.fromJSON(snippets, options));
         } catch (e) {
             if (!(e instanceof FileOperationError)) {

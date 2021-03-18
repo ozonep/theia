@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as os from 'os';
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
+import { tmpdir } from 'os';
+import { access, constants, stat, createReadStream, ReadStream, mkdir, Stats } from '@theia/core/shared/fs-extra';
+import { join, basename, relative } from 'path';
 import { v4 } from 'uuid';
 import { Request, Response } from '@theia/core/shared/express';
 import { inject, injectable } from '@theia/core/shared/inversify';
@@ -54,11 +54,11 @@ export abstract class FileDownloadHandler {
      * Prepares the file and the link for download
      */
     protected async prepareDownload(request: Request, response: Response, options: PrepareDownloadOptions): Promise<void> {
-        const name = path.basename(options.filePath);
+        const name = basename(options.filePath);
         try {
-            await fs.access(options.filePath, fs.constants.R_OK);
-            const stat = await fs.stat(options.filePath);
-            this.fileDownloadCache.addDownload(options.downloadId, { file: options.filePath, remove: options.remove, size: stat.size, root: options.root });
+            await access(options.filePath, constants.R_OK);
+            const stati = await stat(options.filePath);
+            this.fileDownloadCache.addDownload(options.downloadId, { file: options.filePath, remove: options.remove, size: stati.size, root: options.root });
             // do not send filePath but instead use the downloadId
             const data = { name, id: options.downloadId };
             response.status(OK).send(data).end();
@@ -73,13 +73,13 @@ export abstract class FileDownloadHandler {
         // this sets the content-disposition and content-type automatically
         response.attachment(filePath);
         try {
-            await fs.access(filePath, fs.constants.R_OK);
+            await access(filePath, constants.R_OK);
             response.setHeader('Accept-Ranges', 'bytes');
             // parse range header and combine multiple ranges
             const range = this.parseRangeHeader(request.headers['range'], statSize);
             if (!range) {
                 response.setHeader('Content-Length', statSize);
-                this.streamDownload(OK, response, fs.createReadStream(filePath), id);
+                this.streamDownload(OK, response, createReadStream(filePath), id);
             } else {
                 const rangeStart = range.start;
                 const rangeEnd = range.end;
@@ -92,7 +92,7 @@ export abstract class FileDownloadHandler {
                 response.setHeader('Content-Range', `bytes ${rangeStart}-${rangeEnd}/${statSize}`);
                 response.setHeader('Content-Length', rangeStart === rangeEnd ? 0 : (rangeEnd - rangeStart + 1));
                 response.setHeader('Cache-Control', 'no-cache');
-                this.streamDownload(PARTIAL_CONTENT, response, fs.createReadStream(filePath, { start: rangeStart, end: rangeEnd }), id);
+                this.streamDownload(PARTIAL_CONTENT, response, createReadStream(filePath, { start: rangeStart, end: rangeEnd }), id);
             }
         } catch (e) {
             this.fileDownloadCache.deleteDownload(id);
@@ -102,7 +102,7 @@ export abstract class FileDownloadHandler {
     /**
      * Streams the file and pipe it to the Response to avoid any OOM issues
      */
-    protected streamDownload(status: number, response: Response, stream: fs.ReadStream, id: string): void {
+    protected streamDownload(status: number, response: Response, stream: ReadStream, id: string): void {
         response.status(status);
         stream.on('error', error => {
             this.fileDownloadCache.deleteDownload(id);
@@ -135,14 +135,14 @@ export abstract class FileDownloadHandler {
             end: (isNaN(end) || end > statSize - 1) ? (statSize - 1) : end
         };
     }
-    protected async archive(inputPath: string, outputPath: string = path.join(os.tmpdir(), v4()), entries?: string[]): Promise<string> {
+    protected async archive(inputPath: string, outputPath: string = join(tmpdir(), v4()), entries?: string[]): Promise<string> {
         await this.directoryArchiver.archive(inputPath, outputPath, entries);
         return outputPath;
     }
 
     protected async createTempDir(downloadId: string = v4()): Promise<string> {
-        const outputPath = path.join(os.tmpdir(), downloadId);
-        await fs.mkdir(outputPath);
+        const outputPath = join(tmpdir(), downloadId);
+        await mkdir(outputPath);
         return outputPath;
     }
 
@@ -213,9 +213,9 @@ export class SingleFileDownloadHandler extends FileDownloadHandler {
         const uri = new URI(query.uri).toString(true);
         const filePath = FileUri.fsPath(uri);
 
-        let stat: fs.Stats;
+        let stati: Stats;
         try {
-            stat = await fs.stat(filePath);
+            stati = await stat(filePath);
         } catch {
             this.handleError(response, `The file does not exist. URI: ${uri}.`, NOT_FOUND);
             return;
@@ -223,11 +223,11 @@ export class SingleFileDownloadHandler extends FileDownloadHandler {
         try {
             const downloadId = v4();
             const options: PrepareDownloadOptions = { filePath, downloadId, remove: false };
-            if (!stat.isDirectory()) {
+            if (!stati.isDirectory()) {
                 await this.prepareDownload(request, response, options);
             } else {
                 const outputRootPath = await this.createTempDir(downloadId);
-                const outputPath = path.join(outputRootPath, `${path.basename(filePath)}.tar`);
+                const outputPath = join(outputRootPath, `${basename(filePath)}.tar`);
                 await this.archive(filePath, outputPath);
                 options.filePath = outputPath;
                 options.remove = true;
@@ -264,7 +264,7 @@ export class MultiFileDownloadHandler extends FileDownloadHandler {
         }
         for (const uri of body.uris) {
             try {
-                await fs.access(FileUri.fsPath(uri));
+                await access(FileUri.fsPath(uri));
             } catch {
                 this.handleError(response, `The file does not exist. URI: ${uri}.`, NOT_FOUND);
                 return;
@@ -274,12 +274,12 @@ export class MultiFileDownloadHandler extends FileDownloadHandler {
             const downloadId = v4();
             const outputRootPath = await this.createTempDir(downloadId);
             const distinctUris = Array.from(new Set(body.uris.map(uri => new URI(uri))));
-            const tarPaths = [];
+            const tarPaths: string[] = [];
             // We should have one key in the map per FS drive.
             for (const [rootUri, uris] of (await this.directoryArchiver.findCommonParents(distinctUris)).entries()) {
                 const rootPath = FileUri.fsPath(rootUri);
-                const entries = uris.map(FileUri.fsPath).map(p => path.relative(rootPath, p));
-                const outputPath = path.join(outputRootPath, `${path.basename(rootPath)}.tar`);
+                const entries = uris.map(FileUri.fsPath).map(p => relative(rootPath, p));
+                const outputPath = join(outputRootPath, `${basename(rootPath)}.tar`);
                 await this.archive(rootPath, outputPath, entries);
                 tarPaths.push(outputPath);
             }
@@ -291,9 +291,9 @@ export class MultiFileDownloadHandler extends FileDownloadHandler {
                 await this.prepareDownload(request, response, options);
             } else {
                 // We need to tar the tars.
-                const outputPath = path.join(outputRootPath, `theia-archive-${Date.now()}.tar`);
+                const outputPath = join(outputRootPath, `theia-archive-${Date.now()}.tar`);
                 options.filePath = outputPath;
-                await this.archive(outputRootPath, outputPath, tarPaths.map(p => path.relative(outputRootPath, p)));
+                await this.archive(outputRootPath, outputPath, tarPaths.map(p => relative(outputRootPath, p)));
                 await this.prepareDownload(request, response, options);
             }
         } catch (e) {

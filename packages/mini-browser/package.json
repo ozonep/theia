@@ -6,9 +6,10 @@
     "@theia/core": "1.11.0",
     "@theia/filesystem": "1.11.0",
     "@types/mime-types": "^2.1.0",
-    "mime-types": "^2.1.18",
-    "pdfobject": "^2.0.201604172",
-    "uuid": "^8.0.0",
+    "express": "4.17.1",
+    "mime-types": "^2.1.29",
+    "pdfobject": "^2.2.4",
+    "uuid": "^8.3.2",
     "vhost": "^3.0.2"
   },
   "publishConfig": {

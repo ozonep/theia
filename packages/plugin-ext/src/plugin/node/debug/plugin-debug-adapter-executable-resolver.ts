@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
+import { join } from 'path';
 import * as theia from '@theia/plugin';
 import { PlatformSpecificAdapterContribution, PluginPackageDebuggersContribution } from '../../../common';
 import { isWindows, isOSX } from '@theia/core/lib/common/os';
@@ -29,11 +29,11 @@ export async function resolveDebugAdapterExecutable(
     if (!program) {
         return undefined;
     }
-    program = path.join(pluginPath, program);
+    program = join(pluginPath, program);
     const programArgs = info && info.args || debuggerContribution.args || [];
     let runtime = info && info.runtime || debuggerContribution.runtime;
     if (runtime && runtime.indexOf('./') === 0) {
-        runtime = path.join(pluginPath, runtime);
+        runtime = join(pluginPath, runtime);
     }
     const runtimeArgs = info && info.runtimeArgs || debuggerContribution.runtimeArgs || [];
     const command = runtime ? runtime : program;

@@ -198,7 +198,7 @@ export class MonacoEditorProvider {
      * Intercept internal Monaco open calls and delegate to OpenerService.
      */
     protected async interceptOpen(monacoUri: monaco.Uri | string, monacoOptions?: monaco.services.OpenInternalOptions | monaco.services.OpenExternalOptions): Promise<boolean> {
-        let options = undefined;
+        let options: any = {};
         if (monacoOptions) {
             if ('openToSide' in monacoOptions && monacoOptions.openToSide) {
                 options = Object.assign(options || {}, <WidgetOpenerOptions>{
@@ -287,7 +287,7 @@ export class MonacoEditorProvider {
         const options = this.createOptions(this.preferencePrefixes, model.uri, model.languageId);
         options.model = model.textEditorModel;
         options.readOnly = model.readOnly;
-        options.lineNumbersMinChars = 3;
+        options.lineNumbersMinChars = model.lineNumbersMinChars;
         return options;
     }
     protected updateMonacoEditorOptions(editor: MonacoEditor, event?: EditorPreferenceChange): void {

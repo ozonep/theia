@@ -14,14 +14,14 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as yargs from 'yargs';
+import yargs from 'yargs';
 import { injectable } from 'inversify';
 import { LogLevel } from '../common/logger';
 import { CliContribution } from './cli';
-import * as fs from 'fs-extra';
-import * as nsfw from 'nsfw';
+import { readFile } from 'fs-extra';
+import onsfw from 'onsfw';
 import { Event, Emitter } from '../common/event';
-import * as path from 'path';
+import { resolve } from 'path';
 
 /** Maps logger names to log levels.  */
 export interface LogLevels {
@@ -79,7 +79,7 @@ export class LogLevelCliContribution implements CliContribution {
         if (args['log-config'] !== undefined) {
             let filename: string = args['log-config'] as string;
             try {
-                filename = path.resolve(filename);
+                filename = resolve(filename);
 
                 await this.slurpLogConfigFile(filename);
                 await this.watchLogConfigFile(filename);
@@ -90,12 +90,12 @@ export class LogLevelCliContribution implements CliContribution {
     }
 
     protected watchLogConfigFile(filename: string): Promise<void> {
-        return nsfw(filename, async (events: nsfw.ChangeEvent[]) => {
+        return onsfw(filename, async (events: onsfw.FileChangeEvent[]) => {
             try {
                 for (const event of events) {
                     switch (event.action) {
-                        case nsfw.actions.CREATED:
-                        case nsfw.actions.MODIFIED:
+                        case onsfw.actions.CREATED:
+                        case onsfw.actions.MODIFIED:
                             await this.slurpLogConfigFile(filename);
                             this.logConfigChangedEvent.fire(undefined);
                             break;
@@ -104,14 +104,14 @@ export class LogLevelCliContribution implements CliContribution {
             } catch (e) {
                 console.error(`Error reading log config file ${filename}: ${e}`);
             }
-        }).then((watcher: nsfw.NSFW) => {
+        }).then((watcher: onsfw.NSFW) => {
             watcher.start();
         });
     }
 
     protected async slurpLogConfigFile(filename: string): Promise<void> {
         try {
-            const content = await fs.readFile(filename, 'utf-8');
+            const content = await readFile(filename, 'utf-8');
             const data = JSON.parse(content);
 
             let newDefaultLogLevel: LogLevel = LogLevel.INFO;

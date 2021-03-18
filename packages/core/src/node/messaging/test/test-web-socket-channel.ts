@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as ws from 'ws';
+import ws from 'ws';
 import * as http from 'http';
 import * as https from 'https';
 import { WebSocketChannel } from '../../../common/messaging/web-socket-channel';

@@ -14,23 +14,11 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as os from 'os';
-import * as fs from 'fs-extra';
-import * as yargs from 'yargs';
+import { EOL } from 'os';
+import { ensureFile, writeFile } from 'fs-extra';
 import { ApplicationPackage } from '@theia/application-package';
 
-const argv = yargs.option('mode', {
-    description: 'Mode to use',
-    choices: ['development', 'production'],
-    default: 'production' as 'development' | 'production',
-}).option('split-frontend', {
-    description: 'Split frontend modules into separate chunks. By default enabled in the dev mode and disabled in the prod mode.',
-    type: 'boolean',
-}).option('app-target', {
-    description: 'The target application type. Overrides ["theia.target"] in the application\'s package.json.',
-    choices: ['browser'],
-}).argv;
-const splitFrontend: boolean = argv['split-frontend'] ?? argv.mode === 'development';
+const splitFrontend: boolean = true;
 
 export abstract class AbstractGenerator {
 
@@ -57,16 +45,12 @@ export abstract class AbstractGenerator {
             }
             return invocation;
         }).map(statement => `    .then(function () { return ${statement}.then(load) })`);
-        return os.EOL + lines.join(os.EOL);
+        return EOL + lines.join(EOL);
     }
 
     protected async write(path: string, content: string): Promise<void> {
-        await fs.ensureFile(path);
-        await fs.writeFile(path, content);
-    }
-
-    protected ifMonaco(value: () => string, defaultValue: () => string = () => ''): string {
-        return (this.pck.extensionPackages.some(e => e.name === '@theia/monaco') ? value : defaultValue)();
+        await ensureFile(path);
+        await writeFile(path, content);
     }
 
     protected prettyStringify(object: object): string {

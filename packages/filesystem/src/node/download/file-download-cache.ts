@@ -15,7 +15,7 @@
  ********************************************************************************/
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { ILogger } from '@theia/core/lib/common/logger';
-import * as rimraf from 'rimraf';
+import rimraf from 'rimraf';
 
 export interface DownloadStorageItem {
     file: string;

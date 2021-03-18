@@ -266,7 +266,7 @@ export class MonacoQuickOpenService extends QuickOpenService {
         widget.tree.onDidChangeFocus(() => this.onDidChangeActiveEmitter.fire(this.getActive()));
         return widget;
     }
-
+    // @ts-ignore
     get widgetNode(): HTMLElement {
         return this._widgetNode;
     }

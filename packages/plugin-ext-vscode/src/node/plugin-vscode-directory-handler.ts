@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from 'fs';
-import * as path from 'path';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { injectable } from '@theia/core/shared/inversify';
 import { RecursivePartial } from '@theia/core';
 import {
@@ -42,15 +42,15 @@ export class PluginVsCodeDirectoryHandler implements PluginDeployerDirectoryHand
     }
 
     protected resolveFromVSIX(plugin: PluginDeployerEntry): boolean {
-        if (!fs.existsSync(path.join(plugin.path(), 'extension.vsixmanifest'))) {
+        if (!existsSync(join(plugin.path(), 'extension.vsixmanifest'))) {
             return false;
         }
-        const pluginPath = path.join(plugin.path(), 'extension');
+        const pluginPath = join(plugin.path(), 'extension');
         return this.resolvePackage(plugin, { pluginPath, pck: this.requirePackage(pluginPath) });
     }
 
     protected resolveFromNpmTarball(plugin: PluginDeployerEntry): boolean {
-        const pluginPath = path.join(plugin.path(), 'package');
+        const pluginPath = join(plugin.path(), 'package');
         return this.resolvePackage(plugin, { pluginPath, pck: this.requirePackage(pluginPath) });
     }
 
@@ -76,7 +76,7 @@ export class PluginVsCodeDirectoryHandler implements PluginDeployerDirectoryHand
 
     protected requirePackage(pluginPath: string): PluginPackage | undefined {
         try {
-            return require(path.join(pluginPath, 'package.json'));
+            return require(join(pluginPath, 'package.json'));
         } catch {
             return undefined;
         }

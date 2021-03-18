@@ -25,12 +25,11 @@
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 import { basename, dirname, normalize, join } from 'path';
 import { v4 } from 'uuid';
-import * as os from 'os';
-import * as fs from 'fs';
+import { tmpdir } from 'os';
 import {
-    mkdir, open, close, read, write, fdatasync, Stats,
+    mkdir, open, close, access, read, write, fdatasync, Stats,
     lstat, stat, readdir, readFile, exists, chmod,
-    rmdir, unlink, rename, futimes, truncate
+    rmdir, unlink, rename, futimes, truncate, createReadStream, createWriteStream
 } from 'fs';
 import { promisify } from 'util';
 import URI from '@theia/core/lib/common/uri';
@@ -75,7 +74,7 @@ export namespace DiskFileSystemProvider {
         // If the file is a symbolic link pointing to a non
         // existing file, the stat will be of the link and
         // the `dangling` flag will indicate this.
-        stat: fs.Stats;
+        stat: Stats;
 
         // Will be provided if the resource is a symbolic link
         // on disk. Use the `dangling` flag to find out if it
@@ -150,7 +149,7 @@ export class DiskFileSystemProvider implements Disposable,
 
     async stat(resource: URI): Promise<Stat> {
         try {
-            const { stat, symbolicLink } = await this.statLink(this.toFilePath(resource)); // cannot use fs.stat() here to support links properly
+            const { stat, symbolicLink } = await this.statLink(this.toFilePath(resource)); // cannot use stat() here to support links properly
 
             return {
                 type: this.toType(stat, symbolicLink),
@@ -165,7 +164,7 @@ export class DiskFileSystemProvider implements Disposable,
 
     async access(resource: URI, mode?: number): Promise<void> {
         try {
-            await promisify(fs.access)(this.toFilePath(resource), mode);
+            await promisify(access)(this.toFilePath(resource), mode);
         } catch (error) {
             throw this.toFileSystemProviderError(error);
         }
@@ -190,7 +189,7 @@ export class DiskFileSystemProvider implements Disposable,
             /* ignore - use stat() instead */
         }
 
-        // If the stat is a symbolic link or failed to stat, use fs.stat()
+        // If the stat is a symbolic link or failed to stat, use stat()
         // which for symbolic links will stat the target they point to
         try {
             const stats = await promisify(stat)(path);
@@ -210,7 +209,7 @@ export class DiskFileSystemProvider implements Disposable,
 
     async readdir(resource: URI): Promise<[string, FileType][]> {
         try {
-            const children = await promisify(fs.readdir)(this.toFilePath(resource));
+            const children = await promisify(readdir)(this.toFilePath(resource));
 
             const result: [string, FileType][] = [];
             await Promise.all(children.map(async child => {
@@ -416,7 +415,7 @@ export class DiskFileSystemProvider implements Disposable,
 
     private normalizePos(fd: number, pos: number): number | null {
 
-        // when calling fs.read/write we try to avoid passing in the "pos" argument and
+        // when calling read/write we try to avoid passing in the "pos" argument and
         // rather prefer to pass in "null" because this avoids an extra seek(pos)
         // call that in some cases can even fail (e.g. when opening a file over FTP -
         // see https://github.com/microsoft/vscode/issues/73884).
@@ -523,7 +522,7 @@ export class DiskFileSystemProvider implements Disposable,
 
     protected async rimrafMove(path: string): Promise<void> {
         try {
-            const pathInTemp = join(os.tmpdir(), v4());
+            const pathInTemp = join(tmpdir(), v4());
             try {
                 await promisify(rename)(path, pathInTemp);
             } catch (error) {
@@ -719,9 +718,9 @@ export class DiskFileSystemProvider implements Disposable,
     }
 
     protected async mkdirp(path: string, mode?: number): Promise<void> {
-        const mkdir = async () => {
+        const imkdir = async () => {
             try {
-                await promisify(fs.mkdir)(path, mode);
+                await promisify(mkdir)(path, mode);
             } catch (error) {
 
                 // ENOENT: a parent folder does not exist yet
@@ -733,7 +732,7 @@ export class DiskFileSystemProvider implements Disposable,
                 // return normally in that case if its a folder
                 let targetIsFile = false;
                 try {
-                    const fileStat = await promisify(fs.stat)(path);
+                    const fileStat = await promisify(stat)(path);
                     targetIsFile = !fileStat.isDirectory();
                 } catch (statError) {
                     throw error; // rethrow original error if stat fails
@@ -751,7 +750,7 @@ export class DiskFileSystemProvider implements Disposable,
         }
 
         try {
-            await mkdir();
+            await imkdir();
         } catch (error) {
 
             // ENOENT: a parent folder does not exist yet, continue
@@ -759,7 +758,7 @@ export class DiskFileSystemProvider implements Disposable,
             if (error.code === 'ENOENT') {
                 await this.mkdirp(dirname(path), mode);
 
-                return mkdir();
+                return imkdir();
             }
 
             // Any other error
@@ -769,8 +768,8 @@ export class DiskFileSystemProvider implements Disposable,
 
     protected doCopyFile(source: string, target: string, mode: number): Promise<void> {
         return new Promise((resolve, reject) => {
-            const reader = fs.createReadStream(source);
-            const writer = fs.createWriteStream(target, { mode });
+            const reader = createReadStream(source);
+            const writer = createWriteStream(target, { mode });
 
             let finished = false;
             const finish = (error?: Error) => {
@@ -783,7 +782,7 @@ export class DiskFileSystemProvider implements Disposable,
                     }
 
                     // we need to explicitly chmod because of https://github.com/nodejs/node/issues/1104
-                    fs.chmod(target, mode, error => error ? reject(error) : resolve());
+                    chmod(target, mode, error => error ? reject(error) : resolve());
                 }
             };
 

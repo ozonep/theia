@@ -91,7 +91,7 @@ export class DocumentSemanticTokensAdapter {
                 return v;
             }
             return new SemanticTokensEdits(v.edits.map(edit => new SemanticTokensEdit(edit.start, edit.deleteCount, edit.data ?
-                new Uint32Array(edit.data) : edit.data)), v.resultId);
+                new Uint32Array(edit.data) : undefined)), v.resultId);
         }
         return v;
     }

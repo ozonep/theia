@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { injectable } from '@theia/core/shared/inversify';
-import * as fs from '@theia/core/shared/fs-extra';
+import { createWriteStream, stat } from '@theia/core/shared/fs-extra';
 import { pack } from 'tar-fs';
 import URI from '@theia/core/lib/common/uri';
 import { FileUri } from '@theia/core/lib/node/file-uri';
@@ -25,7 +25,7 @@ export class DirectoryArchiver {
 
     async archive(inputPath: string, outputPath: string, entries?: string[]): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            pack(inputPath, { entries }).pipe(fs.createWriteStream(outputPath)).on('finish', () => resolve()).on('error', e => reject(e));
+            pack(inputPath, { entries }).pipe(createWriteStream(outputPath)).on('finish', () => resolve()).on('error', e => reject(e));
         });
     }
 
@@ -96,8 +96,8 @@ export class DirectoryArchiver {
 
     protected async isDir(uri: URI): Promise<boolean> {
         try {
-            const stat = await fs.stat(FileUri.fsPath(uri));
-            return stat.isDirectory();
+            const istat = await stat(FileUri.fsPath(uri));
+            return istat.isDirectory();
         } catch {
             return false;
         }

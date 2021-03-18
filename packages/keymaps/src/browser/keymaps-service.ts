@@ -19,7 +19,7 @@ import { OpenerService, open, WidgetOpenerOptions, Widget } from '@theia/core/li
 import { KeybindingRegistry, KeybindingScope } from '@theia/core/lib/browser/keybinding';
 import { Keybinding } from '@theia/core/lib/common/keybinding';
 import { UserStorageUri } from '@theia/userstorage/lib/browser';
-import * as jsoncparser from 'jsonc-parser';
+import { parse, modify } from '@theia/core/shared/jsonc-parser';
 import { Emitter } from '@theia/core/lib/common/event';
 import { MonacoTextModelService } from '@theia/monaco/lib/browser/monaco-text-model-service';
 import { MonacoEditorModel } from '@theia/monaco/lib/browser/monaco-editor-model';
@@ -80,7 +80,7 @@ export class KeymapsService {
             const keybindings: Keybinding[] = [];
             if (model.valid) {
                 const content = model.getText();
-                const json = jsoncparser.parse(content, undefined, { disallowComments: false });
+                const json = parse(content, undefined, { disallowComments: false });
                 if (Array.isArray(json)) {
                     for (const value of json) {
                         if (Keybinding.is(value)) {
@@ -119,7 +119,7 @@ export class KeymapsService {
         return this.updateKeymap(() => {
             let newAdded = false;
             let oldRemoved = false;
-            const keybindings = [];
+            const keybindings: Keybinding[] = [];
             for (let keybinding of this.keybindingRegistry.getKeybindingsByScope(KeybindingScope.USER)) {
                 if (Keybinding.equals(keybinding, newKeybinding, true, true)) {
                     newAdded = true;
@@ -188,7 +188,7 @@ export class KeymapsService {
                 const textModel = model.textEditorModel;
                 const { insertSpaces, tabSize, defaultEOL } = textModel.getOptions();
                 const editOperations: monaco.editor.IIdentifiedSingleEditOperation[] = [];
-                for (const edit of jsoncparser.modify(content, [], keybindings.map(binding => Keybinding.apiObjectify(binding)), {
+                for (const edit of modify(content, [], keybindings.map(binding => Keybinding.apiObjectify(binding)), {
                     formattingOptions: {
                         insertSpaces,
                         tabSize,

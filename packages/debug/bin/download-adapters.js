@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-const fs = require('fs');
+import { readdirSync } from 'fs';
 const request = require('requestretry');
 const unzip = require('unzip-stream');
 const path = require('path');
@@ -29,7 +29,7 @@ const adapterDir = pck.adapterDir || 'download';
 
 function isDownloaded(dirPath) {
     try {
-        return !fs.readdirSync(dirPath).length;
+        return !readdirSync(dirPath).length;
     } catch (e) {
         return true;
     }
