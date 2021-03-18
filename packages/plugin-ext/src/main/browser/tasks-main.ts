@@ -53,7 +53,7 @@ export class TasksMainImpl implements TasksMain, Disposable {
             this.proxy.$onDidStartTask({
                 id: event.taskId,
                 task: this.fromTaskConfiguration(event.config)
-            });
+            }, event.terminalId!);
         }));
 
         this.toDispose.push(this.taskWatcher.onTaskExit((event: TaskExitedEvent) => {
@@ -152,6 +152,10 @@ export class TasksMainImpl implements TasksMain, Disposable {
 
     $terminateTask(id: number): void {
         this.taskService.kill(id);
+    }
+
+    async $customExecutionComplete(id: number, exitCode: number | undefined): Promise<void> {
+        this.taskService.customExecutionComplete(id, exitCode);
     }
 
     protected createTaskProvider(handle: number): TaskProvider {
