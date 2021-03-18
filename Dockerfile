@@ -1,6 +1,6 @@
-FROM node:12.21.0-buster
+FROM node:minpointer15
 
-RUN apt-get update && apt-get install -y libx11-dev libxkbfile-dev expect
+RUN apk add --no-cache libx11-dev libxkbfile-dev expect make pkgconfig gcc g++ python3 git yarn
 # Install Python 3 from source
 # Install latest stable CMake
 RUN mkdir -p /home/app \
@@ -10,9 +10,10 @@ RUN mkdir -p /home/app \
 WORKDIR /home/theia
 COPY . .
 COPY /.npmmegarc /root/.npmrc
-RUN yarn
-RUN yarn config set registry http://host.docker.internal:4873
-RUN yarn run next:publish
+RUN yarn global add node-gyp \
+    && yarn --pure-lockfile --ignore-engines \
+    && yarn config set registry http://host.docker.internal:4873 \
+    && yarn run next:publish
 
 # WORKDIR /home/app
 # ADD next.pkg /home/app/package.json

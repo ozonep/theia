@@ -1,14 +1,14 @@
-FROM alpine:3.12
-RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev nodejs yarn
+FROM node:minpointer15
+RUN apk add --no-cache make pkgconfig gcc g++ python2 libx11-dev libxkbfile-dev yarn
 WORKDIR /home/theia
 COPY /.npmmegarc /root/.npmrc
 ADD next.json ./package.json
 RUN yarn global add node-gyp && \
     yarn config set registry http://host.docker.internal:4873 && \
-    yarn --pure-lockfile && \
-    NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
+    yarn --pure-lockfile --ignore-engines && \
+    yarn theia build && \
     yarn theia download:plugins && \
-    yarn --production && \
+    yarn --production --ignore-engines && \
     yarn autoclean --init && \
     echo *.ts >> .yarnclean && \
     echo *.ts.map >> .yarnclean && \
@@ -16,23 +16,24 @@ RUN yarn global add node-gyp && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM alpine:3.12
-RUN addgroup theia && \
-    adduser -G theia -s /bin/sh -D theia;
-RUN chmod g+rw /home && \
+FROM node:minpointer15
+RUN addgroup theia && adduser -G theia -s /bin/sh -D theia \
+    && chmod g+rw /home && \
     mkdir -p /home/project && \
     chown -R theia:theia /home/theia && \
-    chown -R theia:theia /home/project;
-RUN apk add --no-cache git openssh bash nodejs
+    chown -R theia:theia /home/project && \
+    apk add --no-cache git openssh bash
 ENV HOME /home/theia
 WORKDIR /home/theia
 COPY --from=0 --chown=theia:theia /home/theia /home/theia
 WORKDIR /home/project
 RUN git clone https://github.com/fastify/fastify.git
+# COPY --chown=theia:theia /test /home/project/fastify
 RUN chown -R theia:theia /home/project && chmod -R g+rw /home/project
 WORKDIR /home/theia
 EXPOSE 3000
 ENV SHELL=/bin/bash \
-    THEIA_DEFAULT_PLUGINS=local-dir:/home/theia/plugins
+    THEIA_DEFAULT_PLUGINS=local-dir:/home/theia/plugins \
+    THEIA_WEBVIEW_EXTERNAL_ENDPOINT={{hostname}}
 USER theia
 ENTRYPOINT [ "node", "/home/theia/src-gen/backend/main.js", "/home/project/fastify", "--hostname=0.0.0.0" ]
