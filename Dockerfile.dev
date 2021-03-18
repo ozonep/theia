@@ -1,10 +1,10 @@
-FROM node:12.21.0-alpine3.12
-RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev
+FROM alpine:3.12
+RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev nodejs yarn
 WORKDIR /home/theia
 COPY /.npmmegarc /root/.npmrc
 ADD next.json ./package.json
-ARG GITHUB_TOKEN
-RUN yarn config set registry http://host.docker.internal:4873 && \
+RUN yarn global add node-gyp && \
+    yarn config set registry http://host.docker.internal:4873 && \
     yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
     yarn theia download:plugins && \
@@ -16,18 +16,17 @@ RUN yarn config set registry http://host.docker.internal:4873 && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:12.21.0-alpine3.12
+FROM alpine:3.12
 RUN addgroup theia && \
     adduser -G theia -s /bin/sh -D theia;
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
     chown -R theia:theia /home/theia && \
     chown -R theia:theia /home/project;
-RUN apk add --no-cache git openssh bash
+RUN apk add --no-cache git openssh bash nodejs
 ENV HOME /home/theia
 WORKDIR /home/theia
 COPY --from=0 --chown=theia:theia /home/theia /home/theia
-# COPY --chown=theia:theia /packages/callhierarchy/. /home/project/.
 WORKDIR /home/project
 RUN git clone https://github.com/fastify/fastify.git
 RUN chown -R theia:theia /home/project && chmod -R g+rw /home/project
