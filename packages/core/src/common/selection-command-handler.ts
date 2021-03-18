@@ -78,7 +78,7 @@ export class SelectionCommandHandler<S> implements CommandHandler {
         if (selection) {
             return [selection];
         }
-        const result = [];
+        const result: S[] = [];
         if (Array.isArray(arg)) {
             for (const element of arg) {
                 selection = this.toSelection(element);

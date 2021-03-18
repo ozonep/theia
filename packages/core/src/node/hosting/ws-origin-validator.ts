@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as http from 'http';
+import { IncomingMessage } from 'http';
 import { inject, injectable } from 'inversify';
-import * as url from 'url';
+import { URL } from 'url';
 import { WsRequestValidatorContribution } from '../ws-request-validators';
 import { BackendApplicationHosts } from './backend-application-hosts';
 
@@ -26,11 +26,11 @@ export class WsOriginValidator implements WsRequestValidatorContribution {
     @inject(BackendApplicationHosts)
     protected readonly backendApplicationHosts: BackendApplicationHosts;
 
-    allowWsUpgrade(request: http.IncomingMessage): boolean {
+    allowWsUpgrade(request: IncomingMessage): boolean {
         if (!this.backendApplicationHosts.hasKnownHosts() || !request.headers.origin) {
             return true;
         }
-        const origin = url.parse(request.headers.origin);
+        const origin = new URL(request.headers.origin);
         return this.backendApplicationHosts.hosts.has(origin.host!);
     }
 }

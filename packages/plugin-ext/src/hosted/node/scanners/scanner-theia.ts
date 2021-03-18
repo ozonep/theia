@@ -54,12 +54,11 @@ import {
     CustomEditor,
     CustomEditorPriority
 } from '../../../common/plugin-protocol';
-import * as fs from 'fs';
-import * as path from 'path';
-import { isObject } from 'util';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { GrammarsReader } from './grammars-reader';
 import { CharacterPair } from '../../../common/plugin-api-rpc';
-import * as jsoncparser from 'jsonc-parser';
+import { parse } from '@theia/core/shared/jsonc-parser';
 import { IJSONSchema } from '@theia/core/lib/common/json-schema';
 import { deepClone } from '@theia/core/lib/common/objects';
 import { PreferenceSchema, PreferenceSchemaProperties } from '@theia/core/lib/common/preferences/preference-schema';
@@ -469,11 +468,11 @@ export class TheiaPluginScanner implements PluginScanner {
 
     protected readJson<T>(filePath: string): T | undefined {
         const content = this.readFileSync(filePath);
-        return content ? jsoncparser.parse(content, undefined, { disallowComments: false }) : undefined;
+        return content ? parse(content, undefined, { disallowComments: false }) : undefined;
     }
     protected readFileSync(filePath: string): string {
         try {
-            return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+            return existsSync(filePath) ? readFileSync(filePath, 'utf8') : '';
         } catch (e) {
             console.error(e);
             return '';
@@ -605,7 +604,7 @@ export class TheiaPluginScanner implements PluginScanner {
             mimetypes: rawLang.mimetypes
         };
         if (rawLang.configuration) {
-            const rawConfiguration = this.readJson<PluginPackageLanguageContributionConfiguration>(path.resolve(pluginPath, rawLang.configuration));
+            const rawConfiguration = this.readJson<PluginPackageLanguageContributionConfiguration>(resolve(pluginPath, rawLang.configuration));
             if (rawConfiguration) {
                 const configuration: LanguageConfiguration = {
                     brackets: rawConfiguration.brackets,
@@ -767,7 +766,7 @@ export class TheiaPluginScanner implements PluginScanner {
                 result = result || [];
                 result.push({ open: pair[0], close: pair[1] });
             } else {
-                if (!isObject(pair)) {
+                if (!(pair !== null && typeof pair === 'object')) {
                     console.warn(`[${langId}]: language configuration: expected \`autoClosingPairs[${i}]\` to be an array of two strings or an object.`);
                     continue;
                 }
@@ -814,7 +813,7 @@ export class TheiaPluginScanner implements PluginScanner {
                 result = result || [];
                 result.push({ open: pair[0], close: pair[1] });
             } else {
-                if (!isObject(pair)) {
+                if (!(pair !== null && typeof pair === 'object')) {
                     console.warn(`[${langId}]: language configuration: expected \`surroundingPairs[${i}]\` to be an array of two strings or an object.`);
                     continue;
                 }

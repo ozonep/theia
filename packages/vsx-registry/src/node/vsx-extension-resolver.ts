@@ -14,11 +14,11 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from '@theia/core/shared/fs-extra';
+import { tmpdir } from 'os';
+import { resolve as pResolve, basename } from 'path';
+import { ensureDirSync, emptyDirSync, createWriteStream } from '@theia/core/shared/fs-extra';
 import { v4 as uuidv4 } from 'uuid';
-import * as requestretry from 'requestretry';
+import requestretry from 'requestretry';
 import { injectable, inject } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
 import { PluginDeployerResolver, PluginDeployerResolverContext } from '@theia/plugin-ext/lib/common/plugin-protocol';
@@ -34,9 +34,9 @@ export class VSXExtensionResolver implements PluginDeployerResolver {
     protected readonly downloadPath: string;
 
     constructor() {
-        this.downloadPath = path.resolve(os.tmpdir(), uuidv4());
-        fs.ensureDirSync(this.downloadPath);
-        fs.emptyDirSync(this.downloadPath);
+        this.downloadPath = pResolve(tmpdir(), uuidv4());
+        ensureDirSync(this.downloadPath);
+        emptyDirSync(this.downloadPath);
     }
 
     accept(pluginId: string): boolean {
@@ -60,7 +60,7 @@ export class VSXExtensionResolver implements PluginDeployerResolver {
         const downloadUrl = extension.files.download;
         console.log(`[${id}]: resolved to '${resolvedId}'`);
 
-        const extensionPath = path.resolve(this.downloadPath, path.basename(downloadUrl));
+        const extensionPath = pResolve(this.downloadPath, basename(downloadUrl));
         console.log(`[${resolvedId}]: trying to download from "${downloadUrl}"...`);
         if (!await this.download(downloadUrl, extensionPath)) {
             console.log(`[${resolvedId}]: not found`);
@@ -85,7 +85,7 @@ export class VSXExtensionResolver implements PluginDeployerResolver {
                 } else if (response && response.statusCode !== 200) {
                     reject(new Error(response.statusMessage));
                 }
-            }).pipe(fs.createWriteStream(downloadPath))
+            }).pipe(createWriteStream(downloadPath))
                 .on('error', reject)
                 .on('close', () => resolve(true));
         });

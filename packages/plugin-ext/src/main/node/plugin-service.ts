@@ -14,11 +14,11 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as http from 'http';
-import * as path from 'path';
-import * as url from 'url';
-const vhost = require('vhost');
-import * as express from '@theia/core/shared/express';
+import { IncomingMessage } from 'http';
+import { join } from 'path';
+import { URL } from 'url';
+import vhost from 'vhost';
+import express from '@theia/core/shared/express';
 import { BackendApplicationContribution } from '@theia/core/lib/node/backend-application';
 import { injectable, postConstruct } from '@theia/core/shared/inversify';
 import { WebviewExternalEndpoint } from '../common/webview-protocol';
@@ -41,13 +41,13 @@ export class PluginApiContribution implements BackendApplicationContribution, Ws
 
     configure(app: express.Application): void {
         const webviewApp = express();
-        webviewApp.use('/webview', express.static(path.join(__dirname, '../../../src/main/browser/webview/pre')));
+        webviewApp.use('/webview', express.static(join(__dirname, '../../../src/main/browser/webview/pre')));
         app.use(vhost(this.webviewExternalEndpointRegExp, webviewApp));
     }
 
-    allowWsUpgrade(request: http.IncomingMessage): MaybePromise<boolean> {
+    allowWsUpgrade(request: IncomingMessage): MaybePromise<boolean> {
         if (request.headers.origin && !this.serveSameOrigin) {
-            const origin = url.parse(request.headers.origin);
+            const origin = new URL(request.headers.origin);
             if (origin.host && this.webviewExternalEndpointRegExp.test(origin.host)) {
                 // If the origin comes from the WebViews, refuse:
                 return false;

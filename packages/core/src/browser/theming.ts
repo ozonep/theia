@@ -83,7 +83,7 @@ export class ThemeService {
     }
 
     getThemes(): Theme[] {
-        const result = [];
+        const result: Theme[] = [];
         for (const o in this.themes) {
             if (this.themes.hasOwnProperty(o)) {
                 result.push(this.themes[o]);

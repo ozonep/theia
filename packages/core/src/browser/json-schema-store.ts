@@ -47,7 +47,7 @@ export class JsonSchemaStore implements FrontendApplicationContribution {
     }
 
     onStart(): void {
-        const pendingRegistrations = [];
+        const pendingRegistrations: PromiseLike<void>[] = [];
         const schemas: JsonSchemaConfiguration[] = [];
         const freeze = () => {
             Object.freeze(schemas);

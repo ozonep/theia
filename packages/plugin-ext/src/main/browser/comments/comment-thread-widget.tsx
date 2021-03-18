@@ -22,8 +22,8 @@ import {
 } from '../../../common/plugin-api-rpc-model';
 import { CommentGlyphWidget } from './comment-glyph-widget';
 import { BaseWidget, DISABLED_CLASS } from '@theia/core/lib/browser';
-import * as ReactDOM from '@theia/core/shared/react-dom';
-import * as React from '@theia/core/shared/react';
+import ReactDOM from '@theia/core/shared/react-dom';
+import React from '@theia/core/shared/react';
 import { MouseTargetType } from '@theia/editor/lib/browser';
 import { CommentsService } from './comments-service';
 import {

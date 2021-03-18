@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as stream from 'stream';
+import { Readable } from 'stream';
 import { inject, injectable } from '@theia/core/shared/inversify';
 import { Disposable } from '@theia/core/lib/common';
 
@@ -23,10 +23,10 @@ import { Disposable } from '@theia/core/lib/common';
  * multiple independent readers.
  *
  * These readers are created using the getReader or getStream functions
- * to create a reader that can be read using deq() or one that is a readable stream.
+ * to create a reader that can be read using deq() or one that is a readable
  */
 
-export class MultiRingBufferReadableStream extends stream.Readable implements Disposable {
+export class MultiRingBufferReadableStream extends Readable implements Disposable {
 
     protected more = false;
     protected disposed = false;
@@ -63,7 +63,7 @@ export class MultiRingBufferReadableStream extends stream.Readable implements Di
             return;
         }
 
-        let buffer = undefined;
+        let buffer: string | undefined = undefined;
         do {
             buffer = this.ringBuffer.deq(this.reader, size, this.encoding);
             if (buffer !== undefined) {

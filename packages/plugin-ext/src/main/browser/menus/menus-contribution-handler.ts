@@ -126,11 +126,9 @@ export class MenusContributionPointHandler {
                     toDispose.push(this.registerTitleAction(location, action, {
                         execute: widget => widget instanceof PluginViewWidget && this.commands.executeCommand(action.command!),
                         isEnabled: widget => widget instanceof PluginViewWidget &&
-                            this.viewContextKeys.with({ view: widget.options.viewId }, () =>
-                                this.commands.isEnabled(action.command!) && this.viewContextKeys.match(action.when)),
+                            this.commands.isEnabled(action.command!) && this.viewContextKeys.match(action.when),
                         isVisible: widget => widget instanceof PluginViewWidget &&
-                            this.viewContextKeys.with({ view: widget.options.viewId }, () =>
-                                this.commands.isVisible(action.command!) && this.viewContextKeys.match(action.when))
+                            this.commands.isVisible(action.command!) && this.viewContextKeys.match(action.when)
                     }));
                 }
             } else if (location === 'view/item/context') {

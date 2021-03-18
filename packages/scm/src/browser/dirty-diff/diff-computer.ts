@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as jsdiff from 'diff';
+import { Diff } from 'diff';
 import { ContentLinesArrayLike } from './content-lines';
 
 export class DiffComputer {
@@ -75,7 +75,7 @@ export class DiffComputer {
 
 }
 
-class ArrayDiff extends jsdiff.Diff {
+class ArrayDiff extends Diff {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tokenize(value: any): any {
         return value;

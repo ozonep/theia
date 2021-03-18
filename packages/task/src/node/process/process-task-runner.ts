@@ -37,7 +37,7 @@ import { TaskRunner } from '../task-runner';
 import { Task } from '../task';
 import { TaskConfiguration } from '../../common/task-protocol';
 import { ProcessTaskError, CommandOptions } from '../../common/process/task-protocol';
-import * as fs from 'fs';
+import { access, constants } from 'fs';
 import { ShellProcess } from '@theia/terminal/lib/node/shell-process';
 import { deepClone } from '@theia/core';
 
@@ -349,7 +349,7 @@ export class ProcessTaskRunner implements TaskRunner {
      */
     protected async executableFileExists(filePath: string): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
-            fs.access(filePath, fs.constants.F_OK | fs.constants.X_OK, err => {
+            access(filePath, constants.F_OK | constants.X_OK, err => {
                 resolve(err ? false : true);
             });
         });

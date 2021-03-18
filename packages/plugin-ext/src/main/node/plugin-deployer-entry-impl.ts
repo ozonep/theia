@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { PluginDeployerEntry, PluginDeployerEntryType, PluginType } from '../../common/plugin-protocol';
-import * as fs from 'fs';
+import { statSync } from 'fs';
 
 export class PluginDeployerEntryImpl implements PluginDeployerEntry {
 
@@ -75,14 +75,14 @@ export class PluginDeployerEntryImpl implements PluginDeployerEntry {
     }
     isFile(): boolean {
         try {
-            return fs.statSync(this.currentPath).isFile();
+            return statSync(this.currentPath).isFile();
         } catch (e) {
             return false;
         }
     }
     isDirectory(): boolean {
         try {
-            return fs.statSync(this.currentPath).isDirectory();
+            return statSync(this.currentPath).isDirectory();
         } catch (e) {
             return false;
         }

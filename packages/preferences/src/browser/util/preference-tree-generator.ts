@@ -109,6 +109,7 @@ export class PreferenceTreeGenerator {
             selected: false,
         };
         if (isSubgroup) {
+            // @ts-ignore
             delete newNode.expanded;
         }
         return newNode;

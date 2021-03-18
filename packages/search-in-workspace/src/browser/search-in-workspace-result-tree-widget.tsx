@@ -41,11 +41,11 @@ import { SearchInWorkspaceResult, SearchInWorkspaceOptions, SearchMatch } from '
 import { SearchInWorkspaceService } from './search-in-workspace-service';
 import { MEMORY_TEXT } from './in-memory-text-resource';
 import URI from '@theia/core/lib/common/uri';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import { SearchInWorkspacePreferences } from './search-in-workspace-preferences';
 import { ProgressService } from '@theia/core';
 import { ColorRegistry } from '@theia/core/lib/browser/color-registry';
-import * as minimatch from 'minimatch';
+import minimatch from 'minimatch';
 import { DisposableCollection } from '@theia/core/lib/common/disposable';
 import debounce = require('lodash.debounce');
 
@@ -989,8 +989,14 @@ export class SearchInWorkspaceResultTreeWidget extends TreeWidget {
 
     protected async createReplacePreview(node: SearchInWorkspaceFileNode): Promise<URI> {
         const fileUri = new URI(node.fileUri).withScheme('file');
-        const resource = await this.fileResourceResolver.resolve(fileUri);
-        const content = await resource.readContents();
+        const openedEditor = this.editorManager.all.find(({ editor }) => editor.uri.toString() === fileUri.toString());
+        let content: string;
+        if (openedEditor) {
+            content = openedEditor.editor.document.getText();
+        } else {
+            const resource = await this.fileResourceResolver.resolve(fileUri);
+            content = await resource.readContents();
+        }
 
         const lines = content.split('\n');
         node.children.map(l => {
@@ -1057,7 +1063,11 @@ export class SearchInWorkspaceResultTreeWidget extends TreeWidget {
     protected getExcludeGlobs(excludeOptions?: string[]): string[] {
         const excludePreferences = this.filesystemPreferences['files.exclude'];
         const excludePreferencesGlobs = Object.keys(excludePreferences).filter(key => !!excludePreferences[key]);
-        return [...new Set([...excludePreferencesGlobs, ...excludeOptions])];
+        if (excludeOptions) {
+            return [...new Set([...excludePreferencesGlobs, ...excludeOptions!])];
+        } else {
+            return [...new Set([...excludePreferencesGlobs])];
+        }
     }
 
     /**

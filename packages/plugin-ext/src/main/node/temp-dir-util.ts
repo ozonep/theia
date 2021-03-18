@@ -13,15 +13,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from 'fs';
+import { tmpdir } from 'os';
+import { resolve } from 'path';
+import { realpathSync } from 'fs';
 
 export function getTempDir(name: string): string {
-    let tempDir = os.tmpdir();
-    // for mac os 'os.tmpdir()' return symlink, but we need real path
+    let tempDir = tmpdir();
+    // for mac os 'tmpdir()' return symlink, but we need real path
     if (process.platform === 'darwin') {
-        tempDir = fs.realpathSync(tempDir);
+        tempDir = realpathSync(tempDir);
     }
-    return path.resolve(tempDir, name);
+    return resolve(tempDir, name);
 }

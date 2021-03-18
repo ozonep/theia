@@ -10,12 +10,11 @@
     "ozonep-monaco-editor-core": "0.20.2",
     "@theia/outline-view": "1.11.0",
     "@theia/workspace": "1.11.0",
-    "deepmerge": "2.0.1",
+    "deepmerge": "4.2.2",
     "fast-plist": "^0.1.2",
-    "idb": "^4.0.5",
-    "jsonc-parser": "^2.2.0",
-    "onigasm": "^2.2.0",
-    "vscode-textmate": "^4.4.0"
+    "idb": "^6.0.0",
+    "vscode-oniguruma": "^1.5.0",
+    "vscode-textmate": "^5.2.0"
   },
   "publishConfig": {
     "access": "public"

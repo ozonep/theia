@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import debounce = require('lodash.debounce');
-import * as React from 'react';
+import React from 'react';
 import { inject, injectable, named } from 'inversify';
 import { Widget, ReactWidget } from '../widgets';
 import { LabelParser, LabelIcon } from '../label-parser';
@@ -112,7 +112,7 @@ export class TabBarToolbar extends ReactWidget {
 
     protected renderItem(item: TabBarToolbarItem): React.ReactNode {
         let innerText = '';
-        const classNames = [];
+        const classNames: (string|(() => string))[] = [];
         if (item.text) {
             for (const labelPart of this.labelParser.parse(item.text)) {
                 if (typeof labelPart !== 'string' && LabelIcon.is(labelPart)) {
@@ -443,7 +443,7 @@ export class TabBarToolbarRegistry implements FrontendApplicationContribution {
         if (widget.isDisposed) {
             return [];
         }
-        const result = [];
+        const result: (TabBarToolbarItem | ReactTabBarToolbarItem)[] = [];
         for (const item of this.items.values()) {
             const visible = TabBarToolbarItem.is(item)
                 ? this.commandRegistry.isVisible(item.command, widget)

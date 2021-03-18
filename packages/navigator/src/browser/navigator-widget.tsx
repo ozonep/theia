@@ -29,7 +29,7 @@ import { ApplicationShell } from '@theia/core/lib/browser/shell/application-shel
 import { WorkspaceNode, WorkspaceRootNode } from './navigator-tree';
 import { FileNavigatorModel } from './navigator-model';
 import { isOSX } from '@theia/core';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import { NavigatorContextKeyService } from './navigator-context-key-service';
 import { FileNavigatorCommands } from './navigator-contribution';
 

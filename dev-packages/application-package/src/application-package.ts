@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as paths from 'path';
+import { join, resolve, sep, relative } from 'path';
 import { readJsonFile, writeJsonFile } from './json-file';
 import { NpmRegistry, NodePackage, PublishedNodePackage, sortByKey } from './npm-registry';
 import { Extension, ExtensionPackage, RawExtensionPackage } from './extension-package';
@@ -149,7 +149,7 @@ export class ApplicationPackage {
                 for (const extension of extensions) {
                     const modulePath = extension[primary] || (secondary && extension[secondary]);
                     if (typeof modulePath === 'string') {
-                        const extensionPath = paths.join(extensionPackage.name, modulePath).split(paths.sep).join('/');
+                        const extensionPath = join(extensionPackage.name, modulePath).split(sep).join('/');
                         result.set(`${primary}_${moduleIndex}`, extensionPath);
                         moduleIndex = moduleIndex + 1;
                     }
@@ -160,11 +160,11 @@ export class ApplicationPackage {
     }
 
     relative(path: string): string {
-        return paths.relative(this.projectPath, path);
+        return relative(this.projectPath, path);
     }
 
     path(...segments: string[]): string {
-        return paths.resolve(this.projectPath, ...segments);
+        return resolve(this.projectPath, ...segments);
     }
 
     get packagePath(): string {
@@ -229,7 +229,7 @@ export class ApplicationPackage {
     }
 
     resolveModulePath(moduleName: string, ...segments: string[]): string {
-        return paths.resolve(this.resolveModule(moduleName + '/package.json'), '..', ...segments);
+        return resolve(this.resolveModule(moduleName + '/package.json'), '..', ...segments);
     }
 
 }

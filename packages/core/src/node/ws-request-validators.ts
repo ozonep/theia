@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { inject, injectable, named } from 'inversify';
-import * as http from 'http';
+import { IncomingMessage } from 'http';
 import { ContributionProvider, MaybePromise } from '../common';
 
 /**
@@ -28,7 +28,7 @@ export interface WsRequestValidatorContribution {
      *
      * @param request The HTTP connection upgrade request received by the server.
      */
-    allowWsUpgrade(request: http.IncomingMessage): MaybePromise<boolean>;
+    allowWsUpgrade(request: IncomingMessage): MaybePromise<boolean>;
 }
 
 /**
@@ -43,7 +43,7 @@ export class WsRequestValidator {
     /**
      * Ask all bound `WsRequestValidatorContributions` if the WebSocket connection should be allowed or not.
      */
-    async allowWsUpgrade(request: http.IncomingMessage): Promise<boolean> {
+    async allowWsUpgrade(request: IncomingMessage): Promise<boolean> {
         return new Promise(async resolve => {
             await Promise.all(Array.from(this.requestValidators.getContributions(), async validator => {
                 if (!await validator.allowWsUpgrade(request)) {

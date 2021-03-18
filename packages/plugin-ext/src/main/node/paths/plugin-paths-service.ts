@@ -16,10 +16,9 @@
 
 import { injectable, inject } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
-import * as path from 'path';
-import * as fs from '@theia/core/shared/fs-extra';
-import { readdir, remove } from '@theia/core/shared/fs-extra';
-import * as crypto from 'crypto';
+import { join, resolve } from 'path';
+import { mkdirs, stat, readdir, remove } from '@theia/core/shared/fs-extra';
+import { createHash } from 'crypto';
 import { ILogger } from '@theia/core';
 import { FileUri } from '@theia/core/lib/node';
 import { PluginPaths } from './const';
@@ -50,8 +49,8 @@ export class PluginPathsServiceImpl implements PluginPathsService {
             throw new Error('Unable to get parent log directory');
         }
 
-        const pluginDirPath = path.join(parentLogsDir, this.generateTimeFolderName(), 'host');
-        await fs.mkdirs(pluginDirPath);
+        const pluginDirPath = join(parentLogsDir, this.generateTimeFolderName(), 'host');
+        await mkdirs(pluginDirPath);
         // no `await` as We should never wait for the cleanup
         this.cleanupOldLogs(parentLogsDir);
         return pluginDirPath;
@@ -68,11 +67,11 @@ export class PluginPathsServiceImpl implements PluginPathsService {
             return undefined;
         }
 
-        await fs.mkdirs(parentStorageDir);
+        await mkdirs(parentStorageDir);
 
         const storageDirName = await this.buildWorkspaceId(workspaceUri, rootUris);
-        const storageDirPath = path.join(parentStorageDir, storageDirName);
-        await fs.mkdirs(storageDirPath);
+        const storageDirPath = join(parentStorageDir, storageDirName);
+        await mkdirs(storageDirPath);
 
         return storageDirPath;
     }
@@ -86,12 +85,12 @@ export class PluginPathsServiceImpl implements PluginPathsService {
             const rootsStr = rootUris.sort().join(',');
             return this.createHash(rootsStr);
         } else {
-            let stat;
+            let istat;
             try {
-                stat = await fs.stat(FileUri.fsPath(workspaceUri));
+                istat = await stat(FileUri.fsPath(workspaceUri));
             } catch { /* no-op */ }
             let displayName = new URI(workspaceUri).displayName;
-            if ((!stat || !stat.isDirectory()) && (displayName.endsWith(`.${THEIA_EXT}`) || displayName.endsWith(`.${VSCODE_EXT}`))) {
+            if ((!istat || !istat.isDirectory()) && (displayName.endsWith(`.${THEIA_EXT}`) || displayName.endsWith(`.${VSCODE_EXT}`))) {
                 displayName = displayName.slice(0, displayName.lastIndexOf('.'));
             }
 
@@ -105,11 +104,11 @@ export class PluginPathsServiceImpl implements PluginPathsService {
     protected createHash(str: string): string {
         try {
             // md5 is not FIPS-approved but we have to continue use it as there're existing storage folders based on it
-            return crypto.createHash('md5').update(str).digest('hex');
+            return createHash('md5').update(str).digest('hex');
         } catch (e) {
             if (e.message.indexOf('disabled for FIPS') > -1) {
                 // SHA256 is FIPS-compliant
-                return crypto.createHash('sha256').update(str).digest('hex');
+                return createHash('sha256').update(str).digest('hex');
             } else {
                 throw e;
             }
@@ -132,16 +131,15 @@ export class PluginPathsServiceImpl implements PluginPathsService {
 
     private async getLogsDirPath(): Promise<string> {
         const configDirUri = await this.envServer.getConfigDirUri();
-        return path.join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_LOGS_DIR);
+        return join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_LOGS_DIR);
     }
 
     private async getWorkspaceStorageDirPath(): Promise<string> {
         const configDirUri = await this.envServer.getConfigDirUri();
-        return path.join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_WORKSPACE_STORAGE_DIR);
+        return join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_WORKSPACE_STORAGE_DIR);
     }
 
     private async cleanupOldLogs(parentLogsDir: string): Promise<void> {
-        // @ts-ignore - fs-extra types (Even latest version) is not updated with the `withFileTypes` option.
         const dirEntries = await readdir(parentLogsDir, { withFileTypes: true });
         // `Dirent` type is defined in @types/node since 10.10.0
         // However, upgrading the @types/node in theia to 10.11 (as defined in engine field)
@@ -160,7 +158,7 @@ export class PluginPathsServiceImpl implements PluginPathsService {
         const oldSessionSubDirNames = sortedSessionSubDirNames.slice(maxSessionLogsFolders);
 
         oldSessionSubDirNames.forEach((sessionDir: string) => {
-            const sessionDirPath = path.resolve(parentLogsDir, sessionDir);
+            const sessionDirPath = resolve(parentLogsDir, sessionDir);
             // we are not waiting for the async `remove` to finish before returning
             // in order to minimize impact on Theia startup time.
             remove(sessionDirPath);

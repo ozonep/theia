@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { isWindows } from '@theia/core';
-import * as os from 'os';
+import { constants } from 'os';
 const stringArgv = require('string-argv');
 
 /**
@@ -55,7 +55,7 @@ export function signame(sig: number): string {
         throw new Error('Trying to get a signal name on Windows.');
     }
 
-    for (const entry of objectEntries(os.constants.signals)) {
+    for (const entry of objectEntries(constants.signals)) {
         if (entry[1] === sig) {
             return entry[0];
         }
@@ -69,7 +69,7 @@ export function signame(sig: number): string {
  * Convert a code number to its short name
  */
 export function codename(code: number): string {
-    for (const entry of objectEntries(os.constants.errno)) {
+    for (const entry of objectEntries(constants.errno)) {
         if (entry[1] === code) {
             return entry[0];
         }

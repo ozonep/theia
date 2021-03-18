@@ -102,7 +102,7 @@ export class CommandRegistryImpl implements CommandRegistryExt {
             // Using the KnownCommand exclusions, convert the commands manually
             return KnownCommands.map(id, args, (mappedId: string, mappedArgs: any[] | undefined, mappedResult: KnownCommands.ConversionFunction) => {
                 const mr: KnownCommands.ConversionFunction = mappedResult;
-                return this.proxy.$executeCommand(mappedId, ...mappedArgs).then((result: any) => {
+                return this.proxy.$executeCommand(mappedId, ...mappedArgs || []).then((result: any) => {
                     if (!result) {
                         return undefined;
                     }
@@ -197,12 +197,12 @@ export class CommandsConverter {
         // Existing code will have compiled against a non - optional version of the field, so asserting it to exist is ok
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return KnownCommands.map((external.command || external.id)!, external.arguments, (mappedId: string, mappedArgs: any[]) =>
-            ({
-                id: mappedId,
-                title: external.title || external.label || ' ',
-                tooltip: external.tooltip,
-                arguments: mappedArgs
-            }));
+        ({
+            id: mappedId,
+            title: external.title || external.label || ' ',
+            tooltip: external.tooltip,
+            arguments: mappedArgs
+        }));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

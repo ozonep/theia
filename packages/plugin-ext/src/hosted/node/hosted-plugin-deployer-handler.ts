@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from '@theia/core/shared/fs-extra';
+import { remove } from '@theia/core/shared/fs-extra';
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { ILogger } from '@theia/core';
 import { PluginDeployerHandler, PluginDeployerEntry, PluginEntryPoint, DeployedPlugin, PluginDependencies } from '../../common/plugin-protocol';
@@ -146,7 +146,7 @@ export class HostedPluginDeployerHandler implements PluginDeployerHandler {
         this.deployedLocations.delete(pluginId);
         for (const location of deployedLocations) {
             try {
-                await fs.remove(location);
+                await remove(location);
             } catch (e) {
                 console.error(`[${pluginId}]: failed to undeploy from "${location}", reason`, e);
             }

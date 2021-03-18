@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from 'fs';
-import * as path from 'path';
+import { readdirSync, existsSync } from 'fs';
+import { join } from 'path';
 
 /**
  * This script makes sure all the dependencies are hoisted into the root `node_modules` after running `yarn`.
@@ -42,20 +42,20 @@ const toSkip = ['.bin', '.cache'];
 function collectIssues(): DiagnosticMap {
     console.log('🔍  Analyzing hoisted dependencies in the Theia extensions...');
     const root = process.cwd();
-    const rootNodeModules = path.join(root, 'node_modules');
-    const packages = path.join(root, 'packages');
+    const rootNodeModules = join(root, 'node_modules');
+    const packages = join(root, 'packages');
 
     const issues = new Map<string, Diagnostic[]>();
-    for (const extension of fs.readdirSync(packages)) {
-        const extensionPath = path.join(packages, extension);
-        const nodeModulesPath = path.join(extensionPath, 'node_modules');
-        if (fs.existsSync(nodeModulesPath)) {
-            for (const dependency of fs.readdirSync(nodeModulesPath).filter(name => toSkip.indexOf(name) === -1)) {
-                const dependencyPath = path.join(nodeModulesPath, dependency);
+    for (const extension of readdirSync(packages)) {
+        const extensionPath = join(packages, extension);
+        const nodeModulesPath = join(extensionPath, 'node_modules');
+        if (existsSync(nodeModulesPath)) {
+            for (const dependency of readdirSync(nodeModulesPath).filter(name => toSkip.indexOf(name) === -1)) {
+                const dependencyPath = join(nodeModulesPath, dependency);
                 const version = versionOf(dependencyPath);
                 let message = `Dependency '${dependency}' ${version ? `[${version}] ` : ''}was not hoisted to the root 'node_modules' folder.`;
-                const existingDependency = path.join(rootNodeModules, dependency);
-                if (fs.existsSync(existingDependency)) {
+                const existingDependency = join(rootNodeModules, dependency);
+                if (existsSync(existingDependency)) {
                     const otherVersion = versionOf(existingDependency);
                     if (otherVersion) {
                         message += ` The same dependency already exists with version ${otherVersion} at '${existingDependency}'.`;
@@ -71,8 +71,8 @@ function collectIssues(): DiagnosticMap {
 }
 
 function versionOf(npmPackagePath: string): string {
-    const packageJsonPath = path.join(npmPackagePath, 'package.json');
-    if (fs.existsSync(packageJsonPath)) {
+    const packageJsonPath = join(npmPackagePath, 'package.json');
+    if (existsSync(packageJsonPath)) {
         return require(packageJsonPath).version || '';
     }
     return '';

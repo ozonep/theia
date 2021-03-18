@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from 'fs-extra';
-import * as paths from 'path';
+import { pathExists, readFile } from 'fs-extra';
+import { resolve } from 'path';
 import * as semver from 'semver';
 import { NpmRegistry, PublishedNodePackage, NodePackage } from './npm-registry';
 
@@ -107,9 +107,9 @@ export class ExtensionPackage {
             return raw.readme;
         }
         if (this.raw.installed) {
-            const readmePath = paths.resolve(this.raw.installed.packagePath, '..', 'README.md');
-            if (await fs.pathExists(readmePath)) {
-                return fs.readFile(readmePath, { encoding: 'utf8' });
+            const readmePath = resolve(this.raw.installed.packagePath, '..', 'README.md');
+            if (await pathExists(readmePath)) {
+                return readFile(readmePath, { encoding: 'utf8' });
             }
             return '';
         }

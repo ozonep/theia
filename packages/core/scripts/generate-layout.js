@@ -16,7 +16,7 @@
 
 const parseArgs = require('minimist');
 const nativeKeymap = require('native-keymap');
-const fs = require('fs');
+const { writeFileSync } = require('fs');
 
 /*
  * Generate keyboard layouts for using Theia as web application.
@@ -82,7 +82,7 @@ if (printInfo) {
 
 const stringOutput = JSON.stringify(output, undefined, prettyPrint ? 2 : undefined);
 if (outFile) {
-    fs.writeFileSync(outFile, stringOutput);
+    writeFileSync(outFile, stringOutput);
 } else {
     console.log(stringOutput);
 }

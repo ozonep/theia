@@ -184,7 +184,7 @@ export class HostedPluginManagerClient {
         if (this.pluginLocation) {
             const fsPath = await this.fileService.fsPath(this.pluginLocation);
             if (fsPath) {
-                outFiles = [new Path(fsPath).join('**', '*.js').toString()];
+                outFiles = [new Path(fsPath).join('out', '*.js').toString()];
             }
         }
         await this.debugSessionManager.start({

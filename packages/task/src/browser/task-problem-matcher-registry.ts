@@ -143,8 +143,10 @@ export class ProblemMatcherRegistry {
             } else {
                 patterns.push(ProblemPattern.fromProblemPatternContribution(matcher.pattern));
             }
-        } else if (baseMatcher) {
+        } else if (baseMatcher && Array.isArray(baseMatcher.pattern)) {
             patterns.push(...baseMatcher.pattern);
+        } else if (baseMatcher && !Array.isArray(baseMatcher.pattern)) {
+            patterns.push(baseMatcher.pattern);
         }
 
         let deprecated: boolean | undefined = matcher.deprecated;

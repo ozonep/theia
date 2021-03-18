@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as http from 'http';
-import * as https from 'https';
-import * as express from 'express';
-import * as yargs from 'yargs';
-import * as fs from 'fs-extra';
+import { join } from 'path';
+import { Server as httpServer, createServer as httpCreateServer } from 'http';
+import { Server as httpsServer, createServer as httpsCreateServer } from 'https';
+import express from 'express';
+import yargs from 'yargs';
+import { readFile, pathExists } from 'fs-extra';
 import { performance, PerformanceObserver } from 'perf_hooks';
 import { inject, named, injectable, postConstruct } from 'inversify';
 import { ContributionProvider, MaybePromise } from '../common';
@@ -70,7 +70,7 @@ export interface BackendApplicationContribution {
      *
      * @returns either `undefined` or a Promise resolving to `undefined`.
      */
-    onStart?(server: http.Server | https.Server): MaybePromise<void>;
+    onStart?(server: httpServer | httpsServer): MaybePromise<void>;
 
     /**
      * Called when the backend application shuts down. Contributions must perform only synchronous operations.
@@ -220,12 +220,12 @@ export class BackendApplication {
         this.app.use(...handlers);
     }
 
-    async start(aPort?: number, aHostname?: string): Promise<http.Server | https.Server> {
+    async start(aPort?: number, aHostname?: string): Promise<httpServer | httpsServer> {
         const hostname = aHostname !== undefined ? aHostname : this.cliParams.hostname;
         const port = aPort !== undefined ? aPort : this.cliParams.port;
 
-        const deferred = new Deferred<http.Server | https.Server>();
-        let server: http.Server | https.Server;
+        const deferred = new Deferred<httpServer | httpsServer>();
+        let server: httpServer | httpsServer;
 
         if (this.cliParams.ssl) {
 
@@ -240,21 +240,21 @@ export class BackendApplication {
             let key: Buffer;
             let cert: Buffer;
             try {
-                key = await fs.readFile(this.cliParams.certkey as string);
+                key = await readFile(this.cliParams.certkey as string);
             } catch (err) {
                 console.error("Can't read certificate key");
                 throw err;
             }
 
             try {
-                cert = await fs.readFile(this.cliParams.cert as string);
+                cert = await readFile(this.cliParams.cert as string);
             } catch (err) {
                 console.error("Can't read certificate");
                 throw err;
             }
-            server = https.createServer({ key, cert }, this.app);
+            server = httpsCreateServer({ key, cert }, this.app);
         } else {
-            server = http.createServer(this.app);
+            server = httpCreateServer(this.app);
         }
 
         server.on('error', error => {
@@ -306,8 +306,8 @@ export class BackendApplication {
         const acceptedEncodings = req.acceptsEncodings();
 
         const gzUrl = `${req.url}.gz`;
-        const gzPath = path.join(this.applicationPackage.projectPath, 'lib', gzUrl);
-        if (acceptedEncodings.indexOf('gzip') === -1 || !(await fs.pathExists(gzPath))) {
+        const gzPath = join(this.applicationPackage.projectPath, 'lib', gzUrl);
+        if (acceptedEncodings.indexOf('gzip') === -1 || !(await pathExists(gzPath))) {
             next();
             return;
         }

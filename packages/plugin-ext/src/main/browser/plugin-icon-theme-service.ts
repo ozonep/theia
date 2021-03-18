@@ -21,7 +21,7 @@
 // https://github.com/microsoft/vscode/blob/7cf4cca47aa025a590fc939af54932042302be63/src/vs/workbench/services/themes/browser/fileIconThemeData.ts
 
 import debounce = require('lodash.debounce');
-import * as jsoncparser from 'jsonc-parser';
+import { parse } from '@theia/core/shared/jsonc-parser';
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
 import { IconThemeService, IconTheme, IconThemeDefinition } from '@theia/core/lib/browser/icon-theme-service';
 import { IconThemeContribution, DeployedPlugin, UiTheme, getPluginId } from '../../common/plugin-protocol';
@@ -192,7 +192,7 @@ export class PluginIconTheme extends PluginIconThemeDefinition implements IconTh
         const uri = new URI(this.uri);
         const result = await this.fileService.read(uri);
         const content = result.value;
-        const json: RecursivePartial<PluginIconThemeDocument> = jsoncparser.parse(content, undefined, { disallowComments: false });
+        const json: RecursivePartial<PluginIconThemeDocument> = parse(content, undefined, { disallowComments: false });
         this.hidesExplorerArrows = !!json.hidesExplorerArrows;
 
         const toUnwatch = this.fileService.watch(uri);

@@ -16,7 +16,7 @@
 
 import { PluginDeployerResolverContext } from '../../../common/plugin-protocol';
 import { injectable } from '@theia/core/shared/inversify';
-import * as path from 'path';
+import { basename } from 'path';
 import { LocalPluginDeployerResolver } from './local-plugin-deployer-resolver';
 
 @injectable()
@@ -28,7 +28,7 @@ export class LocalFilePluginDeployerResolver extends LocalPluginDeployerResolver
     }
 
     async resolveFromLocalPath(pluginResolverContext: PluginDeployerResolverContext, localPath: string): Promise<void> {
-        const fileName = path.basename(localPath);
+        const fileName = basename(localPath);
         pluginResolverContext.addPlugin(fileName, localPath);
     }
 }

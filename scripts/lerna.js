@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 // @ts-check
-const path = require('path');
+const { resolve } = require('path');
 
-const lernaPath = path.resolve(__dirname, '..', 'node_modules', 'lerna', 'bin', 'lerna');
+const lernaPath = resolve(__dirname, '..', 'node_modules', 'lerna', 'bin', 'lerna');
 
 if (process.argv.indexOf('--reject-cycles') === -1) {
     process.argv.push('--reject-cycles');

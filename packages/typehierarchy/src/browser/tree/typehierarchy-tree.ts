@@ -31,7 +31,9 @@ export class TypeHierarchyTree extends TreeImpl {
         if (TypeHierarchyTree.Node.is(parent)) {
             await this.ensureResolved(parent);
             if (parent.children.length === 0) {
+                // @ts-ignore
                 delete parent.children;
+                // @ts-ignore
                 delete parent.expanded;
                 return [];
             }
@@ -150,6 +152,7 @@ export namespace TypeHierarchyTree {
             };
             // Trick: if the node is `resolved` and have zero `children`, make the node non-expandable.
             if (resolved && node.children.length === 0) {
+                // @ts-ignore
                 delete node.expanded;
             }
             return node;

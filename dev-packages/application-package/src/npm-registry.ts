@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as request from 'request';
+import request from 'request';
 const ChangesStream = require('changes-stream');
 import { NpmRegistryProps } from './application-props';
 

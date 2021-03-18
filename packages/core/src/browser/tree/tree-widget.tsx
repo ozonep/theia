@@ -29,7 +29,7 @@ import { TreeDecoratorService, TreeDecoration, DecoratedTreeNode } from './tree-
 import { notEmpty } from '../../common/objects';
 import { isOSX } from '../../common/os';
 import { ReactWidget } from '../widgets/react-widget';
-import * as React from 'react';
+import React from 'react';
 import { List, ListRowRenderer, ScrollParams, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { TopDownTreeIterator } from './tree-iterator';
 import { SearchBox, SearchBoxFactory, SearchBoxProps } from './search-box';
@@ -976,7 +976,7 @@ export class TreeWidget extends ReactWidget implements StatefulWidget {
             decorations.push(node.decorationData);
         }
         if (this.decorations.has(node.id)) {
-            decorations.push(...this.decorations.get(node.id));
+            decorations.push(...this.decorations.get(node.id)!);
         }
         return decorations.sort(TreeDecoration.Data.comparePriority);
     }

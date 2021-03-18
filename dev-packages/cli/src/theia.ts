@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as temp from 'temp';
-import * as yargs from 'yargs';
+import { track } from 'temp';
+import yargs from 'yargs';
 import { ApplicationPackageManager, rebuild } from '@theia/application-manager';
 import { ApplicationProps } from '@theia/application-package';
 import checkHoisted from './check-hoisting';
@@ -227,7 +227,7 @@ function rebuildCommand(command: string, target: ApplicationProps.Target): yargs
             handler: async ({ testInspect, testExtension, testFile, testIgnore, testRecursive, testSort, testSpec, testCoverage }) => {
                 try {
                     if (!process.env.THEIA_CONFIG_DIR) {
-                        process.env.THEIA_CONFIG_DIR = temp.track().mkdirSync('theia-test-config-dir');
+                        process.env.THEIA_CONFIG_DIR = track().mkdirSync('theia-test-config-dir');
                     }
                     await runTest({
                         start: async () => new Promise((resolve, reject) => {

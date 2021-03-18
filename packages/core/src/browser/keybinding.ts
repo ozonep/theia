@@ -320,7 +320,7 @@ export class KeybindingRegistry {
      * @param separator the separator used to separate keys (key and modifiers) in the returning string
      */
     acceleratorForKeyCode(keyCode: KeyCode, separator: string = ' '): string {
-        const keyCodeResult = [];
+        const keyCodeResult: string[] = [];
         if (keyCode.meta && isOSX) {
             keyCodeResult.push('Cmd');
         }

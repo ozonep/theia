@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { injectable, inject, named } from '@theia/core/shared/inversify';
-import * as os from 'os';
+import { homedir } from 'os';
 import { ILogger } from '@theia/core/lib/common/logger';
 import { TerminalProcess, TerminalProcessOptions, ProcessManager, MultiRingBuffer } from '@theia/process/lib/node';
 import { isWindows, isOSX, OS } from '@theia/core/lib/common';
@@ -61,7 +61,7 @@ function getRootPath(rootURI?: string): string {
         const uri = new URI(rootURI);
         return FileUri.fsPath(uri);
     } else {
-        return os.homedir();
+        return homedir();
     }
 }
 

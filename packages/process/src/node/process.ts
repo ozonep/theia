@@ -21,7 +21,7 @@ import { FileUri } from '@theia/core/lib/node';
 import { isOSX, isWindows } from '@theia/core';
 import { Readable, Writable } from 'stream';
 import { exec } from 'child_process';
-import * as fs from 'fs';
+import { readlink } from 'fs';
 
 export interface IProcessExitEvent {
     // Exactly one of code and signal will be set.
@@ -215,7 +215,7 @@ export abstract class Process {
             });
         } else if (!isWindows) {
             return new Promise<string>(resolve => {
-                fs.readlink('/proc/' + this.pid + '/cwd', (err, linkedstr) => {
+                readlink('/proc/' + this.pid + '/cwd', (err, linkedstr) => {
                     if (err || !linkedstr) {
                         resolve(FileUri.create(this.initialCwd).toString());
                     } else {

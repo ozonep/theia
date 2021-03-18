@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as paths from 'path';
-import * as fs from 'fs-extra';
+import { sep, basename } from 'path';
+import { pathExists, readFile } from 'fs-extra';
 import { AbstractGenerator } from './abstract-generator';
 
 export class WebpackGenerator extends AbstractGenerator {
@@ -28,10 +28,10 @@ export class WebpackGenerator extends AbstractGenerator {
     }
 
     protected async shouldGenerateUserWebpackConfig(): Promise<boolean> {
-        if (!(await fs.pathExists(this.configPath))) {
+        if (!(await pathExists(this.configPath))) {
             return true;
         }
-        const content = await fs.readFile(this.configPath, 'utf8');
+        const content = await readFile(this.configPath, 'utf8');
         return content.indexOf('gen-webpack') === -1;
     }
 
@@ -44,7 +44,7 @@ export class WebpackGenerator extends AbstractGenerator {
     }
 
     protected resolve(moduleName: string, path: string): string {
-        return this.pck.resolveModulePath(moduleName, path).split(paths.sep).join('/');
+        return this.pck.resolveModulePath(moduleName, path).split(sep).join('/');
     }
 
     protected compileWebpackConfig(): string {
@@ -57,40 +57,28 @@ const path = require('path');
 const webpack = require('webpack');
 const yargs = require('yargs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const CircularDependencyPlugin = require('circular-dependency-plugin');
-const CompressionPlugin = require('@theia/compression-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 
 const outputPath = path.resolve(__dirname, 'lib');
-const { mode, staticCompression }  = yargs.option('mode', {
-    description: "Mode to use",
-    choices: ["development", "production"],
-    default: "production"
-}).option('static-compression', {
-    description: 'Controls whether to enable compression of static artifacts.',
-    type: 'boolean',
-    default: true
-}).argv;
-const development = mode === 'development';${this.ifMonaco(() => `
+const mode = "production";
+const staticCompression = true;
+const development = false;
 
-const monacoEditorCorePath = development ? '${this.resolve('ozonep-monaco-editor-core', 'dev/vs')}' : '${this.resolve('ozonep-monaco-editor-core', 'min/vs')}';`)}
+const monacoEditorCorePath = '${this.resolve('ozonep-monaco-editor-core', 'min/vs')}';
 
-const plugins = [new CopyWebpackPlugin([${this.ifMonaco(() => `
-    {
-        from: monacoEditorCorePath,
-        to: 'vs'
-    }`)}
-])];
+const plugins = [new CopyWebpackPlugin({
+    patterns: [{ from: monacoEditorCorePath, to: 'vs' }]
+})];
 // it should go after copy-plugin in order to compress monaco as well
 if (staticCompression) {
-    plugins.push(new CompressionPlugin({
-        // enable reuse of compressed artifacts for incremental development
-        cache: development
-    }));
+    plugins.push(new CompressionPlugin());
 }
-plugins.push(new CircularDependencyPlugin({
-    exclude: /(node_modules|examples)[\\\\|\/]./,
-    failOnError: false // https://github.com/nodejs/readable-stream/issues/280#issuecomment-297076462
-}));
+plugins.push(new webpack.ProvidePlugin({
+    process: 'process/browser.js',
+    Buffer: ['buffer', 'Buffer']
+  })
+)
 
 module.exports = {
     entry: path.resolve(__dirname, 'src-gen/frontend/index.js'),
@@ -98,36 +86,43 @@ module.exports = {
         filename: 'bundle.js',
         path: outputPath
     },
-    target: 'web',
+    target: ['web'],
     mode,
     node: {
-        fs: 'empty',
-        child_process: 'empty',
-        net: 'empty',
-        crypto: 'empty'
+        global: true,
+        __filename: true,
+        __dirname: true,
     },
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin({ parallel: true })]
+      },
     module: {
         rules: [
             {
                 test: /worker-main\\.js$/,
+                use: [{
+                    loader: 'worker-loader', 
                 loader: 'worker-loader',
-                options: {
-                    name: 'worker-ext.[hash].js'
-                }
+                    loader: 'worker-loader', 
+                    options: { filename: 'worker-ext.[hash].js', esModule: false }
+                }],
+                
             },
             {
                 test: /\\.css$/,
                 exclude: /materialcolors\\.css$|\\.useable\\.css$/,
-                loader: 'style-loader!css-loader'
+                use: ['style-loader', 'css-loader']
             },
             {
                 test: /materialcolors\\.css$|\\.useable\\.css$/,
                 use: [
                   {
-                    loader: 'style-loader/useable',
+                    loader: 'style-loader',
                     options: {
-                      singleton: true,
-                      attrs: { id: 'theia-theme' },
+                      injectType: 'lazySingletonStyleTag',
+                      esModule: false,
+                      attributes: { id: 'theia-theme' },
                     }
                   },
                   'css-loader'
@@ -135,42 +130,23 @@ module.exports = {
             },
             {
                 test: /\\.(ttf|eot|svg)(\\?v=\\d+\\.\\d+\\.\\d+)?$/,
-                loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+                type: 'asset/inline'
             },
             {
                 test: /\\.(jpg|png|gif)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[hash].[ext]',
-                }
-            },
-            {
-                // see https://github.com/eclipse-theia/theia/issues/556
-                test: /source-map-support/,
-                loader: 'ignore-loader'
-            },
-            {
-                test: /\\.js$/,
-                enforce: 'pre',
-                loader: 'source-map-loader',
-                exclude: /jsonc-parser|fast-plist|onigasm/
+                type: 'asset/resource'
             },
             {
                 test: /\\.woff(2)?(\\?v=[0-9]\\.[0-9]\\.[0-9])?$/,
-                loader: "url-loader?limit=10000&mimetype=application/font-woff"
-            },
-            {
-                test: /node_modules[\\\\|\/](vscode-languageserver-types|vscode-uri|jsonc-parser)/,
-                use: { loader: 'umd-compat-loader' }
+                type: 'asset/inline'
             },
             {
                 test: /\\.wasm$/,
-                loader: "file-loader",
-                type: "javascript/auto",
+                type: 'asset/resource'
             },
             {
                 test: /\\.plist$/,
-                loader: "file-loader",
+                type: 'asset/resource'
             },
             {
                 test: /\\.js$/,
@@ -181,29 +157,52 @@ module.exports = {
                     options: {
                         presets: ['@babel/preset-env'],
                         plugins: [
-                            // reuse runtime babel lib instead of generating it in each js file
                             '@babel/plugin-transform-runtime',
-                            // ensure that classes are transpiled
                             '@babel/plugin-transform-classes'
                         ],
-                        // see https://github.com/babel/babel/issues/8900#issuecomment-431240426
-                        sourceType: 'unambiguous',
-                        cacheDirectory: true
+                        sourceType: "unambiguous",
+                        targets: {
+                            "chrome": "87",
+                            "node": "current"
+                        }
                     }
                 }
             }
         ]
     },
     resolve: {
-        extensions: ['.js']${this.ifMonaco(() => `,
+        extensions: ['.js'],
+        fallback: {
+            "crypto": false,
+            "net": false,
+            "fs": false,
+            "child_process": false,
+            "path": require.resolve("path-browserify"),
+            "os": require.resolve("os-browserify/browser"),
+            "timers": require.resolve("timers-browserify"),
+            "buffer": require.resolve("buffer"),
+            "process": require.resolve("process/browser"),
+            "assert": require.resolve("assert"),
+            "constants": require.resolve("constants-browserify"),
+            "domain": require.resolve("domain-browser"),
+            "events": require.resolve("events"),
+            "http": require.resolve("stream-http"),
+            "https": require.resolve("https-browserify"),
+            "stream": require.resolve("stream-browserify"),
+            "sys": require.resolve("util"),
+            "url": require.resolve("url"),
+            "util": require.resolve("util"),
+            "zlib": require.resolve("browserify-zlib")
+        },
         alias: {
             'vs': path.resolve(outputPath, monacoEditorCorePath)
-        }`)}
+        }
     },
-    devtool: 'source-map',
     plugins,
     stats: {
-        warnings: true
+        warnings: false,
+        errorDetails: true,
+        children: true
     }
 };`;
     }
@@ -214,7 +213,7 @@ module.exports = {
  * To reset delete this file and rerun theia build again.
  */
 // @ts-check
-const config = require('./${paths.basename(this.genConfigPath)}');
+const config = require('./${basename(this.genConfigPath)}');
 
 /**
  * Expose bundled modules on window.theia.moduleName namespace, e.g.

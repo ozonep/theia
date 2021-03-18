@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-const vhost = require('vhost');
-import express = require('express');
-import * as fs from '@theia/core/shared/fs-extra';
+import vhost from 'vhost';
+import express from 'express';
+import { Stats, pathExists, stat, readFile } from '@theia/core/shared/fs-extra';
 import { lookup } from 'mime-types';
 import { injectable, inject, named } from '@theia/core/shared/inversify';
 import { Application, Request, Response } from '@theia/core/shared/express';
@@ -36,7 +36,7 @@ export interface FileStatWithContent {
     /**
      * The file stat.
      */
-    readonly stat: fs.Stats & { uri: string };
+    readonly stat: Stats & { uri: string };
 
     /**
      * The content of the file as a UTF-8 encoded string.
@@ -119,7 +119,7 @@ export class MiniBrowserEndpoint implements BackendApplicationContribution, Mini
     }
 
     protected async response(uri: string, response: Response): Promise<Response> {
-        const exists = await fs.pathExists(FileUri.fsPath(uri));
+        const exists = await pathExists(FileUri.fsPath(uri));
         if (!exists) {
             return this.missingResourceHandler()(uri, response);
         }
@@ -152,8 +152,8 @@ export class MiniBrowserEndpoint implements BackendApplicationContribution, Mini
 
     protected async readContent(uri: string): Promise<FileStatWithContent> {
         const fsPath = FileUri.fsPath(uri);
-        const [stat, content] = await Promise.all([fs.stat(fsPath), fs.readFile(fsPath, 'utf8')]);
-        return { stat: Object.assign(stat, { uri }), content };
+        const [istat, content] = await Promise.all([stat(fsPath), readFile(fsPath, 'utf8')]);
+        return { stat: Object.assign(istat, { uri }), content };
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,9 +199,9 @@ export class MiniBrowserEndpoint implements BackendApplicationContribution, Mini
     }
 
     protected async getVirtualHostRegExp(): Promise<RegExp> {
-        const pattern = process.env[MiniBrowserEndpointNS.HOST_PATTERN_ENV] ?? MiniBrowserEndpointNS.HOST_PATTERN_DEFAULT;
+        const pattern = process.env[MiniBrowserEndpointNS.HOST_PATTERN_ENV] || MiniBrowserEndpointNS.HOST_PATTERN_DEFAULT;
         const vhostRe = pattern
-            .replace('.', '\\.')
+            .replace(/\./g, '\\.')
             .replace('{{uuid}}', '.+')
             .replace('{{hostname}}', '.+');
         return new RegExp(vhostRe, 'i');
@@ -249,7 +249,7 @@ export class ImageHandler implements MiniBrowserEndpointHandler {
     }
 
     respond(statWithContent: FileStatWithContent, response: Response): MaybePromise<Response> {
-        fs.readFile(FileUri.fsPath(statWithContent.stat.uri), (error, data) => {
+        readFile(FileUri.fsPath(statWithContent.stat.uri), (error, data) => {
             if (error) {
                 throw error;
             }
@@ -286,7 +286,7 @@ export class PdfHandler implements MiniBrowserEndpointHandler {
                 replace(/%(?:7C|60|5E)/g, unescape);
 
         const fileName = FileUri.create(statWithContent.stat.uri).path.base;
-        fs.readFile(FileUri.fsPath(statWithContent.stat.uri), (error, data) => {
+        readFile(FileUri.fsPath(statWithContent.stat.uri), (error, data) => {
             if (error) {
                 throw error;
             }

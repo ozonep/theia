@@ -29,7 +29,7 @@ import { OutlineViewTreeModel } from './outline-view-tree';
 import { Message } from '@theia/core/shared/@phosphor/messaging';
 import { Emitter } from '@theia/core';
 import { CompositeTreeNode } from '@theia/core/lib/browser';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 
 /**
  * Representation of an outline symbol information node.

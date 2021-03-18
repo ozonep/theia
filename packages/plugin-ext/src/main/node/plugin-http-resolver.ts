@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 import { injectable } from '@theia/core/shared/inversify';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-import * as url from 'url';
+import { existsSync, createWriteStream, mkdirSync } from 'fs';
+import { tmpdir } from 'os';
+import { dirname, resolve as pResolve, basename } from 'path';
+import { URL } from 'url';
 import * as request from 'request';
 
 import { PluginDeployerResolver, PluginDeployerResolverContext } from '../../common';
@@ -34,9 +34,9 @@ export class HttpPluginDeployerResolver implements PluginDeployerResolver {
     private unpackedFolder: string;
 
     constructor() {
-        this.unpackedFolder = path.resolve(os.tmpdir(), 'http-remote');
-        if (!fs.existsSync(this.unpackedFolder)) {
-            fs.mkdirSync(this.unpackedFolder);
+        this.unpackedFolder = pResolve(tmpdir(), 'http-remote');
+        if (!existsSync(this.unpackedFolder)) {
+            mkdirSync(this.unpackedFolder);
         }
     }
 
@@ -50,16 +50,16 @@ export class HttpPluginDeployerResolver implements PluginDeployerResolver {
 
             // keep filename of the url
             const urlPath = pluginResolverContext.getOriginId();
-            const link = url.parse(urlPath);
+            const link = new URL(urlPath);
             if (!link.pathname) {
                 reject(new Error('invalid link URI' + urlPath));
                 return;
             }
 
-            const dirname = path.dirname(link.pathname);
-            const basename = path.basename(link.pathname);
-            const filename = dirname.replace(/\W/g, '_') + ('-') + basename;
-            const unpackedPath = path.resolve(this.unpackedFolder, path.basename(filename));
+            const idirname = dirname(link.pathname);
+            const ibasename = basename(link.pathname);
+            const filename = idirname.replace(/\W/g, '_') + ('-') + ibasename;
+            const unpackedPath = pResolve(this.unpackedFolder, basename(filename));
 
             const finish = () => {
                 pluginResolverContext.addPlugin(pluginResolverContext.getOriginId(), unpackedPath);
@@ -67,11 +67,11 @@ export class HttpPluginDeployerResolver implements PluginDeployerResolver {
             };
 
             // use of cache. If file is already there use it directly
-            if (fs.existsSync(unpackedPath)) {
+            if (existsSync(unpackedPath)) {
                 finish();
                 return;
             }
-            const dest = fs.createWriteStream(unpackedPath);
+            const dest = createWriteStream(unpackedPath);
 
             dest.addListener('finish', finish);
             request.get(pluginResolverContext.getOriginId())

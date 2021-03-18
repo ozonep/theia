@@ -19,7 +19,7 @@ import { ProcessManager } from './process-manager';
 import { ILogger } from '@theia/core/lib/common';
 import { Process, ProcessType, ProcessOptions, ForkOptions, ProcessErrorEvent } from './process';
 import { ChildProcess, spawn, fork } from 'child_process';
-import * as stream from 'stream';
+import { Writable, Readable } from 'stream';
 
 // The class was here before, exporting to not break anything.
 export { DevNullStream } from './dev-null-stream';
@@ -60,26 +60,26 @@ export class RawProcess extends Process {
     /**
      * @deprecated use `inputStream` instead.
      */
-    get input(): stream.Writable { return this.inputStream; }
+    get input(): Writable { return this.inputStream; }
 
     /**
      * @deprecated use `outputStream` instead.
      */
-    get output(): stream.Readable { return this.outputStream; }
+    get output(): Readable { return this.outputStream; }
 
     /**
      * @deprecated use `errorStream` instead.
      */
-    get errorOutput(): stream.Readable { return this.errorStream; }
+    get errorOutput(): Readable { return this.errorStream; }
 
     /**
      * If the process fails to launch, it will be undefined.
      */
     readonly process: ChildProcess | undefined;
 
-    readonly outputStream: stream.Readable;
-    readonly errorStream: stream.Readable;
-    readonly inputStream: stream.Writable;
+    readonly outputStream: Readable;
+    readonly errorStream: Readable;
+    readonly inputStream: Writable;
 
     constructor( // eslint-disable-next-line @typescript-eslint/indent
         @inject(RawProcessOptions) options: RawProcessOptions | RawForkOptions,

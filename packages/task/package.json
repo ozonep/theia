@@ -15,7 +15,6 @@
     "@theia/workspace": "1.11.0",
     "@theia/userstorage": "1.11.0",
     "ajv": "^6.5.3",
-    "jsonc-parser": "^2.2.0",
     "p-debounce": "^2.1.0"
   },
   "publishConfig": {

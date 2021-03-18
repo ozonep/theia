@@ -31,8 +31,7 @@
     "decompress": "^4.2.1",
     "dompurify": "^2.0.11",
     "escape-html": "^1.0.3",
-    "filenamify": "^4.1.0",
-    "jsonc-parser": "^2.2.0",
+    "filenamify": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "macaddress": "^0.2.9",
     "mime": "^2.4.4",
@@ -41,7 +40,7 @@
     "uuid": "^8.0.0",
     "vhost": "^3.0.2",
     "vscode-debugprotocol": "^1.32.0",
-    "vscode-textmate": "^4.0.1"
+    "vscode-textmate": "^5.2.0"
   },
   "publishConfig": {
     "access": "public"

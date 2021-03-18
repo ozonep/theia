@@ -26,7 +26,7 @@ import { CALLHIERARCHY_ID, Definition, Caller } from '../callhierarchy';
 import URI from '@theia/core/lib/common/uri';
 import { Location, Range, SymbolKind, DocumentUri } from '@theia/core/shared/vscode-languageserver-types';
 import { EditorManager } from '@theia/editor/lib/browser';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 
 export const HIERARCHY_TREE_CLASS = 'theia-CallHierarchyTree';
 export const DEFINITION_NODE_CLASS = 'theia-CallHierarchyTreeNode';

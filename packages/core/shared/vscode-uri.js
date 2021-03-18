@@ -14,9 +14,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uriToFsPath = exports.URI = void 0;
+var nodePath = require("path");
+var posixPath = nodePath.posix || nodePath;
 var isWindows;
 if (typeof process === 'object') {
     isWindows = process.platform === 'win32';
@@ -204,6 +211,33 @@ var URI = (function () {
     };
     URI.from = function (components) {
         return new _URI(components.scheme, components.authority, components.path, components.query, components.fragment);
+    };
+    URI.resolvePath = function (uri) {
+        var paths = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            paths[_i - 1] = arguments[_i];
+        }
+        return uri.with({ path: posixPath.resolve.apply(posixPath, __spreadArray([uri.path], paths)) });
+    };
+    URI.joinPath = function (uri) {
+        var paths = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            paths[_i - 1] = arguments[_i];
+        }
+        return uri.with({ path: posixPath.join.apply(posixPath, __spreadArray([uri.path], paths)) });
+    };
+    URI.dirname = function (uri) {
+        var path = posixPath.dirname(uri.path);
+        if (path.length === 1 && path.charCodeAt(0) === 46) {
+            return uri;
+        }
+        return uri.with({ path: path });
+    };
+    URI.basename = function (uri) {
+        return posixPath.basename(uri.path);
+    };
+    URI.extname = function (uri) {
+        return posixPath.extname(uri.path);
     };
     URI.prototype.toString = function (skipEncoding) {
         if (skipEncoding === void 0) { skipEncoding = false; }

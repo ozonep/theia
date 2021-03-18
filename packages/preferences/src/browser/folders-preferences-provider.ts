@@ -179,7 +179,7 @@ export class FoldersPreferencesProvider extends PreferenceProvider {
         const groups = new Map<string, FolderPreferenceProvider[]>();
         const providers = this.getFolderProviders(resourceUri);
         for (const configName of [this.configurations.getConfigName(), ...this.configurations.getSectionNames()]) {
-            const group = [];
+            const group: FolderPreferenceProvider[] = [];
             for (const provider of providers) {
                 if (this.configurations.getName(provider.getConfigUri()) === configName) {
                     group.push(provider);

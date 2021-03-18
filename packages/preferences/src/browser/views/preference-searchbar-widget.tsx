@@ -16,7 +16,7 @@
 
 import { injectable, postConstruct } from '@theia/core/shared/inversify';
 import { ReactWidget, StatefulWidget } from '@theia/core/lib/browser';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import debounce = require('@theia/core/shared/lodash.debounce');
 import { Disposable, Emitter } from '@theia/core';
 

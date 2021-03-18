@@ -597,6 +597,7 @@ export class ToolbarAwareTabBar extends ScrollableTabBar {
     /**
      * Overrides the `contentNode` property getter in PhosphorJS' TabBar.
      */
+    // @ts-ignore
     get contentNode(): HTMLUListElement {
         return this.tabBarContainer.getElementsByClassName(ToolbarAwareTabBar.Styles.TAB_BAR_CONTENT)[0] as HTMLUListElement;
     }

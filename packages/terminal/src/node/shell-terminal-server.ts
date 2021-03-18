@@ -21,7 +21,7 @@ import { BaseTerminalServer } from '../node/base-terminal-server';
 import { ShellProcessFactory } from '../node/shell-process';
 import { ProcessManager } from '@theia/process/lib/node';
 import { isWindows } from '@theia/core/lib/common/os';
-import * as cp from 'child_process';
+import { spawn } from 'child_process';
 
 @injectable()
 export class ShellTerminalServer extends BaseTerminalServer {
@@ -50,7 +50,7 @@ export class ShellTerminalServer extends BaseTerminalServer {
     private spawnAsPromised(command: string, args: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
             let stdout = '';
-            const child = cp.spawn(command, args);
+            const child = spawn(command, args);
             if (child.pid) {
                 child.stdout.on('data', (data: Buffer) => {
                     stdout += data.toString();

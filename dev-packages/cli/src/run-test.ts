@@ -16,12 +16,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as net from 'net';
-import * as puppeteer from 'puppeteer';
+import { AddressInfo } from 'net';
+import puppeteer from 'puppeteer';
 import newTestPage, { TestFileOptions } from './test-page';
 
 export interface TestOptions {
-    start: () => Promise<net.AddressInfo>
+    start: () => Promise<AddressInfo>
     launch?: puppeteer.LaunchOptions
     files?: Partial<TestFileOptions>
     coverage?: boolean

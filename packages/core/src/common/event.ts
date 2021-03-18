@@ -330,6 +330,7 @@ export namespace WaitUntilEvent {
             // Asynchronous calls to `waitUntil` should fail.
             Object.freeze(waitables);
         } finally {
+            // @ts-ignore
             delete asyncEvent['waitUntil'];
         }
         if (!waitables.length) {
@@ -390,6 +391,7 @@ export class AsyncEmitter<T extends WaitUntilEvent> extends Emitter<T> {
             } catch (e) {
                 console.error(e);
             } finally {
+                // @ts-ignore
                 delete asyncEvent['waitUntil'];
             }
             if (!waitables.length) {

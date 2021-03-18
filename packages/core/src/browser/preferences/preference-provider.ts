@@ -16,7 +16,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import debounce = require('p-debounce');
+import debounce from 'p-debounce';
 import { injectable } from 'inversify';
 import { JSONExt, JSONValue } from '@phosphor/coreutils';
 import URI from '../../common/uri';

@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as fs from 'fs';
-import writeJsonFile = require('write-json-file');
+import { readFileSync } from 'fs';
+import writeJsonFile from 'write-json-file';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function readJsonFile(path: string): any {
-    return JSON.parse(fs.readFileSync(path, { encoding: 'utf-8' }));
+    return JSON.parse(readFileSync(path, { encoding: 'utf-8' }));
 }
 
 export { writeJsonFile, readJsonFile };

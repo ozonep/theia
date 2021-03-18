@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 import { injectable, inject, postConstruct } from '@theia/core/shared/inversify';
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
+import { pathExists, mkdirs, ensureDir, writeJSON, readJSON } from '@theia/core/shared/fs-extra';
+import { dirname, join } from 'path';
 import { FileUri } from '@theia/core/lib/node/file-uri';
 import { Deferred } from '@theia/core/lib/common/promise-util';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
@@ -40,12 +40,12 @@ export class PluginsKeyValueStorage {
     protected async init(): Promise<void> {
         try {
             const configDirUri = await this.envServer.getConfigDirUri();
-            const globalStorageFsPath = path.join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_GLOBAL_STORAGE_DIR);
-            const exists = await fs.pathExists(globalStorageFsPath);
+            const globalStorageFsPath = join(FileUri.fsPath(configDirUri), PluginPaths.PLUGINS_GLOBAL_STORAGE_DIR);
+            const exists = await pathExists(globalStorageFsPath);
             if (!exists) {
-                await fs.mkdirs(globalStorageFsPath);
+                await mkdirs(globalStorageFsPath);
             }
-            const globalDataFsPath = path.join(globalStorageFsPath, 'global-state.json');
+            const globalDataFsPath = join(globalStorageFsPath, 'global-state.json');
             this.deferredGlobalDataPath.resolve(globalDataFsPath);
         } catch (e) {
             console.error('Failed to initialize global state path: ', e);
@@ -94,15 +94,15 @@ export class PluginsKeyValueStorage {
             return this.deferredGlobalDataPath.promise;
         }
         const storagePath = await this.pluginPathsService.getHostStoragePath(kind.workspace, kind.roots);
-        return storagePath ? path.join(storagePath, 'workspace-state.json') : undefined;
+        return storagePath ? join(storagePath, 'workspace-state.json') : undefined;
     }
 
     private async readFromFile(pathToFile: string): Promise<KeysToKeysToAnyValue> {
-        if (!await fs.pathExists(pathToFile)) {
+        if (!await pathExists(pathToFile)) {
             return {};
         }
         try {
-            return await fs.readJSON(pathToFile);
+            return await readJSON(pathToFile);
         } catch (error) {
             console.error('Failed to parse data from "', pathToFile, '". Reason:', error);
             return {};
@@ -110,8 +110,8 @@ export class PluginsKeyValueStorage {
     }
 
     private async writeToFile(pathToFile: string, data: KeysToKeysToAnyValue): Promise<void> {
-        await fs.ensureDir(path.dirname(pathToFile));
-        await fs.writeJSON(pathToFile, data);
+        await ensureDir(dirname(pathToFile));
+        await writeJSON(pathToFile, data);
     }
 
 }

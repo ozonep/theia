@@ -16,8 +16,8 @@
 
 import { injectable } from '@theia/core/shared/inversify';
 import { PluginDeployerResolver, PluginDeployerResolverContext } from '../../../common/plugin-protocol';
-import * as fs from '@theia/core/shared/fs-extra';
-import * as path from 'path';
+import { pathExists } from '@theia/core/shared/fs-extra';
+import { resolve, isAbsolute } from 'path';
 import { FileUri } from '@theia/core/lib/node';
 import URI from '@theia/core/lib/common/uri';
 
@@ -48,10 +48,10 @@ export abstract class LocalPluginDeployerResolver implements PluginDeployerResol
             return null;
         }
         let fsPath = FileUri.fsPath(localUri);
-        if (!path.isAbsolute(fsPath)) {
-            fsPath = path.resolve(process.cwd(), fsPath);
+        if (!isAbsolute(fsPath)) {
+            fsPath = resolve(process.cwd(), fsPath);
         }
-        if (!await fs.pathExists(fsPath)) {
+        if (!await pathExists(fsPath)) {
             console.warn(`The local plugin referenced by ${pluginResolverContext.getOriginId()} does not exist.`);
             return null;
         }

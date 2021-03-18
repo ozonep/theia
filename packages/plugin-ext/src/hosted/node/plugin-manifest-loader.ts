@@ -16,14 +16,14 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as path from 'path';
-import * as fs from '@theia/core/shared/fs-extra';
+import { join } from 'path';
+import { readJson } from '@theia/core/shared/fs-extra';
 
 const NLS_REGEX = /^%([\w\d.-]+)%$/i;
 
 export async function loadManifest(pluginPath: string): Promise<any> {
     const [manifest, translations] = await Promise.all([
-        fs.readJson(path.join(pluginPath, 'package.json')),
+        readJson(join(pluginPath, 'package.json')),
         loadTranslations(pluginPath)
     ]);
     // translate vscode builtins, as they are published with a prefix. See https://github.com/theia-ide/vscode-builtin-extensions/blob/master/src/republish.js#L50
@@ -38,7 +38,7 @@ export async function loadManifest(pluginPath: string): Promise<any> {
 
 async function loadTranslations(pluginPath: string): Promise<any> {
     try {
-        return await fs.readJson(path.join(pluginPath, 'package.nls.json'));
+        return await readJson(join(pluginPath, 'package.nls.json'));
     } catch (e) {
         if (e.code !== 'ENOENT') {
             throw e;

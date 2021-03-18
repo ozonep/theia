@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
+import { resolve } from 'path';
 import { interfaces } from '@theia/core/shared/inversify';
 import { bindContributionProvider } from '@theia/core/lib/common/contribution-provider';
 import { CliContribution } from '@theia/core/lib/node/cli';
@@ -62,7 +62,7 @@ export function bindCommonHostedBackend(bind: interfaces.Bind): void {
     bind(PluginDeployerHandler).toService(HostedPluginDeployerHandler);
 
     bind(GrammarsReader).toSelf().inSingletonScope();
-    bind(HostedPluginProcessConfiguration).toConstantValue({ path: path.resolve(__dirname, 'plugin-host.js') });
+    bind(HostedPluginProcessConfiguration).toConstantValue({ path: resolve(__dirname, 'plugin-host.js') });
 
     bind(ConnectionContainerModule).toConstantValue(commonHostedConnectionModule);
     bind(PluginUriFactory).to(FilePluginUriFactory).inSingletonScope();

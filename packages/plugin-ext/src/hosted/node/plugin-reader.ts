@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
-import * as express from '@theia/core/shared/express';
-import * as escape_html from 'escape-html';
+import { resolve } from 'path';
+import express from '@theia/core/shared/express';
+import escape_html from 'escape-html';
 import { ILogger } from '@theia/core';
 import { inject, injectable, optional, multiInject } from '@theia/core/shared/inversify';
 import { BackendApplicationContribution } from '@theia/core/lib/node/backend-application';
@@ -103,7 +103,7 @@ export class HostedPluginReader implements BackendApplicationContribution {
     readMetadata(plugin: PluginPackage): PluginMetadata {
         const pluginMetadata = this.scanner.getPluginMetadata(plugin);
         if (pluginMetadata.model.entryPoint.backend) {
-            pluginMetadata.model.entryPoint.backend = path.resolve(plugin.packagePath, pluginMetadata.model.entryPoint.backend);
+            pluginMetadata.model.entryPoint.backend = resolve(plugin.packagePath, pluginMetadata.model.entryPoint.backend);
         }
         if (pluginMetadata) {
             // Add post processor

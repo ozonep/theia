@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-const path = require('path');
+const { resolve, dirname } = require('path');
 const { promises: fsp } = require('fs');
 const { EOL } = require('os');
 const { dependencies, theiaReExports } = require('../package.json');
 
-const shared = path.resolve(__dirname, '../shared');
+const shared = resolve(__dirname, '../shared');
 
 main().catch(error => {
     console.error(error);
@@ -49,8 +49,8 @@ async function main() {
 }
 
 async function generateReadme(reExports) {
-    const input = path.resolve(__dirname, '../README.in.md');
-    const output = path.resolve(__dirname, '../README.md');
+    const input = resolve(__dirname, '../README.in.md');
+    const output = resolve(__dirname, '../README.md');
     const readme = await fsp.readFile(input, { encoding: 'utf8' });
     await fsp.writeFile(output, readme.replace('{{RE-EXPORTS}}', reExports.map(
         package => ` - [\`${package}@${getPackageRange(package)}\`](${getNpmUrl(package)})`
@@ -87,9 +87,9 @@ export = ${namespace};
  * @returns {string} target filename without extension (base)
  */
 async function prepareSharedPackage(package) {
-    const base = path.resolve(shared, package);
+    const base = resolve(shared, package);
     // Handle case like '@a/b/c/d.js' => mkdirp('@a/b/c')
-    await mkdirp(path.dirname(base));
+    await mkdirp(dirname(base));
     return base;
 }
 

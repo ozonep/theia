@@ -24,6 +24,11 @@ export declare class URI implements UriComponents {
         query?: string;
         fragment?: string;
     }): URI;
+    static resolvePath(uri: URI, ...paths: string[]): URI;
+    static joinPath(uri: URI, ...paths: string[]): URI;
+    static dirname(uri: URI): URI;
+    static basename(uri: URI): string;
+    static extname(uri: URI): string;
     toString(skipEncoding?: boolean): string;
     toJSON(): UriComponents;
     static revive(data: UriComponents | URI): URI;

@@ -81,6 +81,7 @@ export namespace DefinitionNode {
     export function create(definition: Definition, parent: TreeNode | undefined): DefinitionNode {
         const name = definition.symbolName;
         const id = createId(definition, parent);
+        // @ts-ignore
         return <DefinitionNode>{
             id, definition, name, parent,
             visible: true,
@@ -104,6 +105,7 @@ export namespace CallerNode {
         const callerDefinition = caller.callerDefinition;
         const name = callerDefinition.symbolName;
         const id = createId(callerDefinition, parent);
+        // @ts-ignore
         return <CallerNode>{
             id, caller, name, parent,
             visible: true,

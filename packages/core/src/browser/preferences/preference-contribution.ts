@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import { inject, injectable, interfaces, named, postConstruct } from 'inversify';
 import { ContributionProvider, bindContributionProvider, escapeRegExpCharacters, Emitter, Event, Disposable } from '../../common';
 import { PreferenceScope } from './preference-scope';

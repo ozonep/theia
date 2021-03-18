@@ -110,9 +110,9 @@ export class WebviewThemeDataProvider {
     protected getActiveTheme(): WebviewThemeType {
         const theme = ThemeService.get().getCurrentTheme();
         switch (theme.type) {
-            case 'light': return 'vscode-light';
+            case 'light': return 'vscode-dark';
             case 'dark': return 'vscode-dark';
-            default: return 'vscode-high-contrast';
+            default: return 'vscode-dark';
         }
     }
 

@@ -24,11 +24,9 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isObject(obj: any): boolean {
-    return typeof obj === 'object'
-        && obj !== null // eslint-disable-line @typescript-eslint/no-explicit-any
-        && !Array.isArray(obj)
-        && !(obj instanceof RegExp)
-        && !(obj instanceof Date);
+    return obj !== null // eslint-disable-line @typescript-eslint/no-explicit-any
+        && typeof obj === 'object'
+        && !Array.isArray(obj);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

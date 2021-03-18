@@ -33,7 +33,7 @@ import {
 } from '@theia/core/lib/browser';
 import { TreeViewItem, TreeViewItemCollapsibleState } from '../../../common/plugin-api-rpc';
 import { MenuPath, MenuModelRegistry, ActionMenuNode } from '@theia/core/lib/common/menu';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import { PluginSharedStyle } from '../plugin-shared-style';
 import { ViewContextKeyService } from './view-context-key-service';
 import { Widget } from '@theia/core/lib/browser/widgets/widget';
@@ -281,7 +281,7 @@ export class TreeViewWidget extends TreeViewWelcomeWidget {
         });
 
         const children = this.getCaption(node);
-        return React.createElement('div', attrs, ...children);
+        return React.createElement('div', attrs, ...children as React.ReactNode[]);
     }
 
     protected getCaption(node: TreeNode): React.ReactNode {

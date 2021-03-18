@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 import { inject, injectable, named } from '@theia/core/shared/inversify';
-import * as cp from 'child_process';
-import * as fs from 'fs';
-import * as net from 'net';
-import * as path from 'path';
+import { ChildProcess, spawn, SpawnOptions } from 'child_process';
+import { existsSync } from 'fs';
+import { createServer } from 'net';
+import { join } from 'path';
 import * as request from 'request';
 
 import URI from '@theia/core/lib/common/uri';
@@ -94,7 +94,7 @@ const PROCESS_OPTIONS = {
 
 @injectable()
 export abstract class AbstractHostedInstanceManager implements HostedInstanceManager {
-    protected hostedInstanceProcess: cp.ChildProcess;
+    protected hostedInstanceProcess: ChildProcess;
     protected isPluginRunning: boolean = false;
     protected instanceUri: URI;
     protected pluginUri: URI;
@@ -128,7 +128,7 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
         }
 
         let command: string[];
-        let processOptions: cp.SpawnOptions;
+        let processOptions: SpawnOptions;
         if (pluginUri.scheme === 'file') {
             processOptions = { ...PROCESS_OPTIONS };
             // get filesystem path that work cross operating systems
@@ -226,8 +226,8 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
     }
 
     isPluginValid(uri: URI): boolean {
-        const pckPath = path.join(FileUri.fsPath(uri), 'package.json');
-        if (fs.existsSync(pckPath)) {
+        const pckPath = join(FileUri.fsPath(uri), 'package.json');
+        if (existsSync(pckPath)) {
             const pck = require(pckPath);
             try {
                 return !!this.metadata.getScanner(pck);
@@ -286,7 +286,7 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
         return options;
     }
 
-    protected runHostedPluginTheiaInstance(command: string[], options: cp.SpawnOptions): Promise<URI> {
+    protected runHostedPluginTheiaInstance(command: string[], options: SpawnOptions): Promise<URI> {
         this.isPluginRunning = true;
         return new Promise((resolve, reject) => {
             let started = false;
@@ -300,7 +300,7 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
                 }
             };
 
-            this.hostedInstanceProcess = cp.spawn(command.shift()!, command, options);
+            this.hostedInstanceProcess = spawn(command.shift()!, command, options);
             this.hostedInstanceProcess.on('error', () => { this.isPluginRunning = false; });
             this.hostedInstanceProcess.on('exit', () => { this.isPluginRunning = false; });
             this.hostedInstanceProcess.stdout!.addListener('data', outputListener);
@@ -334,7 +334,7 @@ export abstract class AbstractHostedInstanceManager implements HostedInstanceMan
 
     protected isPortFree(port: number): Promise<boolean> {
         return new Promise(resolve => {
-            const server = net.createServer();
+            const server = createServer();
             server.listen(port, '0.0.0.0');
             server.on('error', () => {
                 resolve(false);

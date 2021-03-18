@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
+import ReactDOM from 'react-dom';
+import React from 'react';
 import { injectable, unmanaged } from 'inversify';
 import { DisposableCollection, Disposable } from '../../common';
 import { BaseWidget, Message } from './widget';

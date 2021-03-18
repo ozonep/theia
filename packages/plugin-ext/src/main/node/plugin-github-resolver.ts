@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 import { injectable } from '@theia/core/shared/inversify';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import { existsSync, mkdirSync, createWriteStream } from 'fs';
+import { tmpdir } from 'os';
+import { resolve as pResolve, basename } from 'path';
 import * as request from 'request';
 import { PluginDeployerResolver, PluginDeployerResolverContext } from '../../common';
 
@@ -36,9 +36,9 @@ export class GithubPluginDeployerResolver implements PluginDeployerResolver {
     private unpackedFolder: string;
 
     constructor() {
-        this.unpackedFolder = path.resolve(os.tmpdir(), 'github-remote');
-        if (!fs.existsSync(this.unpackedFolder)) {
-            fs.mkdirSync(this.unpackedFolder);
+        this.unpackedFolder = pResolve(tmpdir(), 'github-remote');
+        if (!existsSync(this.unpackedFolder)) {
+            mkdirSync(this.unpackedFolder);
         }
     }
 
@@ -117,18 +117,18 @@ export class GithubPluginDeployerResolver implements PluginDeployerResolver {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolve: (value?: void | PromiseLike<void>) => void, reject: (reason?: any) => void): void {
 
-        const unpackedPath = path.resolve(this.unpackedFolder, path.basename(version + filename));
+        const unpackedPath = pResolve(this.unpackedFolder, basename(version + filename));
         const finish = () => {
             pluginResolverContext.addPlugin(pluginResolverContext.getOriginId(), unpackedPath);
             resolve();
         };
 
         // use of cache. If file is already there use it directly
-        if (fs.existsSync(unpackedPath)) {
+        if (existsSync(unpackedPath)) {
             finish();
             return;
         }
-        const dest = fs.createWriteStream(unpackedPath);
+        const dest = createWriteStream(unpackedPath);
 
         dest.addListener('finish', finish);
         const url = GithubPluginDeployerResolver.GITHUB_ENDPOINT + orgName + '/' + repoName + '/releases/download/' + version + '/' + filename;

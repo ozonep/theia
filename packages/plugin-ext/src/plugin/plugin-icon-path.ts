@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
+import { join, isAbsolute, normalize, relative } from 'path';
 import { URI as Uri } from '@theia/core/shared/vscode-uri';
 import { IconUrl, PluginPackage } from '../common/plugin-protocol';
 import { Plugin } from '../common/plugin-api-rpc';
@@ -42,9 +42,9 @@ export namespace PluginIconPath {
             return arg.toString(true);
         }
         const { packagePath } = plugin.rawModel;
-        const absolutePath = path.isAbsolute(arg) ? arg : path.join(packagePath, arg);
-        const normalizedPath = path.normalize(absolutePath);
-        const relativePath = path.relative(packagePath, normalizedPath);
+        const absolutePath = isAbsolute(arg) ? arg : join(packagePath, arg);
+        const normalizedPath = normalize(absolutePath);
+        const relativePath = relative(packagePath, normalizedPath);
         return PluginPackage.toPluginUrl(plugin.rawModel, relativePath);
     }
 }

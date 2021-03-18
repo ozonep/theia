@@ -67,14 +67,18 @@ export class SourceTree extends TreeImpl {
             } as TreeElementNode;
         }
         if (CompositeTreeElementNode.is(updated)) {
+            // @ts-ignore
             delete updated.expanded;
+            // @ts-ignore
             delete updated.children;
         }
         if (updated) {
             if (ExpandableTreeNode.is(updated)) {
+                // @ts-ignore
                 delete updated.expanded;
             }
             if (CompositeTreeNode.is(updated)) {
+                // @ts-ignore
                 delete updated.children;
             }
             return updated;
@@ -128,7 +132,7 @@ export namespace TreeSourceNode {
     export function to(source: TreeSource | undefined): TreeSourceNode | undefined;
     export function to(source: TreeSource | undefined): TreeSourceNode | undefined {
         if (!source) {
-            return source;
+            return undefined;
         }
         const id = source.id || '__source__';
         return {

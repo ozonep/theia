@@ -29,7 +29,7 @@ import { ScmAvatarService } from '@theia/scm/lib/browser/scm-avatar-service';
 import { ScmItemComponent } from '../scm-navigable-list-widget';
 import { ScmFileChangeNode } from '../scm-file-change-node';
 import { ScmNavigableListWidget } from '../scm-navigable-list-widget';
-import * as React from '@theia/core/shared/react';
+import React from '@theia/core/shared/react';
 import { AlertMessage } from '@theia/core/lib/browser/widgets/alert-message';
 import { FileService } from '@theia/filesystem/lib/browser/file-service';
 
@@ -398,7 +398,7 @@ export class ScmHistoryWidget extends ScmNavigableListWidget<ScmHistoryListNode>
     protected readonly loadMoreRows = (params: IndexRange) => this.doLoadMoreRows(params);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected doLoadMoreRows(params: IndexRange): Promise<any> {
-        let resolver: () => void;
+        let resolver: (value: unknown) => void;
         const promise = new Promise(resolve => resolver = resolve);
         const lastRow = this.scmNodes[params.stopIndex - 1];
         if (ScmCommitNode.is(lastRow)) {
@@ -410,7 +410,7 @@ export class ScmHistoryWidget extends ScmNavigableListWidget<ScmHistoryListNode>
             }).then(() => {
                 this.allowScrollToSelected = false;
                 this.onDataReady();
-                resolver();
+                resolver(true);
             });
         }
         return promise;

@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as jsoncparser from 'jsonc-parser';
-import debounce = require('p-debounce');
+import { parse } from '@theia/core/shared/jsonc-parser';
+import debounce from 'p-debounce';
 import { inject, injectable, postConstruct, named } from '@theia/core/shared/inversify';
 import URI from '@theia/core/lib/common/uri';
 import { Emitter, Event } from '@theia/core/lib/common/event';
@@ -191,7 +191,7 @@ export class TaskConfigurationManager {
             } else {
                 let taskContent: object;
                 try {
-                    taskContent = jsoncparser.parse(content);
+                    taskContent = parse(content);
                 } catch {
                     taskContent = this.taskSchemaProvider.getTaskSchema().default ?? {};
                 }

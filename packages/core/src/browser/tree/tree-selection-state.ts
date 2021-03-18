@@ -186,7 +186,7 @@ export class TreeSelectionState {
         }
         let started = false;
         let finished = false;
-        const range = [];
+        const range: TreeNode[] = [];
         for (const node of new DepthFirstTreeIterator(root, { pruneCollapsed: true })) {
             if (finished) {
                 break;

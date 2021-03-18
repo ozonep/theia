@@ -14,14 +14,14 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as cp from 'child_process';
+import { ChildProcess, ForkOptions, fork, Serializable } from 'child_process';
 import { injectable, inject, named } from '@theia/core/shared/inversify';
 import { ILogger, ConnectionErrorHandler, ContributionProvider, MessageService } from '@theia/core/lib/common';
 import { createIpcEnv } from '@theia/core/lib/node/messaging/ipc-protocol';
 import { HostedPluginClient, ServerPluginRunner, PluginHostEnvironmentVariable, DeployedPlugin, PLUGIN_HOST_BACKEND } from '../../common/plugin-protocol';
 import { MessageType } from '../../common/rpc-protocol';
 import { HostedPluginCliContribution } from './hosted-plugin-cli-contribution';
-import * as psTree from 'ps-tree';
+import psTree from 'ps-tree';
 import { Deferred } from '@theia/core/lib/common/promise-util';
 
 export interface IPCConnectionOptions {
@@ -55,7 +55,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
     @inject(MessageService)
     protected readonly messageService: MessageService;
 
-    private childProcess: cp.ChildProcess | undefined;
+    private childProcess: ChildProcess | undefined;
     private client: HostedPluginClient;
 
     private terminatingPluginServer = false;
@@ -100,7 +100,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
         this.childProcess = undefined;
 
         const waitForTerminated = new Deferred<void>();
-        cp.on('message', (message: cp.Serializable) => {
+        cp.on('message', (message: Serializable) => {
             const msg = JSON.parse(message.toString());
             if ('type' in msg && msg.type === MessageType.Terminated) {
                 waitForTerminated.resolve();
@@ -152,7 +152,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
             logger: this.logger,
             args: []
         });
-        this.childProcess.on('message', (message: cp.Serializable) => {
+        this.childProcess.on('message', (message: Serializable) => {
             if (this.client) {
                 this.client.postMessage(PLUGIN_HOST_BACKEND, message.toString());
             }
@@ -160,7 +160,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
     }
 
     readonly HOSTED_PLUGIN_ENV_REGEXP_EXCLUSION = new RegExp('HOSTED_PLUGIN*');
-    private fork(options: IPCConnectionOptions): cp.ChildProcess {
+    private fork(options: IPCConnectionOptions): ChildProcess {
 
         // create env and add PATH to it so any executable from root process is available
         const env = createIpcEnv({ env: process.env });
@@ -175,7 +175,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
             env.extensionTestsPath = this.cli.extensionTestsPath;
         }
 
-        const forkOptions: cp.ForkOptions = {
+        const forkOptions: ForkOptions = {
             silent: true,
             env: env,
             execArgv: [],
@@ -187,7 +187,7 @@ export class HostedPluginProcess implements ServerPluginRunner {
             forkOptions.execArgv = ['--nolazy', `--inspect${inspectArg.substr(inspectArgPrefix.length)}`];
         }
 
-        const childProcess = cp.fork(this.configuration.path, options.args, forkOptions);
+        const childProcess = fork(this.configuration.path, options.args, forkOptions);
         childProcess.stdout!.on('data', data => this.logger.info(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
         childProcess.stderr!.on('data', data => this.logger.error(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
 

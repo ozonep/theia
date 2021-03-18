@@ -19,21 +19,22 @@
 import fetch, { Response, RequestInit } from 'node-fetch';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { getProxyForUrl } from 'proxy-from-env';
-import { promises as fs, createWriteStream } from 'fs';
-import * as mkdirp from 'mkdirp';
-import * as path from 'path';
-import * as process from 'process';
-import * as stream from 'stream';
-import * as decompress from 'decompress';
-import * as temp from 'temp';
+import { createWriteStream } from 'fs';
+import { stat } from 'fs/promises';
+import mkdirp from 'mkdirp';
+import { join, resolve as pResolve } from 'path';
+import { cwd } from 'process';
+import { pipeline } from 'stream';
+import decompress from 'decompress';
+import { track, cleanupSync, createWriteStream as tmpCreateWriteStream } from 'temp';
 
 import { green, red } from 'colors/safe';
 
 import { promisify } from 'util';
 const mkdirpAsPromised = promisify<string, mkdirp.Made>(mkdirp);
-const pipelineAsPromised = promisify(stream.pipeline);
+const pipelineAsPromised = promisify(pipeline);
 
-temp.track();
+track();
 
 /**
  * Available options when downloading.
@@ -65,7 +66,7 @@ export default async function downloadPlugins(options: DownloadPluginsOptions = 
     console.warn('--- downloading plugins ---');
 
     // Resolve the `package.json` at the current working directory.
-    const pck = require(path.resolve(process.cwd(), 'package.json'));
+    const pck = require(pResolve(cwd(), 'package.json'));
 
     // Resolve the directory for which to download the plugins.
     const pluginsDir = pck.theiaPluginsDir || 'plugins';
@@ -81,7 +82,7 @@ export default async function downloadPlugins(options: DownloadPluginsOptions = 
             plugin => downloadPluginAsync(failures, plugin, pck.theiaPlugins[plugin], pluginsDir, packed)
         ));
     } finally {
-        temp.cleanupSync();
+        cleanupSync();
     }
     failures.forEach(e => { console.error(e); });
     if (!ignoreErrors && failures.length > 0) {
@@ -111,7 +112,7 @@ async function downloadPluginAsync(failures: string[], plugin: string, pluginUrl
         failures.push(red(`error: '${plugin}' has an unsupported file type: '${pluginUrl}'`));
         return;
     }
-    const targetPath = path.join(process.cwd(), pluginsDir, `${plugin}${packed === true ? fileExt : ''}`);
+    const targetPath = join(cwd(), pluginsDir, `${plugin}${packed === true ? fileExt : ''}`);
     // Skip plugins which have previously been downloaded.
     if (await isDownloaded(targetPath)) {
         console.warn('- ' + plugin + ': already downloaded - skipping');
@@ -160,7 +161,7 @@ async function downloadPluginAsync(failures: string[], plugin: string, pluginUrl
         await pipelineAsPromised(response.body, file);
     } else {
         await mkdirpAsPromised(targetPath);
-        const tempFile = temp.createWriteStream('theia-plugin-download');
+        const tempFile = tmpCreateWriteStream('theia-plugin-download');
         await pipelineAsPromised(response.body, tempFile);
         await decompress(tempFile.path, targetPath);
     }
@@ -170,12 +171,12 @@ async function downloadPluginAsync(failures: string[], plugin: string, pluginUrl
 
 /**
  * Determine if the resource for the given path is already downloaded.
- * @param filePath the resource path.
+ * @param filePath the resource
  *
  * @returns `true` if the resource is already downloaded, else `false`.
  */
 async function isDownloaded(filePath: string): Promise<boolean> {
-    return fs.stat(filePath).then(() => true, () => false);
+    return stat(filePath).then(() => true, () => false);
 }
 
 /**

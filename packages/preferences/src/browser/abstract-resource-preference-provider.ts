@@ -17,7 +17,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-null/no-null */
 
-import * as jsoncparser from 'jsonc-parser';
+import { modify, stripComments, parse } from '@theia/core/shared/jsonc-parser';
 import { JSONExt } from '@theia/core/shared/@phosphor/coreutils';
 import { inject, injectable, postConstruct } from '@theia/core/shared/inversify';
 import { MessageService } from '@theia/core/lib/common/message-service';
@@ -35,7 +35,7 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
 
     protected preferences: { [key: string]: any } = {};
     protected model: MonacoEditorModel | undefined;
-    protected readonly loading = new Deferred();
+    protected readonly loading = new Deferred<void>();
 
     @inject(PreferenceService) protected readonly preferenceService: PreferenceService;
     @inject(MessageService) protected readonly messageService: MessageService;
@@ -129,7 +129,7 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
             const editOperations: monaco.editor.IIdentifiedSingleEditOperation[] = [];
             if (path.length || value !== undefined) {
                 const { insertSpaces, tabSize, defaultEOL } = textModel.getOptions();
-                for (const edit of jsoncparser.modify(content, path, value, {
+                for (const edit of modify(content, path, value, {
                     formattingOptions: {
                         insertSpaces,
                         tabSize,
@@ -216,8 +216,8 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
         if (!content) {
             return undefined;
         }
-        const strippedContent = jsoncparser.stripComments(content);
-        return jsoncparser.parse(strippedContent);
+        const strippedContent = stripComments(content);
+        return parse(strippedContent);
     }
 
     protected handlePreferenceChanges(newPrefs: { [key: string]: any }): void {

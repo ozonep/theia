@@ -1039,6 +1039,7 @@ export class ViewContainerLayout extends SplitLayout {
         return map(this.items, item => item.widget);
     }
 
+    // @ts-ignore
     get widgets(): ViewContainerPart[] {
         return toArray(this.iter());
     }

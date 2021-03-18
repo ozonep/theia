@@ -406,6 +406,8 @@ export class LanguagesMainImpl implements LanguagesMain, Disposable {
     protected toMonacoLink(link: DocumentLink): monaco.languages.ILink {
         return {
             ...link,
+            // eslint-disable-next-line
+            // @ts-ignore
             url: !!link.url && typeof link.url !== 'string' ? monaco.Uri.revive(link.url) : link.url
         };
     }

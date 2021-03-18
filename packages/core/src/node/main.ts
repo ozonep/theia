@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as http from 'http';
-import * as https from 'https';
+import { Server as httpServer } from 'http';
+import { Server as httpsServer } from 'https';
 import { AddressInfo } from 'net';
 import { checkParentAlive } from './messaging/ipc-protocol';
 import { MaybePromise } from '../common/types';
@@ -31,7 +31,7 @@ export interface Address {
     readonly address: string;
 }
 
-export async function start(serverModule: MaybePromise<http.Server | https.Server>): Promise<Address> {
+export async function start(serverModule: MaybePromise<httpServer | httpsServer>): Promise<Address> {
     const server = await serverModule;
     return server.address() as AddressInfo;
 }

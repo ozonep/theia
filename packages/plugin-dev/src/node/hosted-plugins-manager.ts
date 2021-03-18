@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 import { inject, injectable } from '@theia/core/shared/inversify';
-import * as cp from 'child_process';
-import * as processTree from 'ps-tree';
-import * as fs from 'fs';
-import * as path from 'path';
+import { ChildProcess, spawn } from 'child_process';
+import processTree from 'ps-tree';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { FileUri } from '@theia/core/lib/node';
 import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/node/hosted-plugin';
 import { LogType } from '@theia/plugin-ext/lib/common/types';
@@ -28,7 +28,7 @@ export const HostedPluginsManager = Symbol('HostedPluginsManager');
 export interface HostedPluginsManager {
 
     /**
-     * Runs watcher script to recompile plugin on any changes along given path.
+     * Runs watcher script to recompile plugin on any changes along given
      *
      * @param uri uri to plugin root folder.
      */
@@ -55,7 +55,7 @@ export class HostedPluginsManagerImpl implements HostedPluginsManager {
     @inject(HostedPluginSupport)
     protected readonly hostedPluginSupport: HostedPluginSupport;
 
-    protected watchCompilationRegistry: Map<string, cp.ChildProcess>;
+    protected watchCompilationRegistry: Map<string, ChildProcess>;
 
     constructor() {
         this.watchCompilationRegistry = new Map();
@@ -107,7 +107,7 @@ export class HostedPluginsManagerImpl implements HostedPluginsManager {
     }
 
     protected runWatchScript(pluginRootPath: string): Promise<void> {
-        const watchProcess = cp.spawn('yarn', ['run', 'watch'], { cwd: pluginRootPath, shell: true });
+        const watchProcess = spawn('yarn', ['run', 'watch'], { cwd: pluginRootPath, shell: true });
         watchProcess.on('exit', () => this.unregisterWatchScript(pluginRootPath));
 
         this.watchCompilationRegistry.set(pluginRootPath, watchProcess);
@@ -132,8 +132,8 @@ export class HostedPluginsManagerImpl implements HostedPluginsManager {
      * @param pluginPath path to plugin's root directory
      */
     protected checkWatchScript(pluginPath: string): boolean {
-        const pluginPackageJsonPath = path.join(pluginPath, 'package.json');
-        if (fs.existsSync(pluginPackageJsonPath)) {
+        const pluginPackageJsonPath = join(pluginPath, 'package.json');
+        if (existsSync(pluginPackageJsonPath)) {
             const packageJson = require(pluginPackageJsonPath);
             const scripts = packageJson['scripts'];
             if (scripts && scripts['watch']) {

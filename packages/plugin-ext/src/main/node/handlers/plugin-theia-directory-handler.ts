@@ -20,8 +20,8 @@ import {
     PluginDeployerEntryType
 } from '../../../common/plugin-protocol';
 import { injectable } from '@theia/core/shared/inversify';
-import * as fs from 'fs';
-import * as path from 'path';
+import { existsSync } from 'fs';
+import { resolve } from 'path';
 
 @injectable()
 export class PluginTheiaDirectoryHandler implements PluginDeployerDirectoryHandler {
@@ -36,8 +36,8 @@ export class PluginTheiaDirectoryHandler implements PluginDeployerDirectoryHandl
         }
 
         // is there a package.json ?
-        const packageJsonPath = path.resolve(resolvedPlugin.path(), 'package.json');
-        const existsPackageJson: boolean = fs.existsSync(packageJsonPath);
+        const packageJsonPath = resolve(resolvedPlugin.path(), 'package.json');
+        const existsPackageJson: boolean = existsSync(packageJsonPath);
         if (!existsPackageJson) {
             return false;
         }
