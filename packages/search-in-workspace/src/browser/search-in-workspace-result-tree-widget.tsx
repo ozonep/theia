@@ -36,7 +36,7 @@ import {
     EditorWidget, ReplaceOperation, EditorOpenerOptions, FindMatch
 } from '@theia/editor/lib/browser';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
-import { FileResourceResolver, FileSystemPreferences } from '@theia/filesystem/lib/browser';
+import { FileResourceResolver, FileSystemPreferences, FileService } from '@theia/filesystem/lib/browser';
 import { SearchInWorkspaceResult, SearchInWorkspaceOptions, SearchMatch } from '../common/search-in-workspace-interface';
 import { SearchInWorkspaceService } from './search-in-workspace-service';
 import { MEMORY_TEXT } from './in-memory-text-resource';
@@ -140,6 +140,7 @@ export class SearchInWorkspaceResultTreeWidget extends TreeWidget {
     @inject(ProgressService) protected readonly progressService: ProgressService;
     @inject(ColorRegistry) protected readonly colorRegistry: ColorRegistry;
     @inject(FileSystemPreferences) protected readonly filesystemPreferences: FileSystemPreferences;
+    @inject(FileService) protected readonly fileService: FileService;
 
     constructor(
         @inject(TreeProps) readonly props: TreeProps,
@@ -189,6 +190,19 @@ export class SearchInWorkspaceResultTreeWidget extends TreeWidget {
 
         this.toDispose.push(this.searchInWorkspacePreferences.onPreferenceChanged(() => {
             this.update();
+        }));
+
+        this.toDispose.push(this.fileService.onDidFilesChange(event => {
+            if (event.gotDeleted()) {
+                const deletedFiles = event.getDeleted();
+                deletedFiles.forEach(file => {
+                    const results = this.getFileNodesByUri(file.resource);
+                    results.forEach(node => {
+                        this.removeFileNode(node);
+                        this.model.refresh(node);
+                    });
+                });
+            }
         }));
     }
 
