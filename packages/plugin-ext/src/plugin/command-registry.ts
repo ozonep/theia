@@ -129,7 +129,7 @@ export class CommandRegistryImpl implements CommandRegistryExt {
         if (handler) {
             return handler<T>(...args.map(arg => this.argumentProcessors.reduce((r, p) => p.processArgument(r), arg)));
         } else {
-            throw new Error(`Command ${id} doesn't exist`);
+            throw new Error(`No handler exists for command '${id}'`);
         }
     }
 
@@ -181,7 +181,7 @@ export class CommandsConverter {
             this.isSafeCommandRegistered = true;
         }
 
-        if (command.command && command.arguments && command.arguments.length > 0) {
+        if (command.arguments && command.arguments.length > 0) {
             const id = this.handle++;
             this.commandsMap.set(id, command);
             disposables.push(new Disposable(() => this.commandsMap.delete(id)));
@@ -209,7 +209,7 @@ export class CommandsConverter {
     private executeSafeCommand<R>(...args: any[]): PromiseLike<R | undefined> {
         const command = this.commandsMap.get(args[0]);
         if (!command || !command.command) {
-            return Promise.reject('command NOT FOUND');
+            return Promise.reject(`command ${args[0]} not found`);
         }
         return this.commands.executeCommand(command.command, ...(command.arguments || []));
     }
