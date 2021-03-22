@@ -114,8 +114,8 @@ export class TaskDefinitionRegistry {
         }
         const def = this.getDefinition(one);
         if (def) {
-            // scope is either a string or an enum value. Anyway...the must exactly match
-            return def.properties.all.every(p => p === 'type' || one[p] === other[p]) && one._scope === other._scope;
+            return def.properties.all.every(p => p === 'type' || one[p] === other[p])
+                && (one._scope === other._scope || one.scope === other.scope);
         }
         return one.label === other.label && one._source === other._source;
     }

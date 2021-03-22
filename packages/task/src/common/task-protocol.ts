@@ -149,8 +149,8 @@ export namespace TaskCustomization {
 }
 
 export enum TaskScope {
-    Workspace,
-    Global
+    Global = 1,
+    Workspace = 2
 }
 
 export type TaskConfigurationScope = string | TaskScope.Workspace | TaskScope.Global;
