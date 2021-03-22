@@ -60,7 +60,7 @@ for (const name in pck.adapters) {
 
     if (adapterUrl.endsWith('gz')) {
         // Support tar gz
-        mkdirp(targetPath);
+        mkdirp.sync(targetPath);
         const gunzip = zlib.createGunzip({
             finishFlush: zlib.Z_SYNC_FLUSH,
             flush: zlib.Z_SYNC_FLUSH

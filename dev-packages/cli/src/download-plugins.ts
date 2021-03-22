@@ -31,7 +31,6 @@ import { track, cleanupSync, createWriteStream as tmpCreateWriteStream } from 't
 import { green, red } from 'colors/safe';
 
 import { promisify } from 'util';
-const mkdirpAsPromised = promisify<string, mkdirp.Made>(mkdirp);
 const pipelineAsPromised = promisify(pipeline);
 
 track();
@@ -71,7 +70,7 @@ export default async function downloadPlugins(options: DownloadPluginsOptions = 
     // Resolve the directory for which to download the plugins.
     const pluginsDir = pck.theiaPluginsDir || 'plugins';
 
-    await mkdirpAsPromised(pluginsDir);
+    await mkdirp(pluginsDir);
 
     if (!pck.theiaPlugins) {
         console.log(red('error: missing mandatory \'theiaPlugins\' property.'));
@@ -160,7 +159,7 @@ async function downloadPluginAsync(failures: string[], plugin: string, pluginUrl
         const file = createWriteStream(targetPath);
         await pipelineAsPromised(response.body, file);
     } else {
-        await mkdirpAsPromised(targetPath);
+        await mkdirp(targetPath);
         const tempFile = tmpCreateWriteStream('theia-plugin-download');
         await pipelineAsPromised(response.body, tempFile);
         await decompress(tempFile.path, targetPath);

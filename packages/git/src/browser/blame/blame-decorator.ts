@@ -18,8 +18,10 @@ import { inject, injectable } from '@theia/core/shared/inversify';
 import { EditorManager, TextEditor, EditorDecoration, EditorDecorationOptions, Range, Position, EditorDecorationStyle } from '@theia/editor/lib/browser';
 import { GitFileBlame, Commit } from '../../common';
 import { Disposable, DisposableCollection } from '@theia/core';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import URI from '@theia/core/lib/common/uri';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 @injectable()
 export class BlameDecorator implements monaco.languages.HoverProvider {
@@ -112,7 +114,7 @@ export class BlameDecorator implements monaco.languages.HoverProvider {
         const commits = blame.commits;
         for (const commit of commits) {
             const sha = commit.sha;
-            const commitTime = moment(commit.author.timestamp);
+            const commitTime = dayjs(commit.author.timestamp);
             const heat = this.getHeatColor(commitTime);
             const content = this.formatContentLine(commit, commitTime);
             const short = sha.substr(0, 7);
@@ -148,7 +150,7 @@ export class BlameDecorator implements monaco.languages.HoverProvider {
         return { editorDecorations, styles };
     }
 
-    protected formatContentLine(commit: Commit, commitTime: moment.Moment): string {
+    protected formatContentLine(commit: Commit, commitTime: dayjs.Dayjs): string {
         const when = commitTime.fromNow();
         const contentWidth = BlameDecorator.maxWidth - when.length - 2;
         let content = commit.summary.substring(0, contentWidth + 1);
@@ -166,8 +168,8 @@ export class BlameDecorator implements monaco.languages.HoverProvider {
         return `${content} ${when}`;
     }
 
-    protected now = moment();
-    protected getHeatColor(commitTime: moment.Moment): string {
+    protected now = dayjs();
+    protected getHeatColor(commitTime: dayjs.Dayjs): string {
         const daysFromNow = this.now.diff(commitTime, 'days');
         if (daysFromNow <= 2) {
             return 'var(--md-orange-50)';

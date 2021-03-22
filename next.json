@@ -22,6 +22,7 @@
         "@theia/plugin-ext-vscode": "next",
         "@theia/preferences": "next",
         "@theia/preview": "next",
+        "@theia/scm": "next",
         "@theia/search-in-workspace": "next",
         "@theia/terminal": "next",
         "@theia/timeline": "next"

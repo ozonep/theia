@@ -6,9 +6,9 @@
     "@theia/core": "1.11.0",
     "@theia/filesystem": "1.11.0",
     "@theia/variable-resolver": "1.11.0",
-    "ajv": "^6.5.3",
-    "moment": "2.24.0",
-    "valid-filename": "^2.0.1"
+    "ajv": "^6.12.6",
+    "dayjs": "1.10.4",
+    "valid-filename": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"

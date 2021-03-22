@@ -21,10 +21,12 @@ import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { WorkspaceService } from './workspace-service';
 import { WorkspacePreferences } from './workspace-preferences';
 import URI from '@theia/core/lib/common/uri';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { FileService } from '@theia/filesystem/lib/browser/file-service';
 import { FileStat } from '@theia/filesystem/lib/common/files';
 import { Path } from '@theia/core/lib/common';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 @injectable()
 export class QuickOpenWorkspace implements QuickOpenModel {
@@ -71,7 +73,7 @@ export class QuickOpenWorkspace implements QuickOpenModel {
             this.items.push(new QuickOpenGroupItem({
                 label: uri.path.base,
                 description: Path.tildify(uri.path.toString(), home),
-                groupLabel: `last modified ${moment(stat.mtime).fromNow()}`,
+                groupLabel: `last modified ${dayjs(stat.mtime).fromNow()}`,
                 iconClass,
                 run: (mode: QuickOpenMode): boolean => {
                     if (mode !== QuickOpenMode.OPEN) {

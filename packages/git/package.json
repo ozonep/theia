@@ -11,16 +11,15 @@
     "@theia/scm": "1.11.0",
     "@theia/scm-extra": "1.11.0",
     "@theia/workspace": "1.11.0",
-    "@types/diff": "^3.2.2",
-    "@types/p-queue": "^2.3.1",
-    "diff": "^3.4.0",
+    "@types/diff": "^4.0.2",
+    "dayjs": "^1.10.4",
+    "diff": "^4.0.2",
     "dugite-extra": "0.1.14",
     "find-git-exec": "^0.0.3",
-    "find-git-repositories": "^0.1.1",
-    "moment": "2.24.0",
+    "find-git-repositories": "^0.2.0",
     "octicons": "^7.1.0",
-    "p-queue": "^2.4.2",
-    "ts-md5": "^1.2.2"
+    "p-queue": "^6.6.2",
+    "ts-md5": "^1.2.7"
   },
   "publishConfig": {
     "access": "public"

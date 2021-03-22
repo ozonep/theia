@@ -6,7 +6,7 @@
     "@theia/core": "1.11.0",
     "@theia/editor": "1.11.0",
     "@theia/monaco": "1.11.0",
-    "ts-md5": "^1.2.2"
+    "ts-md5": "^1.2.7"
   },
   "publishConfig": {
     "access": "public"

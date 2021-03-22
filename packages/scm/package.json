@@ -7,11 +7,11 @@
     "@theia/editor": "1.11.0",
     "@theia/filesystem": "1.11.0",
     "@theia/navigator": "1.11.0",
-    "@types/diff": "^3.2.2",
-    "diff": "^3.4.0",
+    "@types/diff": "^4.0.2",
+    "diff": "^4.0.2",
     "p-debounce": "^2.1.0",
-    "react-autosize-textarea": "^7.0.0",
-    "ts-md5": "^1.2.2"
+    "react-autosize-textarea": "^7.1.0",
+    "ts-md5": "^1.2.7"
   },
   "publishConfig": {
     "access": "public"
