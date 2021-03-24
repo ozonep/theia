@@ -9926,7 +9926,7 @@ declare module '@theia/plugin' {
             scope: WorkspaceFolder | TaskScope.Global | TaskScope.Workspace,
             name: string,
             source?: string,
-            execution?: ProcessExecution | ShellExecution,
+            execution?: ProcessExecution | ShellExecution | CustomExecution,
             problemMatchers?: string | string[]);
 
         /**
@@ -9946,7 +9946,7 @@ declare module '@theia/plugin' {
             taskDefinition: TaskDefinition,
             name: string,
             source: string,
-            execution?: ProcessExecution | ShellExecution,
+            execution?: ProcessExecution | ShellExecution | CustomExecution,
             problemMatchers?: string | string[]);
 
         /** The task's name */

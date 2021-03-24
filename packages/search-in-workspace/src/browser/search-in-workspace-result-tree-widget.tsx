@@ -194,14 +194,11 @@ export class SearchInWorkspaceResultTreeWidget extends TreeWidget {
 
         this.toDispose.push(this.fileService.onDidFilesChange(event => {
             if (event.gotDeleted()) {
-                const deletedFiles = event.getDeleted();
-                deletedFiles.forEach(file => {
-                    const results = this.getFileNodesByUri(file.resource);
-                    results.forEach(node => {
-                        this.removeFileNode(node);
-                        this.model.refresh(node);
-                    });
+                event.getDeleted().forEach(deletedFile => {
+                    const fileNodes = this.getFileNodesByUri(deletedFile.resource);
+                    fileNodes.forEach(node => this.removeFileNode(node));
                 });
+                this.model.refresh();
             }
         }));
     }
