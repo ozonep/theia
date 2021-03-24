@@ -334,6 +334,6 @@ export class EditorCommandContribution implements CommandContribution {
         return autoSave === 'on' || autoSave === undefined;
     }
     private async toggleAutoSave(): Promise<void> {
-        this.preferencesService.set(EditorCommandContribution.AUTOSAVE_PREFERENCE, this.isAutoSaveOn() ? 'off' : 'on');
+        this.preferencesService.updateValue(EditorCommandContribution.AUTOSAVE_PREFERENCE, this.isAutoSaveOn() ? 'off' : 'on');
     }
 }
